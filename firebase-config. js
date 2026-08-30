@@ -1,0 +1,8 @@
+const firebaseConfig = {
+  apiKey: "AIzaSyBAhtPH_elsDDkBsxZsvMO8FYwdOGna84g",
+  authDomain: "worldmitra-33ca6.firebaseapp.com",
+  projectId: "worldmitra-33ca6",
+  storageBucket: "worldmitra-33ca6.firebasestorage.app",
+  messagingSenderId: "1089520845776",
+  appId: "1:1089520845776:web:2789654cc6061e7034afd5"
+};
