@@ -320,15 +320,28 @@
 
 
           messageButton.addEventListener(
-            "click",
-            () => {
+  "click",
+  () => {
 
-              alert(
-                "Messaging feature जल्द ही आएगा! 💬🌍"
-              );
+    const chatUrl =
+      "chat.html?uid=" +
+      encodeURIComponent(person.uid) +
+      "&name=" +
+      encodeURIComponent(person.name);
 
-            }
-          );
+    window.location.href = chatUrl;
+
+  }
+);
+          
+          
+
+          
+              
+              
+
+            
+  
 
 
           connectionsList.appendChild(card);
