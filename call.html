@@ -1,0 +1,605 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Voice Call - WorldMitra</title>
+
+  <style>
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+      font-family: Arial, sans-serif;
+    }
+
+    body {
+      min-height: 100vh;
+      background: #f5f8ff;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      padding: 20px;
+    }
+
+    .call-box {
+      width: 100%;
+      max-width: 430px;
+      background: white;
+      padding: 30px 22px;
+      border-radius: 22px;
+      box-shadow: 0 8px 30px rgba(0,0,0,0.10);
+      text-align: center;
+    }
+
+    .avatar {
+      width: 100px;
+      height: 100px;
+      border-radius: 50%;
+      background: #2563eb;
+      color: white;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      margin: 10px auto 18px;
+      font-size: 40px;
+      font-weight: bold;
+    }
+
+    h1 {
+      font-size: 25px;
+      margin-bottom: 8px;
+    }
+
+    .status {
+      color: #667085;
+      margin-bottom: 25px;
+    }
+
+    .buttons {
+      display: flex;
+      justify-content: center;
+      gap: 12px;
+      flex-wrap: wrap;
+    }
+
+    button {
+      border: none;
+      padding: 14px 20px;
+      border-radius: 12px;
+      font-size: 16px;
+      font-weight: bold;
+      cursor: pointer;
+    }
+
+    #startBtn {
+      background: #16a34a;
+      color: white;
+    }
+
+    #muteBtn {
+      background: #f59e0b;
+      color: white;
+    }
+
+    #endBtn {
+      background: #dc2626;
+      color: white;
+    }
+
+    button:disabled {
+      background: #9ca3af;
+      cursor: not-allowed;
+    }
+
+    .back {
+      display: block;
+      margin-top: 22px;
+      text-decoration: none;
+      background: #111827;
+      color: white;
+      padding: 13px;
+      border-radius: 10px;
+      font-weight: bold;
+    }
+  </style>
+</head>
+
+<body>
+
+  <div class="call-box">
+
+    <div class="avatar" id="avatar">
+      W
+    </div>
+
+    <h1 id="personName">
+      Voice Call
+    </h1>
+
+    <p class="status" id="status">
+      Ready to call
+    </p>
+
+    <div class="buttons">
+
+      <button id="startBtn">
+        📞 Start Call
+      </button>
+
+      <button id="muteBtn" disabled>
+        🎤 Mute
+      </button>
+
+      <button id="endBtn" disabled>
+        🔴 End Call
+      </button>
+
+    </div>
+
+    <a href="connections.html" class="back">
+      ← Back to Connections
+    </a>
+
+  </div>
+
+
+  <script type="module">
+
+    import { initializeApp }
+      from "https://www.gstatic.com/firebasejs/12.1.0/firebase-app.js";
+
+    import {
+      getAuth,
+      onAuthStateChanged
+    } from "https://www.gstatic.com/firebasejs/12.1.0/firebase-auth.js";
+
+    import {
+      getFirestore,
+      collection,
+      doc,
+      setDoc,
+      addDoc,
+      onSnapshot,
+      updateDoc,
+      deleteDoc,
+      serverTimestamp
+    } from "https://www.gstatic.com/firebasejs/12.1.0/firebase-firestore.js";
+
+
+    const firebaseConfig = {
+      apiKey: "AIzaSyBAhtPH_elsDDkBsxZsvMO8FYwdOGna84g",
+      authDomain: "worldmitra-33ca6.firebaseapp.com",
+      projectId: "worldmitra-33ca6",
+      storageBucket: "worldmitra-33ca6.firebasestorage.app",
+      messagingSenderId: "1089520845776",
+      appId: "1:1089520845776:web:2789654cc6061e7034afd5"
+    };
+
+
+    const app = initializeApp(firebaseConfig);
+
+    const auth = getAuth(app);
+
+    const db = getFirestore(app);
+
+
+    const personName =
+      document.getElementById("personName");
+
+    const avatar =
+      document.getElementById("avatar");
+
+    const statusText =
+      document.getElementById("status");
+
+    const startBtn =
+      document.getElementById("startBtn");
+
+    const muteBtn =
+      document.getElementById("muteBtn");
+
+    const endBtn =
+      document.getElementById("endBtn");
+
+
+    let currentUser = null;
+
+    let otherUserId = null;
+
+    let otherUserName = "WorldMitra User";
+
+    let localStream = null;
+
+    let peerConnection = null;
+
+    let callDocId = null;
+
+    let unsubscribeCall = null;
+
+    let isMuted = false;
+
+
+    const servers = {
+      iceServers: [
+        {
+          urls: "stun:stun.l.google.com:19302"
+        }
+      ]
+    };
+
+
+    function getChatCallId(userA, userB) {
+
+      return [userA, userB]
+        .sort()
+        .join("_");
+
+    }
+
+
+    async function startVoiceCall() {
+
+      if (!currentUser || !otherUserId) {
+
+        alert("Call user information missing.");
+
+        return;
+
+      }
+
+
+      try {
+
+        statusText.textContent =
+          "Requesting microphone permission...";
+
+
+        localStream =
+          await navigator.mediaDevices.getUserMedia({
+            audio: true,
+            video: false
+          });
+
+
+        peerConnection =
+          new RTCPeerConnection(servers);
+
+
+        localStream
+          .getTracks()
+          .forEach(track => {
+
+            peerConnection.addTrack(
+              track,
+              localStream
+            );
+
+          });
+
+
+        const callId =
+          getChatCallId(
+            currentUser.uid,
+            otherUserId
+          );
+
+
+        callDocId = callId;
+
+
+        const callRef =
+          doc(db, "calls", callId);
+
+
+        peerConnection.onicecandidate =
+          async (event) => {
+
+            if (event.candidate) {
+
+              await addDoc(
+                collection(
+                  db,
+                  "calls",
+                  callId,
+                  "callerCandidates"
+                ),
+                event.candidate.toJSON()
+              );
+
+            }
+
+          };
+
+
+        const offer =
+          await peerConnection.createOffer();
+
+
+        await peerConnection.setLocalDescription(
+          offer
+        );
+
+
+        await setDoc(
+          callRef,
+          {
+            callerId: currentUser.uid,
+            receiverId: otherUserId,
+            callerName: currentUser.displayName || "WorldMitra User",
+            receiverName: otherUserName,
+            type: "voice",
+            status: "calling",
+            offer: {
+              type: offer.type,
+              sdp: offer.sdp
+            },
+            createdAt: serverTimestamp()
+          }
+        );
+
+
+        statusText.textContent =
+          "Calling " + otherUserName + "...";
+
+
+        startBtn.disabled = true;
+
+        muteBtn.disabled = false;
+
+        endBtn.disabled = false;
+
+
+        unsubscribeCall =
+          onSnapshot(
+            callRef,
+            async (snapshot) => {
+
+              if (!snapshot.exists()) {
+                return;
+              }
+
+
+              const data = snapshot.data();
+
+
+              if (
+                data.answer &&
+                !peerConnection.currentRemoteDescription
+              ) {
+
+                await peerConnection.setRemoteDescription(
+                  new RTCSessionDescription(
+                    data.answer
+                  )
+                );
+
+                statusText.textContent =
+                  "Voice call connected 📞";
+
+              }
+
+
+              if (data.status === "ended") {
+
+                endCall(false);
+
+              }
+
+            }
+          );
+
+
+        onSnapshot(
+          collection(
+            db,
+            "calls",
+            callId,
+            "receiverCandidates"
+          ),
+          snapshot => {
+
+            snapshot.docChanges().forEach(change => {
+
+              if (change.type === "added") {
+
+                peerConnection.addIceCandidate(
+                  new RTCIceCandidate(
+                    change.doc.data()
+                  )
+                );
+
+              }
+
+            });
+
+          }
+        );
+
+
+      } catch (error) {
+
+        console.error(error);
+
+        statusText.textContent =
+          "Microphone permission was not granted.";
+
+        alert(
+          "Voice call start नहीं हुई: " +
+          error.message
+        );
+
+      }
+
+    }
+
+
+    async function endCall(updateServer = true) {
+
+      if (updateServer && callDocId) {
+
+        try {
+
+          await updateDoc(
+            doc(db, "calls", callDocId),
+            {
+              status: "ended"
+            }
+          );
+
+        } catch (error) {
+
+          console.error(error);
+
+        }
+
+      }
+
+
+      if (unsubscribeCall) {
+
+        unsubscribeCall();
+
+        unsubscribeCall = null;
+
+      }
+
+
+      if (localStream) {
+
+        localStream
+          .getTracks()
+          .forEach(track => track.stop());
+
+        localStream = null;
+
+      }
+
+
+      if (peerConnection) {
+
+        peerConnection.close();
+
+        peerConnection = null;
+
+      }
+
+
+      statusText.textContent =
+        "Call ended";
+
+      startBtn.disabled = false;
+
+      muteBtn.disabled = true;
+
+      endBtn.disabled = true;
+
+      isMuted = false;
+
+      muteBtn.textContent = "🎤 Mute";
+
+    }
+
+
+    function toggleMute() {
+
+      if (!localStream) {
+        return;
+      }
+
+
+      const audioTracks =
+        localStream.getAudioTracks();
+
+
+      audioTracks.forEach(track => {
+
+        track.enabled = !track.enabled;
+
+        isMuted = !track.enabled;
+
+      });
+
+
+      muteBtn.textContent =
+        isMuted ? "🔇 Unmute" : "🎤 Mute";
+
+    }
+
+
+    startBtn.addEventListener(
+      "click",
+      startVoiceCall
+    );
+
+
+    muteBtn.addEventListener(
+      "click",
+      toggleMute
+    );
+
+
+    endBtn.addEventListener(
+      "click",
+      () => endCall(true)
+    );
+
+
+    onAuthStateChanged(
+      auth,
+      (user) => {
+
+        if (!user) {
+
+          window.location.href =
+            "login.html";
+
+          return;
+
+        }
+
+
+        currentUser = user;
+
+
+        const params =
+          new URLSearchParams(
+            window.location.search
+          );
+
+
+        otherUserId =
+          params.get("uid");
+
+
+        otherUserName =
+          params.get("name") ||
+          "WorldMitra User";
+
+
+        personName.textContent =
+          "📞 " + otherUserName;
+
+
+        avatar.textContent =
+          otherUserName
+            .charAt(0)
+            .toUpperCase();
+
+
+        if (!otherUserId) {
+
+          startBtn.disabled = true;
+
+          statusText.textContent =
+            "Call user not found.";
+
+        }
+
+      }
+    );
+
+  </script>
+
+</body>
+</html>
