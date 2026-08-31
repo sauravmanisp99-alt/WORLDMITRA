@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>WorldMitra - Profile</title>
+  <title>Profile - WorldMitra</title>
 
   <style>
     * {
@@ -14,12 +14,13 @@
     }
 
     body {
-      background: #f5f7fb;
+      background: #f5f8ff;
       color: #222;
+      min-height: 100vh;
     }
 
     .header {
-      background: #1877f2;
+      background: #2563eb;
       color: white;
       padding: 18px;
       text-align: center;
@@ -28,59 +29,59 @@
     }
 
     .profile-card {
+      width: 92%;
       max-width: 500px;
       margin: 30px auto;
       background: white;
-      border-radius: 18px;
-      padding: 30px;
+      padding: 30px 22px;
+      border-radius: 20px;
+      box-shadow: 0 8px 25px rgba(0,0,0,0.10);
       text-align: center;
-      box-shadow: 0 4px 15px rgba(0,0,0,0.08);
     }
 
     .avatar {
       width: 100px;
       height: 100px;
-      margin: auto;
       border-radius: 50%;
-      background: #1877f2;
+      background: #2563eb;
       color: white;
       display: flex;
       align-items: center;
       justify-content: center;
+      margin: 0 auto 18px;
       font-size: 40px;
       font-weight: bold;
     }
 
-    h2 {
-      margin-top: 15px;
+    h1 {
+      font-size: 26px;
+      margin-bottom: 8px;
     }
 
     .email {
-      color: #777;
-      margin-top: 8px;
+      color: #667085;
+      margin-bottom: 20px;
     }
 
     .bio {
-      margin: 20px 0;
       color: #555;
+      line-height: 1.5;
+      margin-bottom: 25px;
     }
 
     .btn {
       display: block;
       width: 100%;
-      padding: 13px;
+      padding: 14px;
       margin-top: 12px;
       border: none;
       border-radius: 10px;
-      background: #1877f2;
+      background: #2563eb;
       color: white;
       font-size: 16px;
-      cursor: pointer;
+      font-weight: bold;
       text-decoration: none;
-    }
-
-    .btn:hover {
-      background: #0d65d9;
+      cursor: pointer;
     }
 
     .logout {
@@ -99,24 +100,77 @@
 
     <div class="avatar">W</div>
 
-    <h2>My Profile</h2>
+    <h1 id="userName">My Profile</h1>
 
-    <p class="email">Welcome to WorldMitra</p>
-
-    <p class="bio">
-      Connect with people around the world, make new friends
-      and discover new cultures.
+    <p class="email" id="userEmail">
+      Loading...
     </p>
 
-    <a href="index.html" class="btn">🏠 Home</a>
+    <p class="bio">
+      Welcome to WorldMitra! Connect with people,
+      make new friends and discover the world.
+    </p>
 
-    <a href="#" class="btn">👥 Find People</a>
+    <a href="index.html" class="btn">
+      🏠 Home
+    </a>
 
-    <a href="#" class="btn">✏️ Edit Profile</a>
+    <a href="#" class="btn">
+      👥 Find People
+    </a>
 
-    <button class="btn logout">🚪 Logout</button>
+    <a href="#" class="btn">
+      ✏️ Edit Profile
+    </a>
+
+    <button id="logoutBtn" class="btn logout">
+      🚪 Logout
+    </button>
 
   </div>
+
+  <script type="module">
+
+    import { initializeApp } 
+      from "https://www.gstatic.com/firebasejs/12.1.0/firebase-app.js";
+
+    import {
+      getAuth,
+      onAuthStateChanged,
+      signOut
+    } from "https://www.gstatic.com/firebasejs/12.1.0/firebase-auth.js";
+
+    const firebaseConfig = {
+      apiKey: "AIzaSyBAhtPH_elsDDkBsxZsvMO8FYwdOGna84g",
+      authDomain: "worldmitra-33ca6.firebaseapp.com",
+      projectId: "worldmitra-33ca6",
+      storageBucket: "worldmitra-33ca6.firebasestorage.app",
+      messagingSenderId: "1089520845776",
+      appId: "1:1089520845776:web:2789654cc6061e7034afd5"
+    };
+
+    const app = initializeApp(firebaseConfig);
+    const auth = getAuth(app);
+
+    onAuthStateChanged(auth, (user) => {
+
+      if (user) {
+        document.getElementById("userEmail").textContent = user.email;
+      } else {
+        window.location.href = "login.html";
+      }
+
+    });
+
+    document.getElementById("logoutBtn").addEventListener("click", async () => {
+
+      await signOut(auth);
+
+      window.location.href = "login.html";
+
+    });
+
+  </script>
 
 </body>
 </html>
