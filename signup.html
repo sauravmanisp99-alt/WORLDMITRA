@@ -59,7 +59,8 @@
       font-size: 14px;
     }
 
-    input, select {
+    input,
+    select {
       width: 100%;
       padding: 13px;
       margin-bottom: 18px;
@@ -69,7 +70,8 @@
       outline: none;
     }
 
-    input:focus, select:focus {
+    input:focus,
+    select:focus {
       border-color: #2563eb;
     }
 
@@ -129,6 +131,7 @@
     <form>
 
       <label for="name">Your Name</label>
+
       <input
         type="text"
         id="name"
@@ -137,6 +140,7 @@
       >
 
       <label for="email">Email</label>
+
       <input
         type="email"
         id="email"
@@ -145,22 +149,24 @@
       >
 
       <label for="country">Country</label>
+
       <select id="country" required>
         <option value="">Select your country</option>
-        <option>India</option>
-        <option>United Arab Emirates</option>
-        <option>United Kingdom</option>
-        <option>United States</option>
-        <option>Canada</option>
-        <option>Australia</option>
-        <option>Germany</option>
-        <option>France</option>
-        <option>Austria</option>
-        <option>Japan</option>
-        <option>Other</option>
+        <option value="India">India</option>
+        <option value="United Arab Emirates">United Arab Emirates</option>
+        <option value="United Kingdom">United Kingdom</option>
+        <option value="United States">United States</option>
+        <option value="Canada">Canada</option>
+        <option value="Australia">Australia</option>
+        <option value="Germany">Germany</option>
+        <option value="France">France</option>
+        <option value="Austria">Austria</option>
+        <option value="Japan">Japan</option>
+        <option value="Other">Other</option>
       </select>
 
       <label for="password">Password</label>
+
       <input
         type="password"
         id="password"
@@ -185,86 +191,101 @@
     </div>
 
   </div>
-<script type="module">
-  import { initializeApp } from "https://www.gstatic.com/firebasejs/12.1.0/firebase-app.js";
 
-  import {
-    getAuth,
-    createUserWithEmailAndPassword,
-    updateProfile
-  } from "https://www.gstatic.com/firebasejs/12.1.0/firebase-auth.js";
+  <script type="module">
 
-  const firebaseConfig = {
-    apiKey: "AIzaSyBAhtPH_elsDDkBsxZsvMO8FYwdOGna84g",
-    authDomain: "worldmitra-33ca6.firebaseapp.com",
-    projectId: "worldmitra-33ca6",
-    storageBucket: "worldmitra-33ca6.firebasestorage.app",
-    messagingSenderId: "1089520845776",
-    appId: "1:1089520845776:web:2789654cc6061e7034afd5"
-  };
+    import { initializeApp }
+      from "https://www.gstatic.com/firebasejs/12.1.0/firebase-app.js";
 
-  const app = initializeApp(firebaseConfig);
-  const auth = getAuth(app);
+    import {
+      getAuth,
+      createUserWithEmailAndPassword,
+      updateProfile
+    } from "https://www.gstatic.com/firebasejs/12.1.0/firebase-auth.js";
 
-  document.querySelector("form").addEventListener("submit", async (event) => {
-    event.preventDefault();
+    import {
+      getFirestore,
+      doc,
+      setDoc
+    } from "https://www.gstatic.com/firebasejs/12.1.0/firebase-firestore.js";
 
-    const name = document.getElementById("name").value.trim();
-    const email = document.getElementById("email").value.trim();
-    const country = document.getElementById("country").value;
-    const password = document.getElementById("password").value;
 
-    try {
-      const userCredential =
-        await createUserWithEmailAndPassword(auth, email, password);
+    const firebaseConfig = {
+      apiKey: "AIzaSyBAhtPH_elsDDkBsxZsvMO8FYwdOGna84g",
+      authDomain: "worldmitra-33ca6.firebaseapp.com",
+      projectId: "worldmitra-33ca6",
+      storageBucket: "worldmitra-33ca6.firebasestorage.app",
+      messagingSenderId: "1089520845776",
+      appId: "1:1089520845776:web:2789654cc6061e7034afd5"
+    };
 
-      const user = userCredential.user;
 
-      await updateProfile(user, {
-        displayName: name
-      });
+    const app = initializeApp(firebaseConfig);
 
-      alert("Account created successfully! 🎉");
+    const auth = getAuth(app);
 
-      window.location.href = "login.html";
+    const db = getFirestore(app);
 
-    } catch (error) {
-      alert("Account create नहीं हुआ: " + error.message);
-    }
-  });
-</script>
-  import { initializeApp } from "https://www.gstatic.com/firebasejs/12.1.0/firebase-app.js";
-  import {
-    getAuth,
-    createUserWithEmailAndPassword
-  } from "https://www.gstatic.com/firebasejs/12.1.0/firebase-auth.js";
 
-  const firebaseConfig = {
-    apiKey: "AIzaSyBAhtPH_elsDDkBsxZsvMO8FYwdOGna84g",
-    authDomain: "worldmitra-33ca6.firebaseapp.com",
-    projectId: "worldmitra-33ca6",
-    storageBucket: "worldmitra-33ca6.firebasestorage.app",
-    messagingSenderId: "1089520845776",
-    appId: "1:1089520845776:web:2789654cc6061e7034afd5"
-  };
+    document.querySelector("form").addEventListener("submit", async (event) => {
 
-  const app = initializeApp(firebaseConfig);
-  const auth = getAuth(app);
+      event.preventDefault();
 
-  document.querySelector("form").addEventListener("submit", async (event) => {
-    event.preventDefault();
 
-    const email = document.getElementById("email").value.trim();
-    const password = document.getElementById("password").value;
+      const name = document.getElementById("name").value.trim();
 
-    try {
-      await createUserWithEmailAndPassword(auth, email, password);
-      alert("Account created successfully!");
-      window.location.href = "login.html";
-    } catch (error) {
-      alert("Account create नहीं हुआ: " + error.message);
-    }
-  });
-</script>
+      const email = document.getElementById("email").value.trim();
+
+      const country = document.getElementById("country").value;
+
+      const password = document.getElementById("password").value;
+
+
+      try {
+
+        const userCredential =
+          await createUserWithEmailAndPassword(
+            auth,
+            email,
+            password
+          );
+
+
+        const user = userCredential.user;
+
+
+        await updateProfile(user, {
+          displayName: name
+        });
+
+
+        await setDoc(
+          doc(db, "users", user.uid),
+          {
+            name: name,
+            email: email,
+            country: country,
+            uid: user.uid,
+            createdAt: new Date()
+          }
+        );
+
+
+        alert("Account created successfully! 🎉");
+
+
+        window.location.href = "login.html";
+
+
+      } catch (error) {
+
+        alert("Account create नहीं हुआ: " + error.message);
+
+      }
+
+    });
+
+  </script>
+
 </body>
 </html>
