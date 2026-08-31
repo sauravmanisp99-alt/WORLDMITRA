@@ -1,0 +1,363 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Find People - WorldMitra</title>
+
+  <style>
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+      font-family: Arial, sans-serif;
+    }
+
+    body {
+      background: #f5f8ff;
+      color: #222;
+      min-height: 100vh;
+    }
+
+    .header {
+      background: #2563eb;
+      color: white;
+      padding: 18px;
+      text-align: center;
+      font-size: 24px;
+      font-weight: bold;
+    }
+
+    .container {
+      width: 92%;
+      max-width: 700px;
+      margin: 25px auto;
+    }
+
+    .search-box {
+      background: white;
+      padding: 20px;
+      border-radius: 16px;
+      box-shadow: 0 5px 20px rgba(0,0,0,0.08);
+      margin-bottom: 20px;
+    }
+
+    .search-box h1 {
+      font-size: 25px;
+      margin-bottom: 8px;
+    }
+
+    .search-box p {
+      color: #667085;
+      margin-bottom: 15px;
+    }
+
+    .search-input {
+      width: 100%;
+      padding: 14px;
+      border: 1px solid #d0d5dd;
+      border-radius: 10px;
+      font-size: 16px;
+      outline: none;
+    }
+
+    .search-input:focus {
+      border-color: #2563eb;
+    }
+
+    .user-card {
+      background: white;
+      padding: 18px;
+      border-radius: 16px;
+      margin-bottom: 15px;
+      box-shadow: 0 5px 18px rgba(0,0,0,0.07);
+      display: flex;
+      align-items: center;
+      gap: 15px;
+    }
+
+    .avatar {
+      width: 60px;
+      height: 60px;
+      min-width: 60px;
+      border-radius: 50%;
+      background: #2563eb;
+      color: white;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 25px;
+      font-weight: bold;
+    }
+
+    .user-info {
+      flex: 1;
+    }
+
+    .user-info h2 {
+      font-size: 18px;
+      margin-bottom: 5px;
+    }
+
+    .country {
+      color: #667085;
+      font-size: 14px;
+    }
+
+    .connect-btn {
+      border: none;
+      background: #2563eb;
+      color: white;
+      padding: 10px 14px;
+      border-radius: 9px;
+      font-weight: bold;
+      cursor: pointer;
+    }
+
+    .empty {
+      text-align: center;
+      color: #667085;
+      padding: 30px;
+      background: white;
+      border-radius: 15px;
+    }
+
+    .home-btn {
+      display: block;
+      text-align: center;
+      text-decoration: none;
+      margin-top: 20px;
+      padding: 13px;
+      background: #111827;
+      color: white;
+      border-radius: 10px;
+      font-weight: bold;
+    }
+  </style>
+</head>
+
+<body>
+
+  <div class="header">
+    🌍 WorldMitra
+  </div>
+
+  <div class="container">
+
+    <div class="search-box">
+      <h1>👥 Find People</h1>
+
+      <p>
+        Discover people and make new connections around the world.
+      </p>
+
+      <input
+        type="text"
+        id="searchInput"
+        class="search-input"
+        placeholder="Search by name or country..."
+      >
+    </div>
+
+    <div id="usersList">
+      <div class="empty">
+        Loading people...
+      </div>
+    </div>
+
+    <a href="profile.html" class="home-btn">
+      ← Back to Profile
+    </a>
+
+  </div>
+
+  <script type="module">
+
+    import { initializeApp }
+      from "https://www.gstatic.com/firebasejs/12.1.0/firebase-app.js";
+
+    import {
+      getAuth,
+      onAuthStateChanged
+    } from "https://www.gstatic.com/firebasejs/12.1.0/firebase-auth.js";
+
+    import {
+      getFirestore,
+      collection,
+      getDocs
+    } from "https://www.gstatic.com/firebasejs/12.1.0/firebase-firestore.js";
+
+
+    const firebaseConfig = {
+      apiKey: "AIzaSyBAhtPH_elsDDkBsxZsvMO8FYwdOGna84g",
+      authDomain: "worldmitra-33ca6.firebaseapp.com",
+      projectId: "worldmitra-33ca6",
+      storageBucket: "worldmitra-33ca6.firebasestorage.app",
+      messagingSenderId: "1089520845776",
+      appId: "1:1089520845776:web:2789654cc6061e7034afd5"
+    };
+
+
+    const app = initializeApp(firebaseConfig);
+
+    const auth = getAuth(app);
+
+    const db = getFirestore(app);
+
+
+    const usersList = document.getElementById("usersList");
+
+    const searchInput = document.getElementById("searchInput");
+
+    let allUsers = [];
+
+
+    function showUsers(users) {
+
+      usersList.innerHTML = "";
+
+      if (users.length === 0) {
+
+        usersList.innerHTML = `
+          <div class="empty">
+            No people found.
+          </div>
+        `;
+
+        return;
+      }
+
+
+      users.forEach((user) => {
+
+        const card = document.createElement("div");
+
+        card.className = "user-card";
+
+        const firstLetter =
+          (user.name || "U").charAt(0).toUpperCase();
+
+
+        card.innerHTML = `
+          <div class="avatar">
+            ${firstLetter}
+          </div>
+
+          <div class="user-info">
+            <h2>${user.name || "WorldMitra User"}</h2>
+            <div class="country">
+              🌎 ${user.country || "Country not available"}
+            </div>
+          </div>
+
+          <button class="connect-btn">
+            Connect
+          </button>
+        `;
+
+
+        const connectButton =
+          card.querySelector(".connect-btn");
+
+
+        connectButton.addEventListener("click", () => {
+
+          alert(
+            "Connect feature जल्द ही available होगा! 🌍"
+          );
+
+        });
+
+
+        usersList.appendChild(card);
+
+      });
+
+    }
+
+
+    async function loadUsers() {
+
+      try {
+
+        const snapshot =
+          await getDocs(collection(db, "users"));
+
+
+        allUsers = [];
+
+
+        snapshot.forEach((doc) => {
+
+          allUsers.push(doc.data());
+
+        });
+
+
+        showUsers(allUsers);
+
+
+      } catch (error) {
+
+        console.error(error);
+
+        usersList.innerHTML = `
+          <div class="empty">
+            People load नहीं हो पाए।
+            <br><br>
+            ${error.message}
+          </div>
+        `;
+
+      }
+
+    }
+
+
+    searchInput.addEventListener("input", () => {
+
+      const search =
+        searchInput.value.toLowerCase().trim();
+
+
+      const filteredUsers =
+        allUsers.filter((user) => {
+
+          const name =
+            (user.name || "").toLowerCase();
+
+          const country =
+            (user.country || "").toLowerCase();
+
+          return (
+            name.includes(search) ||
+            country.includes(search)
+          );
+
+        });
+
+
+      showUsers(filteredUsers);
+
+    });
+
+
+    onAuthStateChanged(auth, (user) => {
+
+      if (!user) {
+
+        window.location.href = "login.html";
+
+        return;
+
+      }
+
+
+      loadUsers();
+
+    });
+
+  </script>
+
+</body>
+</html>
