@@ -54,36 +54,39 @@
     .status {
       color: #667085;
       margin-bottom: 25px;
+      line-height: 1.5;
     }
 
     .buttons {
       display: flex;
       justify-content: center;
-      gap: 12px;
+      gap: 10px;
       flex-wrap: wrap;
     }
 
     button {
       border: none;
-      padding: 14px 20px;
+      padding: 13px 18px;
       border-radius: 12px;
-      font-size: 16px;
+      font-size: 15px;
       font-weight: bold;
       cursor: pointer;
     }
 
-    #startBtn {
+    #startBtn,
+    #acceptBtn {
       background: #16a34a;
+      color: white;
+    }
+
+    #rejectBtn,
+    #endBtn {
+      background: #dc2626;
       color: white;
     }
 
     #muteBtn {
       background: #f59e0b;
-      color: white;
-    }
-
-    #endBtn {
-      background: #dc2626;
       color: white;
     }
 
@@ -102,6 +105,24 @@
       border-radius: 10px;
       font-weight: bold;
     }
+
+    .incoming {
+      display: none;
+      margin-bottom: 20px;
+      padding: 18px;
+      border-radius: 15px;
+      background: #eef4ff;
+    }
+
+    .incoming h2 {
+      font-size: 20px;
+      margin-bottom: 8px;
+    }
+
+    .incoming p {
+      color: #667085;
+      margin-bottom: 15px;
+    }
   </style>
 </head>
 
@@ -109,17 +130,33 @@
 
   <div class="call-box">
 
-    <div class="avatar" id="avatar">
-      W
-    </div>
+    <div class="avatar" id="avatar">W</div>
 
-    <h1 id="personName">
-      Voice Call
-    </h1>
+    <h1 id="personName">Voice Call</h1>
 
     <p class="status" id="status">
       Ready to call
     </p>
+
+    <div class="incoming" id="incomingBox">
+      <h2>📞 Incoming Voice Call</h2>
+
+      <p id="incomingText">
+        Someone is calling you.
+      </p>
+
+      <div class="buttons">
+
+        <button id="acceptBtn">
+          ✅ Accept
+        </button>
+
+        <button id="rejectBtn">
+          ❌ Reject
+        </button>
+
+      </div>
+    </div>
 
     <div class="buttons">
 
@@ -162,7 +199,6 @@
       addDoc,
       onSnapshot,
       updateDoc,
-      deleteDoc,
       serverTimestamp
     } from "https://www.gstatic.com/firebasejs/12.1.0/firebase-firestore.js";
 
@@ -184,11 +220,11 @@
     const db = getFirestore(app);
 
 
-    const personName =
-      document.getElementById("personName");
-
     const avatar =
       document.getElementById("avatar");
+
+    const personName =
+      document.getElementById("personName");
 
     const statusText =
       document.getElementById("status");
@@ -201,6 +237,18 @@
 
     const endBtn =
       document.getElementById("endBtn");
+
+    const incomingBox =
+      document.getElementById("incomingBox");
+
+    const incomingText =
+      document.getElementById("incomingText");
+
+    const acceptBtn =
+      document.getElementById("acceptBtn");
+
+    const rejectBtn =
+      document.getElementById("rejectBtn");
 
 
     let currentUser = null;
@@ -215,7 +263,11 @@
 
     let callDocId = null;
 
-    let unsubscribeCall = null;
+    let callUnsubscribe = null;
+
+    let candidateUnsubscribe = null;
+
+    let incomingUnsubscribe = null;
 
     let isMuted = false;
 
@@ -229,11 +281,79 @@
     };
 
 
-    function getChatCallId(userA, userB) {
+    function getCallId(userA, userB) {
 
       return [userA, userB]
         .sort()
         .join("_");
+
+    }
+
+
+    async function createPeerConnection(callId, candidateCollection) {
+
+      peerConnection =
+        new RTCPeerConnection(servers);
+
+
+      if (localStream) {
+
+        localStream
+          .getTracks()
+          .forEach(track => {
+
+            peerConnection.addTrack(
+              track,
+              localStream
+            );
+
+          });
+
+      }
+
+
+      peerConnection.onicecandidate =
+        async (event) => {
+
+          if (!event.candidate) {
+            return;
+          }
+
+          await addDoc(
+            collection(
+              db,
+              "calls",
+              callId,
+              candidateCollection
+            ),
+            event.candidate.toJSON()
+          );
+
+        };
+
+
+      peerConnection.ontrack =
+        (event) => {
+
+          let audio =
+            document.getElementById("remoteAudio");
+
+          if (!audio) {
+
+            audio =
+              document.createElement("audio");
+
+            audio.id = "remoteAudio";
+            audio.autoplay = true;
+
+            document.body.appendChild(audio);
+
+          }
+
+          audio.srcObject =
+            event.streams[0];
+
+        };
 
     }
 
@@ -262,24 +382,8 @@
           });
 
 
-        peerConnection =
-          new RTCPeerConnection(servers);
-
-
-        localStream
-          .getTracks()
-          .forEach(track => {
-
-            peerConnection.addTrack(
-              track,
-              localStream
-            );
-
-          });
-
-
         const callId =
-          getChatCallId(
+          getCallId(
             currentUser.uid,
             otherUserId
           );
@@ -288,28 +392,10 @@
         callDocId = callId;
 
 
-        const callRef =
-          doc(db, "calls", callId);
-
-
-        peerConnection.onicecandidate =
-          async (event) => {
-
-            if (event.candidate) {
-
-              await addDoc(
-                collection(
-                  db,
-                  "calls",
-                  callId,
-                  "callerCandidates"
-                ),
-                event.candidate.toJSON()
-              );
-
-            }
-
-          };
+        await createPeerConnection(
+          callId,
+          "callerCandidates"
+        );
 
 
         const offer =
@@ -322,19 +408,29 @@
 
 
         await setDoc(
-          callRef,
+          doc(db, "calls", callId),
           {
             callerId: currentUser.uid,
             receiverId: otherUserId,
-            callerName: currentUser.displayName || "WorldMitra User",
-            receiverName: otherUserName,
+
+            callerName:
+              currentUser.displayName ||
+              "WorldMitra User",
+
+            receiverName:
+              otherUserName,
+
             type: "voice",
+
             status: "calling",
+
             offer: {
               type: offer.type,
               sdp: offer.sdp
             },
-            createdAt: serverTimestamp()
+
+            createdAt:
+              serverTimestamp()
           }
         );
 
@@ -350,17 +446,17 @@
         endBtn.disabled = false;
 
 
-        unsubscribeCall =
+        callUnsubscribe =
           onSnapshot(
-            callRef,
+            doc(db, "calls", callId),
             async (snapshot) => {
 
               if (!snapshot.exists()) {
                 return;
               }
 
-
-              const data = snapshot.data();
+              const data =
+                snapshot.data();
 
 
               if (
@@ -382,7 +478,7 @@
 
               if (data.status === "ended") {
 
-                endCall(false);
+                finishCall(false);
 
               }
 
@@ -390,31 +486,35 @@
           );
 
 
-        onSnapshot(
-          collection(
-            db,
-            "calls",
-            callId,
-            "receiverCandidates"
-          ),
-          snapshot => {
+        candidateUnsubscribe =
+          onSnapshot(
+            collection(
+              db,
+              "calls",
+              callId,
+              "receiverCandidates"
+            ),
+            snapshot => {
 
-            snapshot.docChanges().forEach(change => {
+              snapshot.docChanges()
+                .forEach(change => {
 
-              if (change.type === "added") {
+                  if (change.type === "added") {
 
-                peerConnection.addIceCandidate(
-                  new RTCIceCandidate(
-                    change.doc.data()
-                  )
-                );
+                    peerConnection
+                      .addIceCandidate(
+                        new RTCIceCandidate(
+                          change.doc.data()
+                        )
+                      )
+                      .catch(console.error);
 
-              }
+                  }
 
-            });
+                });
 
-          }
-        );
+            }
+          );
 
 
       } catch (error) {
@@ -422,7 +522,7 @@
         console.error(error);
 
         statusText.textContent =
-          "Microphone permission was not granted.";
+          "Voice call could not start.";
 
         alert(
           "Voice call start नहीं हुई: " +
@@ -434,14 +534,271 @@
     }
 
 
-    async function endCall(updateServer = true) {
+    async function acceptIncomingCall(callId, data) {
 
-      if (updateServer && callDocId) {
+      try {
+
+        incomingBox.style.display =
+          "none";
+
+        statusText.textContent =
+          "Requesting microphone permission...";
+
+
+        localStream =
+          await navigator.mediaDevices.getUserMedia({
+            audio: true,
+            video: false
+          });
+
+
+        callDocId = callId;
+
+        otherUserId =
+          data.callerId;
+
+        otherUserName =
+          data.callerName ||
+          "WorldMitra User";
+
+
+        personName.textContent =
+          "📞 " + otherUserName;
+
+
+        avatar.textContent =
+          otherUserName
+            .charAt(0)
+            .toUpperCase();
+
+
+        await createPeerConnection(
+          callId,
+          "receiverCandidates"
+        );
+
+
+        await peerConnection.setRemoteDescription(
+          new RTCSessionDescription(
+            data.offer
+          )
+        );
+
+
+        const answer =
+          await peerConnection.createAnswer();
+
+
+        await peerConnection.setLocalDescription(
+          answer
+        );
+
+
+        await updateDoc(
+          doc(db, "calls", callId),
+          {
+            answer: {
+              type: answer.type,
+              sdp: answer.sdp
+            },
+
+            status: "accepted"
+          }
+        );
+
+
+        statusText.textContent =
+          "Voice call connected 📞";
+
+
+        startBtn.disabled = true;
+
+        muteBtn.disabled = false;
+
+        endBtn.disabled = false;
+
+
+        candidateUnsubscribe =
+          onSnapshot(
+            collection(
+              db,
+              "calls",
+              callId,
+              "callerCandidates"
+            ),
+            snapshot => {
+
+              snapshot.docChanges()
+                .forEach(change => {
+
+                  if (change.type === "added") {
+
+                    peerConnection
+                      .addIceCandidate(
+                        new RTCIceCandidate(
+                          change.doc.data()
+                        )
+                      )
+                      .catch(console.error);
+
+                  }
+
+                });
+
+            }
+          );
+
+
+        callUnsubscribe =
+          onSnapshot(
+            doc(db, "calls", callId),
+            snapshot => {
+
+              if (!snapshot.exists()) {
+                return;
+              }
+
+              if (
+                snapshot.data().status === "ended"
+              ) {
+
+                finishCall(false);
+
+              }
+
+            }
+          );
+
+
+      } catch (error) {
+
+        console.error(error);
+
+        alert(
+          "Call accept नहीं हुई: " +
+          error.message
+        );
+
+        statusText.textContent =
+          "Could not connect the call.";
+
+      }
+
+    }
+
+
+    function listenForIncomingCalls() {
+
+      incomingUnsubscribe =
+        onSnapshot(
+          collection(db, "calls"),
+          snapshot => {
+
+            snapshot.docChanges()
+              .forEach(change => {
+
+                if (change.type !== "added" &&
+                    change.type !== "modified") {
+                  return;
+                }
+
+
+                const data =
+                  change.doc.data();
+
+
+                if (
+                  data.receiverId === currentUser.uid &&
+                  data.callerId !== currentUser.uid &&
+                  data.type === "voice" &&
+                  data.status === "calling"
+                ) {
+
+                  const callId =
+                    change.doc.id;
+
+
+                  incomingText.textContent =
+                    (data.callerName ||
+                    "Someone") +
+                    " is calling you.";
+
+
+                  incomingBox.style.display =
+                    "block";
+
+
+                  statusText.textContent =
+                    "Incoming voice call";
+
+
+                  acceptBtn.onclick =
+                    () => {
+
+                      acceptIncomingCall(
+                        callId,
+                        data
+                      );
+
+                    };
+
+
+                  rejectBtn.onclick =
+                    async () => {
+
+                      try {
+
+                        await updateDoc(
+                          doc(
+                            db,
+                            "calls",
+                            callId
+                          ),
+                          {
+                            status: "ended"
+                          }
+                        );
+
+                      } catch (error) {
+
+                        console.error(error);
+
+                      }
+
+
+                      incomingBox.style.display =
+                        "none";
+
+                      statusText.textContent =
+                        "Call rejected";
+
+                    };
+
+                }
+
+              });
+
+          }
+        );
+
+    }
+
+
+    async function finishCall(updateServer = true) {
+
+      if (
+        updateServer &&
+        callDocId
+      ) {
 
         try {
 
           await updateDoc(
-            doc(db, "calls", callDocId),
+            doc(
+              db,
+              "calls",
+              callDocId
+            ),
             {
               status: "ended"
             }
@@ -456,11 +813,20 @@
       }
 
 
-      if (unsubscribeCall) {
+      if (callUnsubscribe) {
 
-        unsubscribeCall();
+        callUnsubscribe();
 
-        unsubscribeCall = null;
+        callUnsubscribe = null;
+
+      }
+
+
+      if (candidateUnsubscribe) {
+
+        candidateUnsubscribe();
+
+        candidateUnsubscribe = null;
 
       }
 
@@ -469,7 +835,9 @@
 
         localStream
           .getTracks()
-          .forEach(track => track.stop());
+          .forEach(track =>
+            track.stop()
+          );
 
         localStream = null;
 
@@ -485,6 +853,18 @@
       }
 
 
+      const audio =
+        document.getElementById("remoteAudio");
+
+      if (audio) {
+
+        audio.srcObject = null;
+
+        audio.remove();
+
+      }
+
+
       statusText.textContent =
         "Call ended";
 
@@ -496,7 +876,8 @@
 
       isMuted = false;
 
-      muteBtn.textContent = "🎤 Mute";
+      muteBtn.textContent =
+        "🎤 Mute";
 
     }
 
@@ -508,21 +889,25 @@
       }
 
 
-      const audioTracks =
+      const tracks =
         localStream.getAudioTracks();
 
 
-      audioTracks.forEach(track => {
+      tracks.forEach(track => {
 
-        track.enabled = !track.enabled;
+        track.enabled =
+          !track.enabled;
 
-        isMuted = !track.enabled;
+        isMuted =
+          !track.enabled;
 
       });
 
 
       muteBtn.textContent =
-        isMuted ? "🔇 Unmute" : "🎤 Mute";
+        isMuted
+          ? "🔇 Unmute"
+          : "🎤 Mute";
 
     }
 
@@ -541,7 +926,7 @@
 
     endBtn.addEventListener(
       "click",
-      () => endCall(true)
+      () => finishCall(true)
     );
 
 
@@ -592,9 +977,12 @@
           startBtn.disabled = true;
 
           statusText.textContent =
-            "Call user not found.";
+            "Waiting for incoming calls...";
 
         }
+
+
+        listenForIncomingCalls();
 
       }
     );
