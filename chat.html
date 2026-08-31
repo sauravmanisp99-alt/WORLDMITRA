@@ -1,0 +1,496 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Chat - WorldMitra</title>
+
+  <style>
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+      font-family: Arial, sans-serif;
+    }
+
+    body {
+      background: #f5f8ff;
+      min-height: 100vh;
+    }
+
+    .header {
+      background: #2563eb;
+      color: white;
+      padding: 16px;
+      text-align: center;
+      font-size: 22px;
+      font-weight: bold;
+    }
+
+    .chat-container {
+      width: 94%;
+      max-width: 700px;
+      margin: 20px auto;
+      background: white;
+      border-radius: 16px;
+      overflow: hidden;
+      box-shadow: 0 5px 20px rgba(0,0,0,0.08);
+    }
+
+    .person {
+      padding: 16px;
+      border-bottom: 1px solid #eee;
+      font-size: 18px;
+      font-weight: bold;
+    }
+
+    .messages {
+      height: 55vh;
+      min-height: 350px;
+      padding: 18px;
+      overflow-y: auto;
+      background: #f8fafc;
+    }
+
+    .empty {
+      text-align: center;
+      color: #667085;
+      margin-top: 100px;
+    }
+
+    .message {
+      margin-bottom: 12px;
+      display: flex;
+    }
+
+    .message.mine {
+      justify-content: flex-end;
+    }
+
+    .bubble {
+      max-width: 75%;
+      padding: 10px 14px;
+      border-radius: 14px;
+      background: #e5e7eb;
+      word-wrap: break-word;
+    }
+
+    .mine .bubble {
+      background: #2563eb;
+      color: white;
+    }
+
+    .time {
+      display: block;
+      font-size: 10px;
+      margin-top: 5px;
+      opacity: 0.7;
+    }
+
+    .input-area {
+      display: flex;
+      gap: 8px;
+      padding: 12px;
+      border-top: 1px solid #eee;
+    }
+
+    #messageInput {
+      flex: 1;
+      padding: 12px;
+      border: 1px solid #d0d5dd;
+      border-radius: 10px;
+      outline: none;
+      font-size: 15px;
+    }
+
+    #sendBtn {
+      border: none;
+      background: #2563eb;
+      color: white;
+      padding: 12px 18px;
+      border-radius: 10px;
+      font-weight: bold;
+      cursor: pointer;
+    }
+
+    .back {
+      display: block;
+      width: 94%;
+      max-width: 700px;
+      margin: 15px auto;
+      padding: 13px;
+      text-align: center;
+      background: #111827;
+      color: white;
+      text-decoration: none;
+      border-radius: 10px;
+      font-weight: bold;
+    }
+  </style>
+</head>
+
+<body>
+
+  <div class="header">
+    🌍 WorldMitra
+  </div>
+
+  <div class="chat-container">
+
+    <div class="person" id="personName">
+      Loading...
+    </div>
+
+    <div class="messages" id="messages">
+      <div class="empty">
+        Loading messages...
+      </div>
+    </div>
+
+    <div class="input-area">
+
+      <input
+        type="text"
+        id="messageInput"
+        placeholder="Write a message..."
+        autocomplete="off"
+      >
+
+      <button id="sendBtn">
+        Send
+      </button>
+
+    </div>
+
+  </div>
+
+  <a href="connections.html" class="back">
+    ← Back to Connections
+  </a>
+
+
+  <script type="module">
+
+    import { initializeApp }
+      from "https://www.gstatic.com/firebasejs/12.1.0/firebase-app.js";
+
+    import {
+      getAuth,
+      onAuthStateChanged
+    } from "https://www.gstatic.com/firebasejs/12.1.0/firebase-auth.js";
+
+    import {
+      getFirestore,
+      collection,
+      addDoc,
+      query,
+      where,
+      orderBy,
+      onSnapshot,
+      serverTimestamp
+    } from "https://www.gstatic.com/firebasejs/12.1.0/firebase-firestore.js";
+
+
+    const firebaseConfig = {
+      apiKey: "AIzaSyBAhtPH_elsDDkBsxZsvMO8FYwdOGna84g",
+      authDomain: "worldmitra-33ca6.firebaseapp.com",
+      projectId: "worldmitra-33ca6",
+      storageBucket: "worldmitra-33ca6.firebasestorage.app",
+      messagingSenderId: "1089520845776",
+      appId: "1:1089520845776:web:2789654cc6061e7034afd5"
+    };
+
+
+    const app = initializeApp(firebaseConfig);
+
+    const auth = getAuth(app);
+
+    const db = getFirestore(app);
+
+
+    const personName =
+      document.getElementById("personName");
+
+    const messages =
+      document.getElementById("messages");
+
+    const messageInput =
+      document.getElementById("messageInput");
+
+    const sendBtn =
+      document.getElementById("sendBtn");
+
+
+    let currentUser = null;
+    let otherUserId = null;
+    let otherUserName = "WorldMitra User";
+
+
+    function getChatId(userA, userB) {
+
+      return [userA, userB]
+        .sort()
+        .join("_");
+
+    }
+
+
+    function loadMessages() {
+
+      const chatId =
+        getChatId(currentUser.uid, otherUserId);
+
+
+      const messagesQuery = query(
+        collection(db, "chats", chatId, "messages"),
+        orderBy("createdAt", "asc")
+      );
+
+
+      onSnapshot(
+        messagesQuery,
+        (snapshot) => {
+
+          messages.innerHTML = "";
+
+
+          if (snapshot.empty) {
+
+            messages.innerHTML = `
+              <div class="empty">
+                No messages yet. Say hello! 👋
+              </div>
+            `;
+
+            return;
+          }
+
+
+          snapshot.forEach((doc) => {
+
+            const data = doc.data();
+
+            const wrapper =
+              document.createElement("div");
+
+            wrapper.className =
+              "message " +
+              (data.senderId === currentUser.uid
+                ? "mine"
+                : "");
+
+
+            const bubble =
+              document.createElement("div");
+
+            bubble.className = "bubble";
+
+
+            bubble.textContent =
+              data.text || "";
+
+
+            if (data.createdAt) {
+
+              const time =
+                data.createdAt
+                  .toDate()
+                  .toLocaleTimeString([], {
+                    hour: "2-digit",
+                    minute: "2-digit"
+                  });
+
+
+              const timeElement =
+                document.createElement("span");
+
+              timeElement.className = "time";
+
+              timeElement.textContent = time;
+
+              bubble.appendChild(timeElement);
+
+            }
+
+
+            wrapper.appendChild(bubble);
+
+            messages.appendChild(wrapper);
+
+          });
+
+
+          messages.scrollTop =
+            messages.scrollHeight;
+
+        },
+
+        (error) => {
+
+          console.error(error);
+
+          messages.innerHTML = `
+            <div class="empty">
+              Messages load नहीं हो पाए।
+              <br><br>
+              ${error.message}
+            </div>
+          `;
+
+        }
+
+      );
+
+    }
+
+
+    async function sendMessage() {
+
+      const text =
+        messageInput.value.trim();
+
+
+      if (!text) {
+        return;
+      }
+
+
+      if (!currentUser || !otherUserId) {
+
+        alert("Chat user information missing.");
+
+        return;
+
+      }
+
+
+      sendBtn.disabled = true;
+
+
+      try {
+
+        const chatId =
+          getChatId(
+            currentUser.uid,
+            otherUserId
+          );
+
+
+        await addDoc(
+          collection(
+            db,
+            "chats",
+            chatId,
+            "messages"
+          ),
+          {
+            senderId: currentUser.uid,
+            receiverId: otherUserId,
+            text: text,
+            createdAt: serverTimestamp()
+          }
+        );
+
+
+        messageInput.value = "";
+
+      } catch (error) {
+
+        console.error(error);
+
+        alert(
+          "Message send नहीं हुआ: " +
+          error.message
+        );
+
+      }
+
+
+      sendBtn.disabled = false;
+
+    }
+
+
+    sendBtn.addEventListener(
+      "click",
+      sendMessage
+    );
+
+
+    messageInput.addEventListener(
+      "keydown",
+      (event) => {
+
+        if (event.key === "Enter") {
+
+          sendMessage();
+
+        }
+
+      }
+    );
+
+
+    onAuthStateChanged(
+      auth,
+      (user) => {
+
+        if (!user) {
+
+          window.location.href =
+            "login.html";
+
+          return;
+
+        }
+
+
+        currentUser = user;
+
+
+        const params =
+          new URLSearchParams(
+            window.location.search
+          );
+
+
+        otherUserId =
+          params.get("uid");
+
+
+        otherUserName =
+          params.get("name") ||
+          "WorldMitra User";
+
+
+        if (!otherUserId) {
+
+          personName.textContent =
+            "Chat user not found";
+
+          messages.innerHTML = `
+            <div class="empty">
+              Please open Chat from My Connections.
+            </div>
+          `;
+
+          sendBtn.disabled = true;
+
+          return;
+
+        }
+
+
+        personName.textContent =
+          "💬 " + otherUserName;
+
+
+        loadMessages();
+
+      }
+    );
+
+  </script>
+
+</body>
+</html>
