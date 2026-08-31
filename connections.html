@@ -82,14 +82,28 @@
       font-size: 14px;
     }
 
-    .message-btn {
+    .call-buttons {
+      display: flex;
+      gap: 8px;
+      flex-wrap: wrap;
+    }
+
+    .message-btn,
+    .voice-btn {
       border: none;
-      background: #16a34a;
       color: white;
       padding: 10px 14px;
       border-radius: 9px;
       font-weight: bold;
       cursor: pointer;
+    }
+
+    .message-btn {
+      background: #16a34a;
+    }
+
+    .voice-btn {
+      background: #2563eb;
     }
 
     .empty {
@@ -117,8 +131,13 @@
         flex-wrap: wrap;
       }
 
-      .message-btn {
+      .call-buttons {
         width: 100%;
+      }
+
+      .message-btn,
+      .voice-btn {
+        flex: 1;
       }
     }
   </style>
@@ -309,9 +328,17 @@
 
             </div>
 
-            <button class="message-btn">
-              💬 Message
-            </button>
+            <div class="call-buttons">
+
+              <button class="message-btn">
+                💬 Message
+              </button>
+
+              <button class="voice-btn">
+                📞 Voice Call
+              </button>
+
+            </div>
           `;
 
 
@@ -320,28 +347,39 @@
 
 
           messageButton.addEventListener(
-  "click",
-  () => {
+            "click",
+            () => {
 
-    const chatUrl =
-      "chat.html?uid=" +
-      encodeURIComponent(person.uid) +
-      "&name=" +
-      encodeURIComponent(person.name);
+              const chatUrl =
+                "chat.html?uid=" +
+                encodeURIComponent(person.uid) +
+                "&name=" +
+                encodeURIComponent(person.name);
 
-    window.location.href = chatUrl;
+              window.location.href = chatUrl;
 
-  }
-);
-          
-          
+            }
+          );
 
-          
-              
-              
 
-            
-  
+          const voiceButton =
+            card.querySelector(".voice-btn");
+
+
+          voiceButton.addEventListener(
+            "click",
+            () => {
+
+              const callUrl =
+                "call.html?uid=" +
+                encodeURIComponent(person.uid) +
+                "&name=" +
+                encodeURIComponent(person.name);
+
+              window.location.href = callUrl;
+
+            }
+          );
 
 
           connectionsList.appendChild(card);
