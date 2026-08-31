@@ -1,0 +1,383 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Connection Requests - WorldMitra</title>
+
+  <style>
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+      font-family: Arial, sans-serif;
+    }
+
+    body {
+      background: #f5f8ff;
+      color: #222;
+      min-height: 100vh;
+    }
+
+    .header {
+      background: #2563eb;
+      color: white;
+      padding: 18px;
+      text-align: center;
+      font-size: 24px;
+      font-weight: bold;
+    }
+
+    .container {
+      width: 92%;
+      max-width: 650px;
+      margin: 25px auto;
+    }
+
+    h1 {
+      margin-bottom: 8px;
+    }
+
+    .subtitle {
+      color: #667085;
+      margin-bottom: 20px;
+    }
+
+    .request-card {
+      background: white;
+      padding: 18px;
+      border-radius: 16px;
+      margin-bottom: 15px;
+      box-shadow: 0 5px 18px rgba(0,0,0,0.07);
+      display: flex;
+      align-items: center;
+      gap: 15px;
+    }
+
+    .avatar {
+      width: 60px;
+      height: 60px;
+      min-width: 60px;
+      border-radius: 50%;
+      background: #2563eb;
+      color: white;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 25px;
+      font-weight: bold;
+    }
+
+    .info {
+      flex: 1;
+    }
+
+    .info h2 {
+      font-size: 18px;
+      margin-bottom: 5px;
+    }
+
+    .country {
+      color: #667085;
+      font-size: 14px;
+    }
+
+    .actions {
+      display: flex;
+      gap: 7px;
+      flex-wrap: wrap;
+    }
+
+    .btn {
+      border: none;
+      padding: 9px 12px;
+      border-radius: 8px;
+      font-weight: bold;
+      cursor: pointer;
+    }
+
+    .accept {
+      background: #16a34a;
+      color: white;
+    }
+
+    .reject {
+      background: #e53935;
+      color: white;
+    }
+
+    .empty {
+      background: white;
+      padding: 35px 20px;
+      border-radius: 16px;
+      text-align: center;
+      color: #667085;
+    }
+
+    .back {
+      display: block;
+      text-align: center;
+      text-decoration: none;
+      margin-top: 20px;
+      padding: 13px;
+      background: #111827;
+      color: white;
+      border-radius: 10px;
+      font-weight: bold;
+    }
+  </style>
+</head>
+
+<body>
+
+  <div class="header">
+    🌍 WorldMitra
+  </div>
+
+  <div class="container">
+
+    <h1>🤝 Connection Requests</h1>
+
+    <p class="subtitle">
+      See people who want to connect with you.
+    </p>
+
+    <div id="requestsList">
+      <div class="empty">
+        Loading requests...
+      </div>
+    </div>
+
+    <a href="profile.html" class="back">
+      ← Back to Profile
+    </a>
+
+  </div>
+
+  <script type="module">
+
+    import { initializeApp }
+      from "https://www.gstatic.com/firebasejs/12.1.0/firebase-app.js";
+
+    import {
+      getAuth,
+      onAuthStateChanged
+    } from "https://www.gstatic.com/firebasejs/12.1.0/firebase-auth.js";
+
+    import {
+      getFirestore,
+      collection,
+      query,
+      where,
+      getDocs,
+      doc,
+      updateDoc,
+      deleteDoc
+    } from "https://www.gstatic.com/firebasejs/12.1.0/firebase-firestore.js";
+
+
+    const firebaseConfig = {
+      apiKey: "AIzaSyBAhtPH_elsDDkBsxZsvMO8FYwdOGna84g",
+      authDomain: "worldmitra-33ca6.firebaseapp.com",
+      projectId: "worldmitra-33ca6",
+      storageBucket: "worldmitra-33ca6.firebasestorage.app",
+      messagingSenderId: "1089520845776",
+      appId: "1:1089520845776:web:2789654cc6061e7034afd5"
+    };
+
+
+    const app = initializeApp(firebaseConfig);
+
+    const auth = getAuth(app);
+
+    const db = getFirestore(app);
+
+    const requestsList =
+      document.getElementById("requestsList");
+
+
+    async function loadRequests(user) {
+
+      try {
+
+        const requestsQuery = query(
+          collection(db, "connectionRequests"),
+          where("toUserId", "==", user.uid),
+          where("status", "==", "pending")
+        );
+
+        const snapshot =
+          await getDocs(requestsQuery);
+
+
+        requestsList.innerHTML = "";
+
+
+        if (snapshot.empty) {
+
+          requestsList.innerHTML = `
+            <div class="empty">
+              No connection requests yet. 🌍
+            </div>
+          `;
+
+          return;
+        }
+
+
+        for (const requestDoc of snapshot.docs) {
+
+          const request = requestDoc.data();
+
+          const card =
+            document.createElement("div");
+
+          card.className = "request-card";
+
+
+          const firstLetter =
+            (request.fromName || "U")
+              .charAt(0)
+              .toUpperCase();
+
+
+          card.innerHTML = `
+            <div class="avatar">
+              ${firstLetter}
+            </div>
+
+            <div class="info">
+              <h2>
+                ${request.fromName || "WorldMitra User"}
+              </h2>
+
+              <div class="country">
+                🌎 ${request.fromCountry || "Country not available"}
+              </div>
+            </div>
+
+            <div class="actions">
+
+              <button class="btn accept">
+                Accept
+              </button>
+
+              <button class="btn reject">
+                Reject
+              </button>
+
+            </div>
+          `;
+
+
+          const acceptButton =
+            card.querySelector(".accept");
+
+          const rejectButton =
+            card.querySelector(".reject");
+
+
+          acceptButton.addEventListener(
+            "click",
+            async () => {
+
+              try {
+
+                await updateDoc(
+                  doc(
+                    db,
+                    "connectionRequests",
+                    requestDoc.id
+                  ),
+                  {
+                    status: "accepted"
+                  }
+                );
+
+                alert("Connection accepted! 🎉");
+
+                card.remove();
+
+              } catch (error) {
+
+                alert(
+                  "Could not accept request: " +
+                  error.message
+                );
+
+              }
+
+            }
+          );
+
+
+          rejectButton.addEventListener(
+            "click",
+            async () => {
+
+              try {
+
+                await deleteDoc(
+                  doc(
+                    db,
+                    "connectionRequests",
+                    requestDoc.id
+                  )
+                );
+
+                alert("Request rejected.");
+
+                card.remove();
+
+              } catch (error) {
+
+                alert(
+                  "Could not reject request: " +
+                  error.message
+                );
+
+              }
+
+            }
+          );
+
+
+          requestsList.appendChild(card);
+
+        }
+
+      } catch (error) {
+
+        console.error(error);
+
+        requestsList.innerHTML = `
+          <div class="empty">
+            Requests load नहीं हो पाए।
+            <br><br>
+            ${error.message}
+          </div>
+        `;
+
+      }
+
+    }
+
+
+    onAuthStateChanged(auth, (user) => {
+
+      if (!user) {
+
+        window.location.href = "login.html";
+
+        return;
+
+      }
+
+      loadRequests(user);
+
+    });
+
+  </script>
+
+</body>
+</html>
