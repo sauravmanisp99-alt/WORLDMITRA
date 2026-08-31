@@ -89,7 +89,8 @@
     }
 
     .message-btn,
-    .voice-btn {
+    .voice-btn,
+    .video-btn {
       border: none;
       color: white;
       padding: 10px 14px;
@@ -104,6 +105,10 @@
 
     .voice-btn {
       background: #2563eb;
+    }
+
+    .video-btn {
+      background: #7c3aed;
     }
 
     .empty {
@@ -136,7 +141,8 @@
       }
 
       .message-btn,
-      .voice-btn {
+      .voice-btn,
+      .video-btn {
         flex: 1;
       }
     }
@@ -168,6 +174,7 @@
     </a>
 
   </div>
+
 
   <script type="module">
 
@@ -302,7 +309,8 @@
           const card =
             document.createElement("div");
 
-          card.className = "connection-card";
+          card.className =
+            "connection-card";
 
 
           const firstLetter =
@@ -312,6 +320,7 @@
 
 
           card.innerHTML = `
+            
             <div class="avatar">
               ${firstLetter}
             </div>
@@ -330,17 +339,29 @@
 
             <div class="call-buttons">
 
-              <button class="message-btn">
+              <button
+                type="button"
+                class="message-btn">
                 💬 Message
               </button>
 
-              <button class="voice-btn">
+              <button
+                type="button"
+                class="voice-btn">
                 📞 Voice Call
+              </button>
+
+              <button
+                type="button"
+                class="video-btn">
+                📹 Video Call
               </button>
 
             </div>
           `;
 
+
+          /* MESSAGE BUTTON */
 
           const messageButton =
             card.querySelector(".message-btn");
@@ -350,17 +371,17 @@
             "click",
             () => {
 
-              const chatUrl =
+              window.location.href =
                 "chat.html?uid=" +
                 encodeURIComponent(person.uid) +
                 "&name=" +
                 encodeURIComponent(person.name);
 
-              window.location.href = chatUrl;
-
             }
           );
 
+
+          /* VOICE CALL BUTTON */
 
           const voiceButton =
             card.querySelector(".voice-btn");
@@ -370,13 +391,31 @@
             "click",
             () => {
 
-              const callUrl =
+              window.location.href =
                 "call.html?uid=" +
                 encodeURIComponent(person.uid) +
                 "&name=" +
                 encodeURIComponent(person.name);
 
-              window.location.href = callUrl;
+            }
+          );
+
+
+          /* VIDEO CALL BUTTON */
+
+          const videoButton =
+            card.querySelector(".video-btn");
+
+
+          videoButton.addEventListener(
+            "click",
+            () => {
+
+              window.location.href =
+                "video-call.html?uid=" +
+                encodeURIComponent(person.uid) +
+                "&name=" +
+                encodeURIComponent(person.name);
 
             }
           );
@@ -404,19 +443,23 @@
     }
 
 
-    onAuthStateChanged(auth, (user) => {
+    onAuthStateChanged(
+      auth,
+      (user) => {
 
-      if (!user) {
+        if (!user) {
 
-        window.location.href = "login.html";
+          window.location.href =
+            "login.html";
 
-        return;
+          return;
+
+        }
+
+        loadConnections(user);
 
       }
-
-      loadConnections(user);
-
-    });
+    );
 
   </script>
 
