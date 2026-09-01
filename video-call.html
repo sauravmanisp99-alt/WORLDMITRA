@@ -153,7 +153,14 @@ noVideo.style.display="none";
 
 peerConnection.onconnectionstatechange=()=>{
 const s=peerConnection?.connectionState;
-if(s==="connected")statusText.textContent="Video call connected 📹";
+if (s === "connected") {
+
+  statusText.textContent =
+    "Video call connected 📹";
+
+  startTimer();
+
+}
 if(s==="disconnected")statusText.textContent="Connection interrupted...";
 if(s==="failed")statusText.textContent="Connection failed.";
 };
