@@ -158,7 +158,55 @@ if(s==="disconnected")statusText.textContent="Connection interrupted...";
 if(s==="failed")statusText.textContent="Connection failed.";
 };
 }
+function startTimer() {
+  callStartTime = Date.now();
 
+  clearInterval(timerInterval);
+
+  const timer = document.getElementById("timer");
+
+  timer.style.display = "block";
+
+  timerInterval = setInterval(() => {
+
+    const elapsed =
+      Math.floor(
+        (Date.now() - callStartTime) / 1000
+      );
+
+    const minutes =
+      String(
+        Math.floor(elapsed / 60)
+      ).padStart(2, "0");
+
+    const seconds =
+      String(
+        elapsed % 60
+      ).padStart(2, "0");
+
+    timer.textContent =
+      minutes + ":" + seconds;
+
+  }, 1000);
+}
+
+
+function stopTimer() {
+
+  clearInterval(timerInterval);
+
+  timerInterval = null;
+
+  callStartTime = null;
+
+  const timer =
+    document.getElementById("timer");
+
+  timer.textContent = "00:00";
+
+  timer.style.display = "none";
+
+}
 async function startVideoCall(){
 if(!currentUser){alert("Login information missing.");return;}
 if(!otherUserId){alert("Call user information missing.");return;}
