@@ -359,7 +359,8 @@ statusText.textContent="Call rejected";
 },err=>console.error("Incoming listener error",err));
 }
 
-async function finishCall(updateServer=true){
+async function finishCall(updateServer=true){ 
+  stopTimer();
 if(updateServer&&callDocId){
 try{await updateDoc(doc(db,"calls",callDocId),{status:"ended"});}
 catch(err){console.error("End call error",err);}
