@@ -125,7 +125,7 @@ function getCallId(a,b){return [a,b].sort().join("_");}
 async function getLocalStream(){
 if(localStream)return localStream;
 statusText.textContent="Requesting camera and microphone permission...";
-localStream=await navigator.mediaDevices.getUserMedia({audio:true,video:true});
+localStream=await navigator.mediaDevices.getUserMedia({audio:true,video:true}); 
 localVideo.srcObject=localStream;
 return localStream;
 }
