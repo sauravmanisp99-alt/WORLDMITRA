@@ -258,8 +258,10 @@ statusText.textContent="Video call connected 📹";
 }catch(err){console.error("Answer error",err);}
 }
 
-if(data.status==="ended")finishCall(false);
-});
+if(data.status==="ended") {
+  stopTimer();
+  fineshcall(false);
+}
 
 candidateUnsubscribe=onSnapshot(
 collection(db,"calls",callId,"receiverCandidates"),
