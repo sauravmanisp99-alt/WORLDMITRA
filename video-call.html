@@ -261,7 +261,7 @@ if(data.answer && peerConnection && !peerConnection.currentRemoteDescription){
 try{
 await peerConnection.setRemoteDescription(new RTCSessionDescription(data.answer));
 statusText.textContent="Video call connected 📹";
-}catch(err){console.error("Answer error",err);}
+}catch(err){console.error("Answer error",err);} 
 }
 
 if(data.status==="ended") {
