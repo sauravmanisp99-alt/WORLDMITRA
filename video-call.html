@@ -1,6 +1,10 @@
 !DOCTYPE html>
 <html lang="en">
 <head>
+button{border:0;padding:13px 18px;border-radius:12px;font-size:15px;font-weight:bold;cursor:pointer}
+#startBtn,#acceptBtn{background:#16a34a;color:white} !DOCTYPE html>
+<html lang="en">
+<head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Video Call - WorldMitra</title>
@@ -15,8 +19,6 @@ body{min-height:100vh;background:#111827;color:white;padding:15px}
 #localVideo{position:absolute;right:15px;bottom:15px;width:180px;height:130px;object-fit:cover;background:#222;border:2px solid white;border-radius:12px;z-index:5}
 .no-video{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;color:#cbd5e1;font-size:18px;z-index:1;pointer-events:none}
 .controls{display:flex;justify-content:center;gap:10px;flex-wrap:wrap;padding:20px 0}
-button{border:0;padding:13px 18px;border-radius:12px;font-size:15px;font-weight:bold;cursor:pointer}
-#startBtn,#acceptBtn{background:#16a34a;color:white}
 #rejectBtn,#endBtn{background:#dc2626;color:white}
 #muteBtn{background:#f59e0b;color:white}
 #cameraBtn{background:#2563eb;color:white}
@@ -200,18 +202,22 @@ function startTimer() {
 
 function stopTimer() {
 
-  clearInterval(timerInterval);
+  if (timerInterval !== null) {
+    clearInterval(timerInterval);
+  }
 
   timerInterval = null;
-
   callStartTime = null;
 
   const timer =
     document.getElementById("timer");
 
-  timer.textContent = "00:00";
+  if (timer) {
+    timer.textContent = "00:00";
+    timer.style.display = "none";
+  }
 
-  timer.style.display = "none";
+
 
 }
 async function startVideoCall(){
@@ -260,7 +266,7 @@ statusText.textContent="Video call connected 📹";
 
 if(data.status==="ended") {
   stopTimer();
-  fineshcall(false);
+  finishcall(false);
 }
 
 candidateUnsubscribe=onSnapshot(
