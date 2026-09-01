@@ -33,7 +33,7 @@ button:disabled{background:#6b7280;cursor:not-allowed}
 <h1 id="personName">🎥 Video Call</h1>
 <p class="status" id="status">Ready to call</p>
 </div>
-
+<p class="status" id="timer" style="display:none;margin-top:6px;font-weight:bold;">00:00</p>
 <div class="incoming" id="incomingBox">
 <h2>📹 Incoming Video Call</h2>
 <p id="incomingText">Someone is calling you.</p>
@@ -103,7 +103,8 @@ let candidateUnsubscribe=null;
 let incomingUnsubscribe=null;
 let isMuted=false;
 let isCameraOff=false;
-
+let callStartTime = null;
+let timerInterval = null;
 const params=new URLSearchParams(location.search);
 otherUserId=params.get("uid");
 if(params.get("name")){
