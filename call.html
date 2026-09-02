@@ -53,8 +53,17 @@
 
     .status {
       color: #667085;
-      margin-bottom: 25px;
+      margin-bottom: 12px;
       line-height: 1.5;
+    }
+
+    /* CALL TIMER */
+    .timer {
+      font-size: 30px;
+      font-weight: bold;
+      color: #2563eb;
+      margin: 8px 0 22px;
+      display: none;
     }
 
     .buttons {
@@ -138,7 +147,13 @@
       Ready to call
     </p>
 
+    <!-- CALL TIMER -->
+    <div class="timer" id="timer">
+      00:00
+    </div>
+
     <div class="incoming" id="incomingBox">
+
       <h2>📞 Incoming Voice Call</h2>
 
       <p id="incomingText">
@@ -156,6 +171,7 @@
         </button>
 
       </div>
+
     </div>
 
     <div class="buttons">
@@ -229,6 +245,9 @@
     const statusText =
       document.getElementById("status");
 
+    const timer =
+      document.getElementById("timer");
+
     const startBtn =
       document.getElementById("startBtn");
 
@@ -272,6 +291,13 @@
     let isMuted = false;
 
 
+    /* TIMER VARIABLES */
+
+    let callStartTime = null;
+
+    let timerInterval = null;
+
+
     const servers = {
       iceServers: [
         {
@@ -281,16 +307,63 @@
     };
 
 
-    function getCallId(userA, userB) {
+    /* START TIMER */
 
-      return [userA, userB]
-        .sort()
-        .join("_");
+    function startTimer() {
+
+      stopTimer();
+
+      callStartTime = Date.now();
+
+      timer.style.display = "block";
+
+      timer.textContent = "00:00";
+
+      timerInterval =
+        setInterval(() => {
+
+          const elapsed =
+            Math.floor(
+              (Date.now() - callStartTime) / 1000
+            );
+
+          const minutes =
+            Math.floor(elapsed / 60);
+
+          const seconds =
+            elapsed % 60;
+
+          timer.textContent =
+            String(minutes).padStart(2, "0") +
+            ":" +
+            String(seconds).padStart(2, "0");
+
+        }, 1000);
 
     }
 
 
-    async function createPeerConnection(callId, candidateCollection) {
+    /* STOP TIMER */
+
+    function stopTimer() {
+
+      if (timerInterval) {
+
+        clearInterval(timerInterval);
+
+        timerInterval = null;
+
+      }
+
+      callStartTime = null;
+
+    }
+
+
+    async function createPeerConnection(
+      callId,
+      candidateCollection
+    ) {
 
       peerConnection =
         new RTCPeerConnection(servers);
@@ -344,6 +417,7 @@
               document.createElement("audio");
 
             audio.id = "remoteAudio";
+
             audio.autoplay = true;
 
             document.body.appendChild(audio);
@@ -411,6 +485,7 @@
           doc(db, "calls", callId),
           {
             callerId: currentUser.uid,
+
             receiverId: otherUserId,
 
             callerName:
@@ -473,6 +548,10 @@
                 statusText.textContent =
                   "Voice call connected 📞";
 
+                /* START TIMER WHEN CONNECTED */
+
+                startTimer();
+
               }
 
 
@@ -534,7 +613,10 @@
     }
 
 
-    async function acceptIncomingCall(callId, data) {
+    async function acceptIncomingCall(
+      callId,
+      data
+    ) {
 
       try {
 
@@ -609,6 +691,11 @@
 
         statusText.textContent =
           "Voice call connected 📞";
+
+
+        /* START TIMER FOR RECEIVER */
+
+        startTimer();
 
 
         startBtn.disabled = true;
@@ -697,9 +784,13 @@
             snapshot.docChanges()
               .forEach(change => {
 
-                if (change.type !== "added" &&
-                    change.type !== "modified") {
+                if (
+                  change.type !== "added" &&
+                  change.type !== "modified"
+                ) {
+
                   return;
+
                 }
 
 
@@ -784,7 +875,9 @@
     }
 
 
-    async function finishCall(updateServer = true) {
+    async function finishCall(
+      updateServer = true
+    ) {
 
       if (
         updateServer &&
@@ -811,6 +904,11 @@
         }
 
       }
+
+
+      /* STOP TIMER */
+
+      stopTimer();
 
 
       if (callUnsubscribe) {
@@ -856,6 +954,7 @@
       const audio =
         document.getElementById("remoteAudio");
 
+
       if (audio) {
 
         audio.srcObject = null;
@@ -868,13 +967,16 @@
       statusText.textContent =
         "Call ended";
 
+
       startBtn.disabled = false;
 
       muteBtn.disabled = true;
 
       endBtn.disabled = true;
 
+
       isMuted = false;
+
 
       muteBtn.textContent =
         "🎤 Mute";
@@ -908,6 +1010,21 @@
         isMuted
           ? "🔇 Unmute"
           : "🎤 Mute";
+
+    }
+
+
+    function getCallId(
+      userA,
+      userB
+    ) {
+
+      return [
+        userA,
+        userB
+      ]
+      .sort()
+      .join("_");
 
     }
 
