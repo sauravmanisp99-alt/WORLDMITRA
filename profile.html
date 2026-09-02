@@ -39,18 +39,61 @@
       text-align: center;
     }
 
+    .avatar-wrapper {
+      position: relative;
+      width: 110px;
+      height: 110px;
+      margin: 0 auto 18px;
+    }
+
     .avatar {
-      width: 100px;
-      height: 100px;
+      width: 110px;
+      height: 110px;
       border-radius: 50%;
       background: #2563eb;
       color: white;
       display: flex;
       align-items: center;
       justify-content: center;
-      margin: 0 auto 18px;
+      overflow: hidden;
       font-size: 40px;
       font-weight: bold;
+      border: 3px solid #e5e7eb;
+    }
+
+    .avatar img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      display: none;
+    }
+
+    .photo-btn {
+      display: inline-block;
+      padding: 10px 16px;
+      margin-bottom: 20px;
+      border-radius: 10px;
+      background: #2563eb;
+      color: white;
+      font-size: 14px;
+      font-weight: bold;
+      cursor: pointer;
+    }
+
+    .photo-btn:hover {
+      background: #1d4ed8;
+    }
+
+    #photoInput {
+      display: none;
+    }
+
+    .photo-status {
+      color: #667085;
+      font-size: 13px;
+      margin-top: -12px;
+      margin-bottom: 18px;
+      min-height: 18px;
     }
 
     h1 {
@@ -105,6 +148,13 @@
     .loading {
       color: #667085;
     }
+
+    .save-status {
+      margin-top: 12px;
+      font-size: 14px;
+      font-weight: bold;
+      min-height: 20px;
+    }
   </style>
 </head>
 
@@ -116,9 +166,34 @@
 
   <div class="profile-card">
 
-    <div class="avatar" id="avatar">
-      W
+    <!-- Profile Photo -->
+    <div class="avatar-wrapper">
+
+      <div class="avatar" id="avatar">
+        <span id="avatarLetter">W</span>
+
+        <img
+          id="profileImage"
+          alt="Profile Photo"
+        >
+      </div>
+
     </div>
+
+    <label for="photoInput" class="photo-btn">
+      📷 Change Profile Photo
+    </label>
+
+    <input
+      type="file"
+      id="photoInput"
+      accept="image/jpeg,image/png,image/webp"
+    >
+
+    <div
+      class="photo-status"
+      id="photoStatus"
+    ></div>
 
     <h1 id="userName">
       My Profile
@@ -139,6 +214,11 @@
     <div class="interests" id="userInterests">
       ❤️ Interests not added
     </div>
+
+    <div
+      class="save-status"
+      id="saveStatus"
+    ></div>
 
 
     <a href="index.html" class="btn">
@@ -185,7 +265,9 @@
     import {
       getFirestore,
       doc,
-      getDoc
+      getDoc,
+      updateDoc,
+      setDoc
     } from "https://www.gstatic.com/firebasejs/12.1.0/firebase-firestore.js";
 
 
@@ -227,9 +309,31 @@
     const avatar =
       document.getElementById("avatar");
 
+    const avatarLetter =
+      document.getElementById("avatarLetter");
+
+    const profileImage =
+      document.getElementById("profileImage");
+
+    const photoInput =
+      document.getElementById("photoInput");
+
+    const photoStatus =
+      document.getElementById("photoStatus");
+
+    const saveStatus =
+      document.getElementById("saveStatus");
+
     const logoutBtn =
       document.getElementById("logoutBtn");
 
+
+    let currentUser = null;
+
+
+    /*
+      Load profile
+    */
 
     async function loadProfile(user) {
 
@@ -267,7 +371,7 @@
             name;
 
 
-          avatar.textContent =
+          avatarLetter.textContent =
             name
               .charAt(0)
               .toUpperCase();
@@ -275,8 +379,10 @@
 
           userCountry.textContent =
             "🌍 " +
-            (data.country ||
-            "Country not added");
+            (
+              data.country ||
+              "Country not added"
+            );
 
 
           userBio.textContent =
@@ -286,8 +392,28 @@
 
           userInterests.textContent =
             "❤️ Interests: " +
-            (data.interests ||
-            "Not added yet");
+            (
+              data.interests ||
+              "Not added yet"
+            );
+
+
+          /*
+            Existing profile image
+          */
+
+          if (data.profileImage) {
+
+            profileImage.src =
+              data.profileImage;
+
+            profileImage.style.display =
+              "block";
+
+            avatarLetter.style.display =
+              "none";
+
+          }
 
         } else {
 
@@ -296,7 +422,7 @@
             "WorldMitra User";
 
 
-          avatar.textContent =
+          avatarLetter.textContent =
             userName.textContent
               .charAt(0)
               .toUpperCase();
@@ -306,7 +432,11 @@
 
       } catch (error) {
 
-        console.error(error);
+        console.error(
+          "Profile loading error:",
+          error
+        );
+
 
         userName.textContent =
           "WorldMitra User";
@@ -328,6 +458,318 @@
     }
 
 
+    /*
+      Compress profile image
+    */
+
+    function compressImage(file) {
+
+      return new Promise(
+        (resolve, reject) => {
+
+          const reader =
+            new FileReader();
+
+
+          reader.onload =
+            function(event) {
+
+              const image =
+                new Image();
+
+
+              image.onload =
+                function() {
+
+                  const maxSize =
+                    500;
+
+
+                  let width =
+                    image.width;
+
+                  let height =
+                    image.height;
+
+
+                  if (width > height) {
+
+                    if (width > maxSize) {
+
+                      height =
+                        Math.round(
+                          height *
+                          maxSize /
+                          width
+                        );
+
+                      width =
+                        maxSize;
+
+                    }
+
+                  } else {
+
+                    if (height > maxSize) {
+
+                      width =
+                        Math.round(
+                          width *
+                          maxSize /
+                          height
+                        );
+
+                      height =
+                        maxSize;
+
+                    }
+
+                  }
+
+
+                  const canvas =
+                    document.createElement(
+                      "canvas"
+                    );
+
+
+                  canvas.width =
+                    width;
+
+                  canvas.height =
+                    height;
+
+
+                  const context =
+                    canvas.getContext(
+                      "2d"
+                    );
+
+
+                  context.drawImage(
+                    image,
+                    0,
+                    0,
+                    width,
+                    height
+                  );
+
+
+                  const compressed =
+                    canvas.toDataURL(
+                      "image/jpeg",
+                      0.75
+                    );
+
+
+                  resolve(
+                    compressed
+                  );
+
+                };
+
+
+              image.onerror =
+                function() {
+
+                  reject(
+                    new Error(
+                      "Image could not be loaded."
+                    )
+                  );
+
+                };
+
+
+              image.src =
+                event.target.result;
+
+            };
+
+
+          reader.onerror =
+            function() {
+
+              reject(
+                new Error(
+                  "Image could not be read."
+                )
+              );
+
+            };
+
+
+          reader.readAsDataURL(file);
+
+        }
+      );
+
+    }
+
+
+    /*
+      Change profile photo
+    */
+
+    photoInput.addEventListener(
+      "change",
+      async function() {
+
+        const file =
+          this.files[0];
+
+
+        if (!file) {
+          return;
+        }
+
+
+        if (
+          !file.type.startsWith(
+            "image/"
+          )
+        ) {
+
+          alert(
+            "Please select an image file."
+          );
+
+          photoInput.value = "";
+
+          return;
+
+        }
+
+
+        if (
+          file.size >
+          10 * 1024 * 1024
+        ) {
+
+          alert(
+            "Image बहुत बड़ी है। कृपया 10 MB से छोटी photo चुनें।"
+          );
+
+          photoInput.value = "";
+
+          return;
+
+        }
+
+
+        try {
+
+          photoStatus.textContent =
+            "Preparing photo...";
+
+          saveStatus.textContent =
+            "";
+
+
+          const compressedImage =
+            await compressImage(
+              file
+            );
+
+
+          /*
+            Show image immediately
+          */
+
+          profileImage.src =
+            compressedImage;
+
+          profileImage.style.display =
+            "block";
+
+          avatarLetter.style.display =
+            "none";
+
+
+          photoStatus.textContent =
+            "Saving photo...";
+
+
+          if (!currentUser) {
+
+            photoStatus.textContent =
+              "Please login first.";
+
+            return;
+
+          }
+
+
+          const profileRef =
+            doc(
+              db,
+              "users",
+              currentUser.uid
+            );
+
+
+          const profileSnapshot =
+            await getDoc(
+              profileRef
+            );
+
+
+          if (profileSnapshot.exists()) {
+
+            await updateDoc(
+              profileRef,
+              {
+                profileImage:
+                  compressedImage
+              }
+            );
+
+          } else {
+
+            await setDoc(
+              profileRef,
+              {
+                profileImage:
+                  compressedImage,
+                email:
+                  currentUser.email || ""
+              },
+              {
+                merge: true
+              }
+            );
+
+          }
+
+
+          photoStatus.textContent =
+            "✅ Profile photo saved.";
+
+        } catch (error) {
+
+          console.error(
+            "Photo save error:",
+            error
+          );
+
+
+          photoStatus.textContent =
+            "❌ Photo save नहीं हो पाया.";
+
+          alert(
+            "Profile photo save नहीं हो पाया। कृपया फिर से try करें।"
+          );
+
+        }
+
+      }
+    );
+
+
+    /*
+      Authentication
+    */
+
     onAuthStateChanged(
       auth,
       async (user) => {
@@ -342,11 +784,21 @@
         }
 
 
-        await loadProfile(user);
+        currentUser =
+          user;
+
+
+        await loadProfile(
+          user
+        );
 
       }
     );
 
+
+    /*
+      Logout
+    */
 
     logoutBtn.addEventListener(
       "click",
@@ -354,14 +806,21 @@
 
         try {
 
-          await signOut(auth);
+          await signOut(
+            auth
+          );
+
 
           window.location.href =
             "login.html";
 
+
         } catch (error) {
 
-          console.error(error);
+          console.error(
+            error
+          );
+
 
           alert(
             "Logout नहीं हो पाया: " +
