@@ -683,7 +683,11 @@
       callStartTime =
         null;
 
-      timer.textContent =/* ==============================
+      timer.textContent =
+      "00:00";
+timer.style.display = "none";
+    }
+        /* ==============================
        START VIDEO CALL
     ============================== */
 
@@ -1115,56 +1119,36 @@
                     "block";
 
                   statusText.textContent =
-                    "Incoming video call 📹";
+                    "Incoming video call...";
 
+                  acceptBtn.onclick = () => {
+                    acceptIncomingCall(
+                      callId,
+                      data
+                    );
+                  };
 
-                  /* ACCEPT */
-
-                  acceptBtn.onclick =
-                    () => {
-
-                      acceptIncomingCall(
-                        callId,
-                        data
+                  rejectBtn.onclick = async () => {
+                    try {
+                      await updateDoc(
+                        doc(db, "calls", callId),
+                        {
+                          status: "ended"
+                        }
                       );
+                    } catch (error) {
+                      console.error(
+                        "Reject call error:",
+                        error
+                      );
+                    }
 
-                    };
+                    incomingBox.style.display =
+                      "none";
 
-
-                  /* REJECT */
-
-                  rejectBtn.onclick =
-                    async () => {
-
-                      try {
-
-                        await updateDoc(
-                          doc(
-                            db,
-                            "calls",
-                            callId
-                          ),
-                          {
-                            status: "ended"
-                          }
-                        );
-
-                      } catch (error) {
-
-                        console.error(
-                          "Reject error:",
-                          error
-                        );
-
-                      }
-
-                      incomingBox.style.display =
-                        "none";
-
-                      statusText.textContent =
-                        "Call rejected";
-
-                    };
+                    statusText.textContent =
+                      "Call rejected";
+                  };
 
                 }
 
@@ -1172,12 +1156,13 @@
 
           },
           error => {
-
             console.error(
-              "Incoming listener error:",
+              "Incoming call listener error:",
               error
             );
 
+            statusText.textContent =
+              "Unable to listen for incoming calls.";
           }
         );
 
@@ -1185,7 +1170,7 @@
 
 
     /* ==============================
-       FINISH CALL
+       END CALL
     ============================== */
 
     async function finishCall(
@@ -1200,7 +1185,6 @@
 
       stopTimer();
 
-
       if (
         updateServer &&
         callDocId
@@ -1209,11 +1193,7 @@
         try {
 
           await updateDoc(
-            doc(
-              db,
-              "calls",
-              callDocId
-            ),
+            doc(db, "calls", callDocId),
             {
               status: "ended"
             }
@@ -1222,7 +1202,7 @@
         } catch (error) {
 
           console.error(
-            "End call error:",
+            "End call update error:",
             error
           );
 
@@ -1230,68 +1210,50 @@
 
       }
 
-
       if (callUnsubscribe) {
-
         callUnsubscribe();
-
         callUnsubscribe = null;
-
       }
-
 
       if (candidateUnsubscribe) {
-
         candidateUnsubscribe();
-
         candidateUnsubscribe = null;
-
       }
 
+      if (peerConnection) {
+        peerConnection.close();
+        peerConnection = null;
+      }
 
       if (localStream) {
 
         localStream
           .getTracks()
-          .forEach(track => {
-            track.stop();
-          });
+          .forEach(track => track.stop());
 
         localStream = null;
 
       }
 
-
-      if (peerConnection) {
-
-        peerConnection.close();
-
-        peerConnection = null;
-
-      }
-
-
       localVideo.srcObject = null;
-
       remoteVideo.srcObject = null;
 
-      noVideo.style.display = "flex";
+      muteBtn.disabled = true;
+      cameraBtn.disabled = true;
+      endBtn.disabled = true;
 
+      startBtn.disabled = false;
+
+      incomingBox.style.display =
+        "none";
+
+      noVideo.style.display =
+        "flex";
 
       statusText.textContent =
         "Call ended";
 
-      startBtn.disabled = false;
-
-      muteBtn.disabled = true;
-
-      cameraBtn.disabled = true;
-
-      endBtn.disabled = true;
-
-
       isMuted = false;
-
       isCameraOff = false;
 
       muteBtn.textContent =
@@ -1300,86 +1262,94 @@
       cameraBtn.textContent =
         "📷 Camera Off";
 
-      callDocId = null;
-
     }
 
 
     /* ==============================
-       MUTE BUTTON
+       MUTE
     ============================== */
 
-    muteBtn.onclick = () => {
+    muteBtn.addEventListener(
+      "click",
+      () => {
 
-      if (!localStream) {
-        return;
-      }
+        if (!localStream) {
+          return;
+        }
 
-      const tracks =
-        localStream.getAudioTracks();
+        const audioTracks =
+          localStream.getAudioTracks();
 
-      tracks.forEach(track => {
-
-        track.enabled =
-          !track.enabled;
+        audioTracks.forEach(track => {
+          track.enabled = !track.enabled;
+        });
 
         isMuted =
-          !track.enabled;
+          !audioTracks.some(
+            track => track.enabled
+          );
 
-      });
+        muteBtn.textContent =
+          isMuted
+            ? "🔇 Unmute"
+            : "🎤 Mute";
 
-      muteBtn.textContent =
-        isMuted
-          ? "🔇 Unmute"
-          : "🎤 Mute";
-
-    };
+      }
+    );
 
 
     /* ==============================
-       CAMERA BUTTON
+       CAMERA
     ============================== */
 
-    cameraBtn.onclick = () => {
+    cameraBtn.addEventListener(
+      "click",
+      () => {
 
-      if (!localStream) {
-        return;
-      }
+        if (!localStream) {
+          return;
+        }
 
-      const tracks =
-        localStream.getVideoTracks();
+        const videoTracks =
+          localStream.getVideoTracks();
 
-      tracks.forEach(track => {
-
-        track.enabled =
-          !track.enabled;
+        videoTracks.forEach(track => {
+          track.enabled = !track.enabled;
+        });
 
         isCameraOff =
-          !track.enabled;
+          !videoTracks.some(
+            track => track.enabled
+          );
 
-      });
+        cameraBtn.textContent =
+          isCameraOff
+            ? "📷 Camera On"
+            : "📷 Camera Off";
 
-      cameraBtn.textContent =
-        isCameraOff
-          ? "📷 Camera On"
-          : "📷 Camera Off";
-
-    };
+      }
+    );
 
 
     /* ==============================
        BUTTON EVENTS
     ============================== */
 
-    startBtn.onclick =
-      startVideoCall;
+    startBtn.addEventListener(
+      "click",
+      startVideoCall
+    );
 
-    endBtn.onclick =
-      () => finishCall(true);
+    endBtn.addEventListener(
+      "click",
+      () => {
+        finishCall(true);
+      }
+    );
 
 
     /* ==============================
-       LOGIN CHECK
+       AUTH
     ============================== */
 
     onAuthStateChanged(
@@ -1388,7 +1358,7 @@
 
         if (!user) {
 
-          location.href =
+          window.location.href =
             "login.html";
 
           return;
@@ -1397,21 +1367,16 @@
 
         currentUser = user;
 
+        statusText.textContent =
+          otherUserId
+            ? "Ready to call " + otherUserName
+            : "Ready for incoming call";
 
-        if (
-          otherUserId ===
-          currentUser.uid
-        ) {
-
-          statusText.textContent =
-            "You cannot call yourself.";
+        if (!otherUserId) {
 
           startBtn.disabled = true;
 
-          return;
-
         }
-
 
         listenForIncomingCalls();
 
@@ -1427,15 +1392,11 @@
       "beforeunload",
       () => {
 
-        stopTimer();
-
         if (localStream) {
 
           localStream
             .getTracks()
-            .forEach(track => {
-              track.stop();
-            });
+            .forEach(track => track.stop());
 
         }
 
@@ -1446,5 +1407,6 @@
 
 </body>
 </html>
-        
-    
+
+
+                  
