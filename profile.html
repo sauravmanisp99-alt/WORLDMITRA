@@ -60,13 +60,27 @@
 
     .email {
       color: #667085;
-      margin-bottom: 20px;
+      margin-bottom: 10px;
+    }
+
+    .country {
+      color: #667085;
+      margin-bottom: 18px;
     }
 
     .bio {
       color: #555;
       line-height: 1.5;
+      margin-bottom: 15px;
+    }
+
+    .interests {
+      background: #eef4ff;
+      padding: 12px;
+      border-radius: 10px;
       margin-bottom: 25px;
+      color: #333;
+      line-height: 1.5;
     }
 
     .btn {
@@ -87,6 +101,10 @@
     .logout {
       background: #e53935;
     }
+
+    .loading {
+      color: #667085;
+    }
   </style>
 </head>
 
@@ -98,38 +116,50 @@
 
   <div class="profile-card">
 
-    <div class="avatar">W</div>
+    <div class="avatar" id="avatar">
+      W
+    </div>
 
-    <h1 id="userName">My Profile</h1>
+    <h1 id="userName">
+      My Profile
+    </h1>
 
     <p class="email" id="userEmail">
       Loading...
     </p>
 
-    <p class="bio">
-      Welcome to WorldMitra! Connect with people,
-      make new friends and discover the world.
+    <p class="country" id="userCountry">
+      🌍 Country not added
     </p>
+
+    <p class="bio" id="userBio">
+      Welcome to WorldMitra!
+    </p>
+
+    <div class="interests" id="userInterests">
+      ❤️ Interests not added
+    </div>
+
 
     <a href="index.html" class="btn">
       🏠 Home
     </a>
 
     <a href="findpeople.html" class="btn">
-  👥 Find People
-</a>
+      👥 Find People
+    </a>
 
-<a href="requests.html" class="btn">
-  🤝 Connection Requests
-</a>
+    <a href="requests.html" class="btn">
+      🤝 Connection Requests
+    </a>
 
-<a href="connections.html" class="btn">
-  🤝 My Connections
-</a>
+    <a href="connections.html" class="btn">
+      🤝 My Connections
+    </a>
 
-<a href="editprofile.html" class="btn">
-  ✏️ Edit Profile
-</a>                                                                                                       
+    <a href="editprofile.html" class="btn">
+      ✏️ Edit Profile
+    </a>
 
     <button id="logoutBtn" class="btn logout">
       🚪 Logout
@@ -137,16 +167,27 @@
 
   </div>
 
+
   <script type="module">
 
-    import { initializeApp } 
-      from "https://www.gstatic.com/firebasejs/12.1.0/firebase-app.js";
+    import {
+      initializeApp
+    } from "https://www.gstatic.com/firebasejs/12.1.0/firebase-app.js";
+
 
     import {
       getAuth,
       onAuthStateChanged,
       signOut
     } from "https://www.gstatic.com/firebasejs/12.1.0/firebase-auth.js";
+
+
+    import {
+      getFirestore,
+      doc,
+      getDoc
+    } from "https://www.gstatic.com/firebasejs/12.1.0/firebase-firestore.js";
+
 
     const firebaseConfig = {
       apiKey: "AIzaSyBAhtPH_elsDDkBsxZsvMO8FYwdOGna84g",
@@ -157,26 +198,180 @@
       appId: "1:1089520845776:web:2789654cc6061e7034afd5"
     };
 
-    const app = initializeApp(firebaseConfig);
-    const auth = getAuth(app);
 
-    onAuthStateChanged(auth, (user) => {
+    const app =
+      initializeApp(firebaseConfig);
 
-      if (user) {
-        document.getElementById("userEmail").textContent = user.email;
-      } else {
-        window.location.href = "login.html";
+    const auth =
+      getAuth(app);
+
+    const db =
+      getFirestore(app);
+
+
+    const userName =
+      document.getElementById("userName");
+
+    const userEmail =
+      document.getElementById("userEmail");
+
+    const userCountry =
+      document.getElementById("userCountry");
+
+    const userBio =
+      document.getElementById("userBio");
+
+    const userInterests =
+      document.getElementById("userInterests");
+
+    const avatar =
+      document.getElementById("avatar");
+
+    const logoutBtn =
+      document.getElementById("logoutBtn");
+
+
+    async function loadProfile(user) {
+
+      try {
+
+        const profileRef =
+          doc(
+            db,
+            "users",
+            user.uid
+          );
+
+
+        const profileSnapshot =
+          await getDoc(profileRef);
+
+
+        userEmail.textContent =
+          user.email || "";
+
+
+        if (profileSnapshot.exists()) {
+
+          const data =
+            profileSnapshot.data();
+
+
+          const name =
+            data.name ||
+            user.displayName ||
+            "WorldMitra User";
+
+
+          userName.textContent =
+            name;
+
+
+          avatar.textContent =
+            name
+              .charAt(0)
+              .toUpperCase();
+
+
+          userCountry.textContent =
+            "🌍 " +
+            (data.country ||
+            "Country not added");
+
+
+          userBio.textContent =
+            data.bio ||
+            "Welcome to WorldMitra! Connect with people, make new friends and discover the world.";
+
+
+          userInterests.textContent =
+            "❤️ Interests: " +
+            (data.interests ||
+            "Not added yet");
+
+        } else {
+
+          userName.textContent =
+            user.displayName ||
+            "WorldMitra User";
+
+
+          avatar.textContent =
+            userName.textContent
+              .charAt(0)
+              .toUpperCase();
+
+        }
+
+
+      } catch (error) {
+
+        console.error(error);
+
+        userName.textContent =
+          "WorldMitra User";
+
+        userEmail.textContent =
+          user.email || "";
+
+        userCountry.textContent =
+          "🌍 Country not available";
+
+        userBio.textContent =
+          "Unable to load profile.";
+
+        userInterests.textContent =
+          "❤️ Interests not available";
+
       }
 
-    });
+    }
 
-    document.getElementById("logoutBtn").addEventListener("click", async () => {
 
-      await signOut(auth);
+    onAuthStateChanged(
+      auth,
+      async (user) => {
 
-      window.location.href = "login.html";
+        if (!user) {
 
-    });
+          window.location.href =
+            "login.html";
+
+          return;
+
+        }
+
+
+        await loadProfile(user);
+
+      }
+    );
+
+
+    logoutBtn.addEventListener(
+      "click",
+      async () => {
+
+        try {
+
+          await signOut(auth);
+
+          window.location.href =
+            "login.html";
+
+        } catch (error) {
+
+          console.error(error);
+
+          alert(
+            "Logout नहीं हो पाया: " +
+            error.message
+          );
+
+        }
+
+      }
+    );
 
   </script>
 
