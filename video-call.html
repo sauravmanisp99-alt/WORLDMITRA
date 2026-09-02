@@ -1,441 +1,1450 @@
-!DOCTYPE html>
+<!DOCTYPE html>
 <html lang="en">
 <head>
-button{border:0;padding:13px 18px;border-radius:12px;font-size:15px;font-weight:bold;cursor:pointer}
-#startBtn,#acceptBtn{background:#16a34a;color:white} !DOCTYPE html>
-<html lang="en">
-<head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Video Call - WorldMitra</title>
-<style>
-*{box-sizing:border-box;margin:0;padding:0;font-family:Arial,sans-serif}
-body{min-height:100vh;background:#111827;color:white;padding:15px}
-.container{width:100%;max-width:900px;margin:auto}
-.top{text-align:center;padding:15px}.top h1{font-size:24px;margin-bottom:6px}
-.status{color:#cbd5e1;font-size:15px}
-.video-area{position:relative;width:100%;background:#000;border-radius:18px;overflow:hidden;min-height:500px;margin-top:10px}
-#remoteVideo{width:100%;height:500px;object-fit:cover;background:#000}
-#localVideo{position:absolute;right:15px;bottom:15px;width:180px;height:130px;object-fit:cover;background:#222;border:2px solid white;border-radius:12px;z-index:5}
-.no-video{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;color:#cbd5e1;font-size:18px;z-index:1;pointer-events:none}
-.controls{display:flex;justify-content:center;gap:10px;flex-wrap:wrap;padding:20px 0}
-#rejectBtn,#endBtn{background:#dc2626;color:white}
-#muteBtn{background:#f59e0b;color:white}
-#cameraBtn{background:#2563eb;color:white}
-button:disabled{background:#6b7280;cursor:not-allowed}
-.incoming{display:none;background:white;color:#172033;padding:20px;border-radius:18px;text-align:center;margin:15px auto;max-width:450px}
-.incoming p{color:#667085;margin:10px 0}
-.back{display:block;text-align:center;text-decoration:none;color:white;background:#374151;padding:13px;border-radius:10px}
-@media(max-width:600px){.video-area{min-height:400px}#remoteVideo{height:400px}#localVideo{width:120px;height:90px;right:10px;bottom:10px}button{padding:12px 14px;font-size:14px}}
-</style>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Video Call - WorldMitra</title>
+
+  <style>
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+      font-family: Arial, sans-serif;
+    }
+
+    body {
+      min-height: 100vh;
+      background: #111827;
+      color: white;
+      padding: 15px;
+    }
+
+    .container {
+      width: 100%;
+      max-width: 900px;
+      margin: auto;
+    }
+
+    .top {
+      text-align: center;
+      padding: 15px;
+    }
+
+    .top h1 {
+      font-size: 24px;
+      margin-bottom: 6px;
+    }
+
+    .status {
+      color: #cbd5e1;
+      font-size: 15px;
+    }
+
+    #timer {
+      display: none;
+      text-align: center;
+      margin-top: 6px;
+      color: #22c55e;
+      font-size: 18px;
+      font-weight: bold;
+    }
+
+    .video-area {
+      position: relative;
+      width: 100%;
+      background: #000;
+      border-radius: 18px;
+      overflow: hidden;
+      min-height: 500px;
+      margin-top: 10px;
+    }
+
+    #remoteVideo {
+      width: 100%;
+      height: 500px;
+      object-fit: cover;
+      background: #000;
+      display: block;
+    }
+
+    #localVideo {
+      position: absolute;
+      right: 15px;
+      bottom: 15px;
+      width: 180px;
+      height: 130px;
+      object-fit: cover;
+      background: #222;
+      border: 2px solid white;
+      border-radius: 12px;
+      z-index: 5;
+    }
+
+    .no-video {
+      position: absolute;
+      inset: 0;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: #cbd5e1;
+      font-size: 18px;
+      z-index: 1;
+      pointer-events: none;
+    }
+
+    .controls {
+      display: flex;
+      justify-content: center;
+      gap: 10px;
+      flex-wrap: wrap;
+      padding: 20px 0;
+    }
+
+    button {
+      border: 0;
+      padding: 13px 18px;
+      border-radius: 12px;
+      font-size: 15px;
+      font-weight: bold;
+      cursor: pointer;
+    }
+
+    #startBtn,
+    #acceptBtn {
+      background: #16a34a;
+      color: white;
+    }
+
+    #rejectBtn,
+    #endBtn {
+      background: #dc2626;
+      color: white;
+    }
+
+    #muteBtn {
+      background: #f59e0b;
+      color: white;
+    }
+
+    #cameraBtn {
+      background: #2563eb;
+      color: white;
+    }
+
+    button:disabled {
+      background: #6b7280 !important;
+      cursor: not-allowed;
+    }
+
+    .incoming {
+      display: none;
+      background: white;
+      color: #172033;
+      padding: 20px;
+      border-radius: 18px;
+      text-align: center;
+      margin: 15px auto;
+      max-width: 450px;
+    }
+
+    .incoming h2 {
+      margin-bottom: 8px;
+    }
+
+    .incoming p {
+      color: #667085;
+      margin: 10px 0;
+    }
+
+    .back {
+      display: block;
+      text-align: center;
+      text-decoration: none;
+      color: white;
+      background: #374151;
+      padding: 13px;
+      border-radius: 10px;
+      margin-top: 5px;
+    }
+
+    @media (max-width: 600px) {
+      .video-area {
+        min-height: 400px;
+      }
+
+      #remoteVideo {
+        height: 400px;
+      }
+
+      #localVideo {
+        width: 120px;
+        height: 90px;
+        right: 10px;
+        bottom: 10px;
+      }
+
+      button {
+        padding: 12px 14px;
+        font-size: 14px;
+      }
+    }
+  </style>
 </head>
 <body>
-<div class="container">
-<div class="top">
-<h1 id="personName">🎥 Video Call</h1>
-<p class="status" id="status">Ready to call</p>
-</div>
-<p class="status" id="timer" style="display:none;margin-top:6px;font-weight:bold;">00:00</p>
-<div class="incoming" id="incomingBox">
-<h2>📹 Incoming Video Call</h2>
-<p id="incomingText">Someone is calling you.</p>
-<div class="controls">
-<button id="acceptBtn">✅ Accept</button>
-<button id="rejectBtn">❌ Reject</button>
-</div>
-</div>
-
-<div class="video-area">
-<div class="no-video" id="noVideo">📹 Waiting for video...</div>
-<video id="remoteVideo" autoplay playsinline></video>
-<video id="localVideo" autoplay muted playsinline></video>
-</div>
-
-<div class="controls">
-<button id="startBtn">📹 Start Video Call</button>
-<button id="muteBtn" disabled>🎤 Mute</button>
-<button id="cameraBtn" disabled>📷 Camera Off</button>
-<button id="endBtn" disabled>🔴 End Call</button>
-</div>
-
-<a href="connections.html" class="back">← Back to Connections</a>
-</div>
-
-<script type="module">
-import {initializeApp} from "https://www.gstatic.com/firebasejs/12.1.0/firebase-app.js";
-import {getAuth,onAuthStateChanged} from "https://www.gstatic.com/firebasejs/12.1.0/firebase-auth.js";
-import {getFirestore,collection,doc,setDoc,addDoc,onSnapshot,updateDoc,serverTimestamp}
-from "https://www.gstatic.com/firebasejs/12.1.0/firebase-firestore.js";
-
-const firebaseConfig={
-apiKey:"AIzaSyBAhtPH_elsDDkBsxZsvMO8FYwdOGna84g",
-authDomain:"worldmitra-33ca6.firebaseapp.com",
-projectId:"worldmitra-33ca6",
-storageBucket:"worldmitra-33ca6.firebasestorage.app",
-messagingSenderId:"1089520845776",
-appId:"1:1089520845776:web:2789654cc6061e7034afd5"
-};
-
-const app=initializeApp(firebaseConfig);
-const auth=getAuth(app);
-const db=getFirestore(app);
-
-const personName=document.getElementById("personName");
-const statusText=document.getElementById("status");
-const startBtn=document.getElementById("startBtn");
-const muteBtn=document.getElementById("muteBtn");
-const cameraBtn=document.getElementById("cameraBtn");
-const endBtn=document.getElementById("endBtn");
-const acceptBtn=document.getElementById("acceptBtn");
-const rejectBtn=document.getElementById("rejectBtn");
-const incomingBox=document.getElementById("incomingBox");
-const incomingText=document.getElementById("incomingText");
-const localVideo=document.getElementById("localVideo");
-const remoteVideo=document.getElementById("remoteVideo");
-const noVideo=document.getElementById("noVideo");
-
-let currentUser=null;
-let otherUserId=null;
-let otherUserName="WorldMitra User";
-let localStream=null;
-let peerConnection=null;
-let callDocId=null;
-let callUnsubscribe=null;
-let candidateUnsubscribe=null;
-let incomingUnsubscribe=null;
-let isMuted=false;
-let isCameraOff=false;
-let callStartTime = null;
-let timerInterval = null;
-const params=new URLSearchParams(location.search);
-otherUserId=params.get("uid");
-if(params.get("name")){
-otherUserName=params.get("name");
-personName.textContent="📹 "+otherUserName;
-}
-
-const servers={
-iceServers:[
-{urls:"stun:stun.l.google.com:19302"},
-{urls:"stun:stun1.l.google.com:19302"}
-]};
-
-function getCallId(a,b){return [a,b].sort().join("_");}
-
-async function getLocalStream(){
-if(localStream)return localStream;
-statusText.textContent="Requesting camera and microphone permission...";
-localStream=await navigator.mediaDevices.getUserMedia({audio:true,video:true}); 
-localVideo.srcObject=localStream;
-return localStream;
-}
-
-function createPeerConnection(callId,candidateCollection){
-peerConnection=new RTCPeerConnection(servers);
 
-if(localStream){
-localStream.getTracks().forEach(track=>{
-peerConnection.addTrack(track,localStream);
-});
-}
+  <div class="container">
 
-peerConnection.onicecandidate=async e=>{
-if(!e.candidate)return;
-try{
-await addDoc(collection(db,"calls",callId,candidateCollection),e.candidate.toJSON());
-}catch(err){console.error("ICE error",err);}
-};
+    <div class="top">
+      <h1 id="personName">🎥 Video Call</h1>
+      <p class="status" id="status">Ready to call</p>
+      <p id="timer">00:00</p>
+    </div>
 
-peerConnection.ontrack=e=>{
-if(e.streams[0]){
-remoteVideo.srcObject=e.streams[0];
-noVideo.style.display="none";
-}
-};
+    <!-- INCOMING CALL -->
+    <div class="incoming" id="incomingBox">
 
-peerConnection.onconnectionstatechange=()=>{
-const s=peerConnection?.connectionState;
-if (s === "connected") {
+      <h2>📹 Incoming Video Call</h2>
 
-  statusText.textContent =
-    "Video call connected 📹";
+      <p id="incomingText">
+        Someone is calling you.
+      </p>
 
-  startTimer();
+      <div class="controls">
 
-}
-if(s==="disconnected")statusText.textContent="Connection interrupted...";
-if(s==="failed")statusText.textContent="Connection failed.";
-};
-}
-function startTimer() {
-  callStartTime = Date.now();
+        <button id="acceptBtn">
+          ✅ Accept
+        </button>
 
-  clearInterval(timerInterval);
-
-  const timer = document.getElementById("timer");
-
-  timer.style.display = "block";
-
-  timerInterval = setInterval(() => {
-
-    const elapsed =
-      Math.floor(
-        (Date.now() - callStartTime) / 1000
-      );
-
-    const minutes =
-      String(
-        Math.floor(elapsed / 60)
-      ).padStart(2, "0");
-
-    const seconds =
-      String(
-        elapsed % 60
-      ).padStart(2, "0");
-
-    timer.textContent =
-      minutes + ":" + seconds;
-
-  }, 1000);
-}
-
-
-function stopTimer() {
-
-  if (timerInterval !== null) {
-    clearInterval(timerInterval);
-  }
-
-  timerInterval = null;
-  callStartTime = null;
-
-  const timer =
-    document.getElementById("timer");
-
-  if (timer) {
-    timer.textContent = "00:00";
-    timer.style.display = "none";
-  }
-
-
-
-}
-async function startVideoCall(){
-if(!currentUser){alert("Login information missing.");return;}
-if(!otherUserId){alert("Call user information missing.");return;}
-if(otherUserId===currentUser.uid){alert("You cannot call yourself.");return;}
-
-try{
-startBtn.disabled=true;
-await getLocalStream();
-
-const callId=getCallId(currentUser.uid,otherUserId);
-callDocId=callId;
-
-createPeerConnection(callId,"callerCandidates");
-
-const offer=await peerConnection.createOffer();
-await peerConnection.setLocalDescription(offer);
-
-await setDoc(doc(db,"calls",callId),{
-callerId:currentUser.uid,
-receiverId:otherUserId,
-callerName:currentUser.displayName||currentUser.email||"WorldMitra User",
-receiverName:otherUserName,
-type:"video",
-status:"calling",
-offer:{type:offer.type,sdp:offer.sdp},
-createdAt:serverTimestamp()
-});
-
-statusText.textContent="Calling "+otherUserName+"...";
-muteBtn.disabled=false;
-cameraBtn.disabled=false;
-endBtn.disabled=false;
-
-callUnsubscribe=onSnapshot(doc(db,"calls",callId),async snap=>{
-if(!snap.exists())return;
-const data=snap.data();
-
-if(data.answer && peerConnection && !peerConnection.currentRemoteDescription){
-try{
-await peerConnection.setRemoteDescription(new RTCSessionDescription(data.answer));
-statusText.textContent="Video call connected 📹";
-}catch(err){console.error("Answer error",err);} 
-}
-
-if(data.status==="ended") {
-  stopTimer();
-  finishcall(false);
-}
-
-candidateUnsubscribe=onSnapshot(
-collection(db,"calls",callId,"receiverCandidates"),
-snap=>{
-snap.docChanges().forEach(async change=>{
-if(change.type!=="added"||!peerConnection)return;
-try{await peerConnection.addIceCandidate(new RTCIceCandidate(change.doc.data()));}
-catch(err){console.error("Receiver ICE error",err);}
-});
-});
-}catch(err){
-console.error(err);
-startBtn.disabled=false;
-statusText.textContent="Video call could not start.";
-alert("Video Call start nahi hui:\n\n"+err.message);
-}
-}
-
-async function acceptIncomingCall(callId,data){
-try{
-incomingBox.style.display="none";
-startBtn.disabled=true;
-
-otherUserId=data.callerId;
-otherUserName=data.callerName||"WorldMitra User";
-callDocId=callId;
-personName.textContent="📹 "+otherUserName;
-
-await getLocalStream();
-createPeerConnection(callId,"receiverCandidates");
-
-await peerConnection.setRemoteDescription(new RTCSessionDescription(data.offer));
-
-const answer=await peerConnection.createAnswer();
-await peerConnection.setLocalDescription(answer);
-
-await updateDoc(doc(db,"calls",callId),{
-answer:{type:answer.type,sdp:answer.sdp},
-status:"accepted"
-});
-
-statusText.textContent="Video call connected 📹";
-muteBtn.disabled=false;
-cameraBtn.disabled=false;
-endBtn.disabled=false;
-
-candidateUnsubscribe=onSnapshot(
-collection(db,"calls",callId,"callerCandidates"),
-snap=>{
-snap.docChanges().forEach(async change=>{
-if(change.type!=="added"||!peerConnection)return;
-try{await peerConnection.addIceCandidate(new RTCIceCandidate(change.doc.data()));}
-catch(err){console.error("Caller ICE error",err);}
-});
-});
-
-callUnsubscribe=onSnapshot(doc(db,"calls",callId),snap=>{
-if(snap.exists()&&snap.data().status==="ended")finishCall(false);
-});
-}catch(err){
-console.error(err);
-incomingBox.style.display="none";
-statusText.textContent="Could not connect the call.";
-alert("Video Call accept nahi hui:\n\n"+err.message);
-}
-}
-
-function listenForIncomingCalls(){
-if(!currentUser)return;
-
-incomingUnsubscribe=onSnapshot(collection(db,"calls"),snap=>{
-snap.docChanges().forEach(change=>{
-if(change.type!=="added"&&change.type!=="modified")return;
-
-const data=change.doc.data();
-
-if(data.receiverId===currentUser.uid &&
-data.callerId!==currentUser.uid &&
-data.type==="video" &&
-data.status==="calling"){
-
-const callId=change.doc.id;
-incomingText.textContent=(data.callerName||"Someone")+" is calling you.";
-incomingBox.style.display="block";
-statusText.textContent="Incoming video call 📹";
-
-acceptBtn.onclick=()=>acceptIncomingCall(callId,data);
-
-rejectBtn.onclick=async()=>{
-try{await updateDoc(doc(db,"calls",callId),{status:"ended"});}
-catch(err){console.error(err);}
-incomingBox.style.display="none";
-statusText.textContent="Call rejected";
-};
-}
-});
-},err=>console.error("Incoming listener error",err));
-}
-
-async function finishCall(updateServer=true){ 
-  stopTimer();
-if(updateServer&&callDocId){
-try{await updateDoc(doc(db,"calls",callDocId),{status:"ended"});}
-catch(err){console.error("End call error",err);}
-}
-
-if(callUnsubscribe){callUnsubscribe();callUnsubscribe=null;}
-if(candidateUnsubscribe){candidateUnsubscribe();candidateUnsubscribe=null;}
-
-if(localStream){
-localStream.getTracks().forEach(track=>track.stop());
-localStream=null;
-}
-
-if(peerConnection){peerConnection.close();peerConnection=null;}
-
-localVideo.srcObject=null;
-remoteVideo.srcObject=null;
-noVideo.style.display="flex";
-
-statusText.textContent="Call ended";
-startBtn.disabled=false;
-muteBtn.disabled=true;
-cameraBtn.disabled=true;
-endBtn.disabled=true;
-isMuted=false;
-isCameraOff=false;
-muteBtn.textContent="🎤 Mute";
-cameraBtn.textContent="📷 Camera Off";
-callDocId=null;
-}
-
-muteBtn.onclick=()=>{
-if(!localStream)return;
-localStream.getAudioTracks().forEach(track=>{
-track.enabled=!track.enabled;
-isMuted=!track.enabled;
-});
-muteBtn.textContent=isMuted?"🔇 Unmute":"🎤 Mute";
-};
-
-cameraBtn.onclick=()=>{
-if(!localStream)return;
-localStream.getVideoTracks().forEach(track=>{
-track.enabled=!track.enabled;
-isCameraOff=!track.enabled;
-});
-cameraBtn.textContent=isCameraOff?"📷 Camera On":"📷 Camera Off";
-};
-
-startBtn.onclick=startVideoCall;
-endBtn.onclick=()=>finishCall(true);
-
-onAuthStateChanged(auth,user=>{
-if(!user){location.href="login.html";return;}
-currentUser=user;
-
-if(otherUserId===currentUser.uid){
-statusText.textContent="You cannot call yourself.";
-startBtn.disabled=true;
-}
-
-listenForIncomingCalls();
-});
-
-window.addEventListener("beforeunload",()=>{
-if(localStream)localStream.getTracks().forEach(track=>track.stop());
-});
-</script>
+        <button id="rejectBtn">
+          ❌ Reject
+        </button>
+
+      </div>
+
+    </div>
+
+    <!-- VIDEO AREA -->
+    <div class="video-area">
+
+      <div class="no-video" id="noVideo">
+        📹 Waiting for video...
+      </div>
+
+      <video
+        id="remoteVideo"
+        autoplay
+        playsinline>
+      </video>
+
+      <video
+        id="localVideo"
+        autoplay
+        muted
+        playsinline>
+      </video>
+
+    </div>
+
+    <!-- CONTROLS -->
+    <div class="controls">
+
+      <button id="startBtn">
+        📹 Start Video Call
+      </button>
+
+      <button id="muteBtn" disabled>
+        🎤 Mute
+      </button>
+
+      <button id="cameraBtn" disabled>
+        📷 Camera Off
+      </button>
+
+      <button id="endBtn" disabled>
+        🔴 End Call
+      </button>
+
+    </div>
+
+    <a href="connections.html" class="back">
+      ← Back to Connections
+    </a>
+
+  </div>
+
+  <script type="module">
+
+    import {
+      initializeApp
+    } from "https://www.gstatic.com/firebasejs/12.1.0/firebase-app.js";
+
+    import {
+      getAuth,
+      onAuthStateChanged
+    } from "https://www.gstatic.com/firebasejs/12.1.0/firebase-auth.js";
+
+    import {
+      getFirestore,
+      collection,
+      doc,
+      setDoc,
+      addDoc,
+      onSnapshot,
+      updateDoc,
+      serverTimestamp
+    } from "https://www.gstatic.com/firebasejs/12.1.0/firebase-firestore.js";
+
+    const firebaseConfig = {
+
+      apiKey: "AIzaSyBAhtPH_elsDDkBsxZsvMO8FYwdOGna84g",
+
+      authDomain: "worldmitra-33ca6.firebaseapp.com",
+
+      projectId: "worldmitra-33ca6",
+
+      storageBucket: "worldmitra-33ca6.firebasestorage.app",
+
+      messagingSenderId: "1089520845776",
+
+      appId: "1:1089520845776:web:2789654cc6061e7034afd5"
+
+    };
+
+    const app = initializeApp(firebaseConfig);
+
+    const auth = getAuth(app);
+
+    const db = getFirestore(app);
+
+    const personName =
+      document.getElementById("personName");
+
+    const statusText =
+      document.getElementById("status");
+
+    const timer =
+      document.getElementById("timer");
+
+    const startBtn =
+      document.getElementById("startBtn");
+
+    const muteBtn =
+      document.getElementById("muteBtn");
+
+    const cameraBtn =
+      document.getElementById("cameraBtn");
+
+    const endBtn =
+      document.getElementById("endBtn");
+
+    const acceptBtn =
+      document.getElementById("acceptBtn");
+
+    const rejectBtn =
+      document.getElementById("rejectBtn");
+
+    const incomingBox =
+      document.getElementById("incomingBox");
+
+    const incomingText =
+      document.getElementById("incomingText");
+
+    const localVideo =
+      document.getElementById("localVideo");
+
+    const remoteVideo =
+      document.getElementById("remoteVideo");
+
+    const noVideo =
+      document.getElementById("noVideo");
+    let currentUser = null;
+
+    let otherUserId = null;
+
+    let otherUserName = "WorldMitra User";
+
+    let localStream = null;
+
+    let peerConnection = null;
+
+    let callDocId = null;
+
+    let callUnsubscribe = null;
+
+    let candidateUnsubscribe = null;
+
+    let incomingUnsubscribe = null;
+
+    let isMuted = false;
+
+    let isCameraOff = false;
+
+    let callStartTime = null;
+
+    let timerInterval = null;
+
+    let isCallFinished = false;
+
+
+    /* ==============================
+       URL PARAMETERS
+    ============================== */
+
+    const params =
+      new URLSearchParams(location.search);
+
+    otherUserId =
+      params.get("uid");
+
+    if (params.get("name")) {
+
+      otherUserName =
+        params.get("name");
+
+      personName.textContent =
+        "📹 " + otherUserName;
+
+    }
+
+
+    /* ==============================
+       WEBRTC SERVERS
+    ============================== */
+
+    const servers = {
+
+      iceServers: [
+
+        {
+          urls: "stun:stun.l.google.com:19302"
+        },
+
+        {
+          urls: "stun:stun1.l.google.com:19302"
+        }
+
+      ]
+
+    };
+
+
+    /* ==============================
+       CREATE CALL ID
+    ============================== */
+
+    function getCallId(a, b) {
+
+      return [a, b]
+        .sort()
+        .join("_");
+
+    }
+
+
+    /* ==============================
+       CAMERA + MICROPHONE
+    ============================== */
+
+    async function getLocalStream() {
+
+      if (localStream) {
+        return localStream;
+      }
+
+      statusText.textContent =
+        "Requesting camera and microphone permission...";
+
+      if (
+        !navigator.mediaDevices ||
+        !navigator.mediaDevices.getUserMedia
+      ) {
+
+        throw new Error(
+          "Camera/Microphone is not supported here. Please use HTTPS."
+        );
+
+      }
+
+      localStream =
+        await navigator.mediaDevices.getUserMedia({
+          audio: true,
+          video: true
+        });
+
+      localVideo.srcObject =
+        localStream;
+
+      return localStream;
+
+    }
+
+
+    /* ==============================
+       CREATE PEER CONNECTION
+    ============================== */
+
+    function createPeerConnection(
+      callId,
+      candidateCollection
+    ) {
+
+      peerConnection =
+        new RTCPeerConnection(servers);
+
+
+      if (localStream) {
+
+        localStream
+          .getTracks()
+          .forEach(track => {
+
+            peerConnection.addTrack(
+              track,
+              localStream
+            );
+
+          });
+
+      }
+
+
+      /* SEND ICE CANDIDATES */
+
+      peerConnection.onicecandidate =
+        async event => {
+
+          if (!event.candidate) {
+            return;
+          }
+
+          try {
+
+            await addDoc(
+              collection(
+                db,
+                "calls",
+                callId,
+                candidateCollection
+              ),
+              event.candidate.toJSON()
+            );
+
+          } catch (error) {
+
+            console.error(
+              "ICE candidate error:",
+              error
+            );
+
+          }
+
+        };
+
+
+      /* RECEIVE REMOTE VIDEO */
+
+      peerConnection.ontrack =
+        event => {
+
+          if (event.streams[0]) {
+
+            remoteVideo.srcObject =
+              event.streams[0];
+
+            noVideo.style.display =
+              "none";
+
+          }
+
+        };
+
+
+      /* CONNECTION STATE */
+
+      peerConnection.onconnectionstatechange =
+        () => {
+
+          if (!peerConnection) {
+            return;
+          }
+
+          const state =
+            peerConnection.connectionState;
+
+          console.log(
+            "WebRTC connection state:",
+            state
+          );
+
+
+          if (state === "connected") {
+
+            statusText.textContent =
+              "Video call connected 📹";
+
+            startTimer();
+
+          }
+
+
+          if (state === "disconnected") {
+
+            statusText.textContent =
+              "Connection interrupted...";
+
+          }
+
+
+          if (state === "failed") {
+
+            statusText.textContent =
+              "Connection failed.";
+
+          }
+
+
+          if (state === "closed") {
+
+            statusText.textContent =
+              "Call ended";
+
+          }
+
+        };
+
+    }
+
+
+    /* ==============================
+       START TIMER
+    ============================== */
+
+    function startTimer() {
+
+      if (timerInterval) {
+        return;
+      }
+
+      callStartTime =
+        Date.now();
+
+      timer.style.display =
+        "block";
+
+      timerInterval =
+        setInterval(() => {
+
+          if (!callStartTime) {
+            return;
+          }
+
+          const elapsed =
+            Math.floor(
+              (Date.now() - callStartTime) / 1000
+            );
+
+          const minutes =
+            String(
+              Math.floor(elapsed / 60)
+            ).padStart(2, "0");
+
+          const seconds =
+            String(
+              elapsed % 60
+            ).padStart(2, "0"
+            );
+
+          timer.textContent =
+            minutes + ":" + seconds;
+
+        }, 1000);
+
+    }
+
+
+    /* ==============================
+       STOP TIMER
+    ============================== */
+
+    function stopTimer() {
+
+      if (timerInterval) {
+
+        clearInterval(
+          timerInterval
+        );
+
+      }
+
+      timerInterval =
+        null;
+
+      callStartTime =
+        null;
+
+      timer.textContent =/* ==============================
+       START VIDEO CALL
+    ============================== */
+
+    async function startVideoCall() {
+
+      if (!currentUser) {
+        alert("Login information missing.");
+        return;
+      }
+
+      if (!otherUserId) {
+        alert("Call user information missing.");
+        return;
+      }
+
+      if (otherUserId === currentUser.uid) {
+        alert("You cannot call yourself.");
+        return;
+      }
+
+      try {
+
+        isCallFinished = false;
+
+        startBtn.disabled = true;
+
+        await getLocalStream();
+
+        const callId =
+          getCallId(
+            currentUser.uid,
+            otherUserId
+          );
+
+        callDocId = callId;
+
+        createPeerConnection(
+          callId,
+          "callerCandidates"
+        );
+
+        const offer =
+          await peerConnection.createOffer();
+
+        await peerConnection.setLocalDescription(
+          offer
+        );
+
+        await setDoc(
+          doc(db, "calls", callId),
+          {
+            callerId: currentUser.uid,
+
+            receiverId: otherUserId,
+
+            callerName:
+              currentUser.displayName ||
+              currentUser.email ||
+              "WorldMitra User",
+
+            receiverName: otherUserName,
+
+            type: "video",
+
+            status: "calling",
+
+            offer: {
+              type: offer.type,
+              sdp: offer.sdp
+            },
+
+            createdAt: serverTimestamp()
+          }
+        );
+
+        statusText.textContent =
+          "Calling " + otherUserName + "...";
+
+        muteBtn.disabled = false;
+        cameraBtn.disabled = false;
+        endBtn.disabled = false;
+
+
+        /* CALL DOCUMENT LISTENER */
+
+        callUnsubscribe =
+          onSnapshot(
+            doc(db, "calls", callId),
+            async snapshot => {
+
+              if (!snapshot.exists()) {
+                return;
+              }
+
+              const data =
+                snapshot.data();
+
+
+              /* ANSWER RECEIVED */
+
+              if (
+                data.answer &&
+                peerConnection &&
+                !peerConnection.currentRemoteDescription
+              ) {
+
+                try {
+
+                  await peerConnection.setRemoteDescription(
+                    new RTCSessionDescription(
+                      data.answer
+                    )
+                  );
+
+                  statusText.textContent =
+                    "Connecting video...";
+
+                } catch (error) {
+
+                  console.error(
+                    "Answer error:",
+                    error
+                  );
+
+                }
+
+              }
+
+
+              /* OTHER USER ENDED */
+
+              if (
+                data.status === "ended" &&
+                !isCallFinished
+              ) {
+
+                finishCall(false);
+
+              }
+
+            }
+          );
+
+
+        /* RECEIVER ICE LISTENER */
+
+        candidateUnsubscribe =
+          onSnapshot(
+            collection(
+              db,
+              "calls",
+              callId,
+              "receiverCandidates"
+            ),
+            snapshot => {
+
+              snapshot.docChanges()
+                .forEach(async change => {
+
+                  if (
+                    change.type !== "added"
+                  ) {
+                    return;
+                  }
+
+                  if (!peerConnection) {
+                    return;
+                  }
+
+                  try {
+
+                    await peerConnection.addIceCandidate(
+                      new RTCIceCandidate(
+                        change.doc.data()
+                      )
+                    );
+
+                  } catch (error) {
+
+                    console.error(
+                      "Receiver ICE error:",
+                      error
+                    );
+
+                  }
+
+                });
+
+            }
+          );
+
+
+      } catch (error) {
+
+        console.error(
+          "Start call error:",
+          error
+        );
+
+        startBtn.disabled = false;
+
+        statusText.textContent =
+          "Video call could not start.";
+
+        alert(
+          "Video Call start nahi hui:\n\n" +
+          error.message
+        );
+
+      }
+
+    }
+
+
+    /* ==============================
+       ACCEPT INCOMING CALL
+    ============================== */
+
+    async function acceptIncomingCall(
+      callId,
+      data
+    ) {
+
+      try {
+
+        isCallFinished = false;
+
+        incomingBox.style.display = "none";
+
+        startBtn.disabled = true;
+
+        otherUserId =
+          data.callerId;
+
+        otherUserName =
+          data.callerName ||
+          "WorldMitra User";
+
+        callDocId = callId;
+
+        personName.textContent =
+          "📹 " + otherUserName;
+
+
+        await getLocalStream();
+
+
+        createPeerConnection(
+          callId,
+          "receiverCandidates"
+        );
+
+
+        await peerConnection.setRemoteDescription(
+          new RTCSessionDescription(
+            data.offer
+          )
+        );
+
+
+        const answer =
+          await peerConnection.createAnswer();
+
+        await peerConnection.setLocalDescription(
+          answer
+        );
+
+
+        await updateDoc(
+          doc(db, "calls", callId),
+          {
+            answer: {
+              type: answer.type,
+              sdp: answer.sdp
+            },
+
+            status: "accepted"
+          }
+        );
+
+
+        statusText.textContent =
+          "Connecting video...";
+
+        muteBtn.disabled = false;
+        cameraBtn.disabled = false;
+        endBtn.disabled = false;
+
+
+        /* CALLER ICE LISTENER */
+
+        candidateUnsubscribe =
+          onSnapshot(
+            collection(
+              db,
+              "calls",
+              callId,
+              "callerCandidates"
+            ),
+            snapshot => {
+
+              snapshot.docChanges()
+                .forEach(async change => {
+
+                  if (
+                    change.type !== "added"
+                  ) {
+                    return;
+                  }
+
+                  if (!peerConnection) {
+                    return;
+                  }
+
+                  try {
+
+                    await peerConnection.addIceCandidate(
+                      new RTCIceCandidate(
+                        change.doc.data()
+                      )
+                    );
+
+                  } catch (error) {
+
+                    console.error(
+                      "Caller ICE error:",
+                      error
+                    );
+
+                  }
+
+                });
+
+            }
+          );
+
+
+        /* CALL END LISTENER */
+
+        callUnsubscribe =
+          onSnapshot(
+            doc(db, "calls", callId),
+            snapshot => {
+
+              if (
+                snapshot.exists() &&
+                snapshot.data().status === "ended" &&
+                !isCallFinished
+              ) {
+
+                finishCall(false);
+
+              }
+
+            }
+          );
+
+
+      } catch (error) {
+
+        console.error(
+          "Accept call error:",
+          error
+        );
+
+        incomingBox.style.display =
+          "none";
+
+        statusText.textContent =
+          "Could not connect the call.";
+
+        alert(
+          "Video Call accept nahi hui:\n\n" +
+          error.message
+        );
+
+      }
+
+    }
+
+
+    /* ==============================
+       INCOMING CALL LISTENER
+    ============================== */
+
+    function listenForIncomingCalls() {
+
+      if (!currentUser) {
+        return;
+      }
+
+      incomingUnsubscribe =
+        onSnapshot(
+          collection(db, "calls"),
+          snapshot => {
+
+            snapshot.docChanges()
+              .forEach(change => {
+
+                if (
+                  change.type !== "added" &&
+                  change.type !== "modified"
+                ) {
+                  return;
+                }
+
+                const data =
+                  change.doc.data();
+
+
+                if (
+                  data.receiverId === currentUser.uid &&
+                  data.callerId !== currentUser.uid &&
+                  data.type === "video" &&
+                  data.status === "calling"
+                ) {
+
+                  const callId =
+                    change.doc.id;
+
+                  incomingText.textContent =
+                    (
+                      data.callerName ||
+                      "Someone"
+                    ) +
+                    " is calling you.";
+
+                  incomingBox.style.display =
+                    "block";
+
+                  statusText.textContent =
+                    "Incoming video call 📹";
+
+
+                  /* ACCEPT */
+
+                  acceptBtn.onclick =
+                    () => {
+
+                      acceptIncomingCall(
+                        callId,
+                        data
+                      );
+
+                    };
+
+
+                  /* REJECT */
+
+                  rejectBtn.onclick =
+                    async () => {
+
+                      try {
+
+                        await updateDoc(
+                          doc(
+                            db,
+                            "calls",
+                            callId
+                          ),
+                          {
+                            status: "ended"
+                          }
+                        );
+
+                      } catch (error) {
+
+                        console.error(
+                          "Reject error:",
+                          error
+                        );
+
+                      }
+
+                      incomingBox.style.display =
+                        "none";
+
+                      statusText.textContent =
+                        "Call rejected";
+
+                    };
+
+                }
+
+              });
+
+          },
+          error => {
+
+            console.error(
+              "Incoming listener error:",
+              error
+            );
+
+          }
+        );
+
+    }
+
+
+    /* ==============================
+       FINISH CALL
+    ============================== */
+
+    async function finishCall(
+      updateServer = true
+    ) {
+
+      if (isCallFinished) {
+        return;
+      }
+
+      isCallFinished = true;
+
+      stopTimer();
+
+
+      if (
+        updateServer &&
+        callDocId
+      ) {
+
+        try {
+
+          await updateDoc(
+            doc(
+              db,
+              "calls",
+              callDocId
+            ),
+            {
+              status: "ended"
+            }
+          );
+
+        } catch (error) {
+
+          console.error(
+            "End call error:",
+            error
+          );
+
+        }
+
+      }
+
+
+      if (callUnsubscribe) {
+
+        callUnsubscribe();
+
+        callUnsubscribe = null;
+
+      }
+
+
+      if (candidateUnsubscribe) {
+
+        candidateUnsubscribe();
+
+        candidateUnsubscribe = null;
+
+      }
+
+
+      if (localStream) {
+
+        localStream
+          .getTracks()
+          .forEach(track => {
+            track.stop();
+          });
+
+        localStream = null;
+
+      }
+
+
+      if (peerConnection) {
+
+        peerConnection.close();
+
+        peerConnection = null;
+
+      }
+
+
+      localVideo.srcObject = null;
+
+      remoteVideo.srcObject = null;
+
+      noVideo.style.display = "flex";
+
+
+      statusText.textContent =
+        "Call ended";
+
+      startBtn.disabled = false;
+
+      muteBtn.disabled = true;
+
+      cameraBtn.disabled = true;
+
+      endBtn.disabled = true;
+
+
+      isMuted = false;
+
+      isCameraOff = false;
+
+      muteBtn.textContent =
+        "🎤 Mute";
+
+      cameraBtn.textContent =
+        "📷 Camera Off";
+
+      callDocId = null;
+
+    }
+
+
+    /* ==============================
+       MUTE BUTTON
+    ============================== */
+
+    muteBtn.onclick = () => {
+
+      if (!localStream) {
+        return;
+      }
+
+      const tracks =
+        localStream.getAudioTracks();
+
+      tracks.forEach(track => {
+
+        track.enabled =
+          !track.enabled;
+
+        isMuted =
+          !track.enabled;
+
+      });
+
+      muteBtn.textContent =
+        isMuted
+          ? "🔇 Unmute"
+          : "🎤 Mute";
+
+    };
+
+
+    /* ==============================
+       CAMERA BUTTON
+    ============================== */
+
+    cameraBtn.onclick = () => {
+
+      if (!localStream) {
+        return;
+      }
+
+      const tracks =
+        localStream.getVideoTracks();
+
+      tracks.forEach(track => {
+
+        track.enabled =
+          !track.enabled;
+
+        isCameraOff =
+          !track.enabled;
+
+      });
+
+      cameraBtn.textContent =
+        isCameraOff
+          ? "📷 Camera On"
+          : "📷 Camera Off";
+
+    };
+
+
+    /* ==============================
+       BUTTON EVENTS
+    ============================== */
+
+    startBtn.onclick =
+      startVideoCall;
+
+    endBtn.onclick =
+      () => finishCall(true);
+
+
+    /* ==============================
+       LOGIN CHECK
+    ============================== */
+
+    onAuthStateChanged(
+      auth,
+      user => {
+
+        if (!user) {
+
+          location.href =
+            "login.html";
+
+          return;
+
+        }
+
+        currentUser = user;
+
+
+        if (
+          otherUserId ===
+          currentUser.uid
+        ) {
+
+          statusText.textContent =
+            "You cannot call yourself.";
+
+          startBtn.disabled = true;
+
+          return;
+
+        }
+
+
+        listenForIncomingCalls();
+
+      }
+    );
+
+
+    /* ==============================
+       PAGE CLOSE
+    ============================== */
+
+    window.addEventListener(
+      "beforeunload",
+      () => {
+
+        stopTimer();
+
+        if (localStream) {
+
+          localStream
+            .getTracks()
+            .forEach(track => {
+              track.stop();
+            });
+
+        }
+
+      }
+    );
+
+  </script>
+
 </body>
 </html>
+        
+    
