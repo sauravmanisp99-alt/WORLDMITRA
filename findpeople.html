@@ -67,6 +67,9 @@
       border-radius: 16px;
       margin-bottom: 15px;
       box-shadow: 0 5px 18px rgba(0,0,0,0.07);
+    }
+
+    .top-row {
       display: flex;
       align-items: center;
       gap: 15px;
@@ -100,6 +103,22 @@
       font-size: 14px;
     }
 
+    .bio {
+      color: #555;
+      line-height: 1.5;
+      margin-top: 12px;
+    }
+
+    .interests {
+      background: #eef4ff;
+      padding: 10px;
+      border-radius: 9px;
+      margin-top: 10px;
+      color: #333;
+      font-size: 14px;
+      line-height: 1.4;
+    }
+
     .connect-btn {
       border: none;
       background: #2563eb;
@@ -108,6 +127,8 @@
       border-radius: 9px;
       font-weight: bold;
       cursor: pointer;
+      margin-top: 14px;
+      width: 100%;
     }
 
     .connect-btn:disabled {
@@ -146,6 +167,7 @@
   <div class="container">
 
     <div class="search-box">
+
       <h1>👥 Find People</h1>
 
       <p>
@@ -158,12 +180,15 @@
         class="search-input"
         placeholder="Search by name or country..."
       >
+
     </div>
 
     <div id="usersList">
+
       <div class="empty">
         Loading people...
       </div>
+
     </div>
 
     <a href="profile.html" class="home-btn">
@@ -171,6 +196,7 @@
     </a>
 
   </div>
+
 
   <script type="module">
 
@@ -188,8 +214,7 @@
       getDocs,
       addDoc,
       query,
-      where,
-      getDocs as getMatchingDocs
+      where
     } from "https://www.gstatic.com/firebasejs/12.1.0/firebase-firestore.js";
 
 
@@ -209,79 +234,191 @@
 
     const db = getFirestore(app);
 
+
     const usersList =
       document.getElementById("usersList");
 
     const searchInput =
       document.getElementById("searchInput");
 
+
     let allUsers = [];
 
     let currentUser = null;
 
+    let currentUserProfile = null;
 
-    async function sendConnectionRequest(targetUser, button) {
+
+    // Load current user's Firestore profile
+
+    async function loadCurrentUserProfile() {
+
+      try {
+
+        const snapshot =
+          await getDocs(
+            query(
+              collection(db, "users"),
+              where("uid", "==", currentUser.uid)
+            )
+          );
+
+
+        if (!snapshot.empty) {
+
+          currentUserProfile =
+            snapshot.docs[0].data();
+
+        }
+
+      } catch (error) {
+
+        console.error(
+          "Current profile load error:",
+          error
+        );
+
+      }
+
+    }
+
+
+    // Send connection request
+
+    async function sendConnectionRequest(
+      targetUser,
+      button
+    ) {
 
       if (!currentUser) {
+
         alert("Please login first.");
+
         return;
+
       }
+
 
       if (!targetUser.uid) {
-        alert("This user's profile is missing a UID.");
+
+        alert(
+          "This user's profile is missing a UID."
+        );
+
         return;
+
       }
 
-      if (targetUser.uid === currentUser.uid) {
-        alert("You cannot connect with yourself.");
+
+      if (
+        targetUser.uid ===
+        currentUser.uid
+      ) {
+
+        alert(
+          "You cannot connect with yourself."
+        );
+
         return;
+
       }
+
 
       button.disabled = true;
+
       button.textContent = "Sending...";
 
 
       try {
 
-        const existingQuery = query(
-          collection(db, "connectionRequests"),
-          where("fromUserId", "==", currentUser.uid),
-          where("toUserId", "==", targetUser.uid)
-        );
+        const existingQuery =
+          query(
+            collection(
+              db,
+              "connectionRequests"
+            ),
+
+            where(
+              "fromUserId",
+              "==",
+              currentUser.uid
+            ),
+
+            where(
+              "toUserId",
+              "==",
+              targetUser.uid
+            )
+          );
+
 
         const existingSnapshot =
-          await getMatchingDocs(existingQuery);
+          await getDocs(existingQuery);
 
 
         if (!existingSnapshot.empty) {
 
-          alert("Connection request already sent.");
+          button.textContent =
+            "Requested";
 
-          button.textContent = "Requested";
+          alert(
+            "Connection request already sent."
+          );
 
           return;
+
         }
 
 
         await addDoc(
-          collection(db, "connectionRequests"),
+          collection(
+            db,
+            "connectionRequests"
+          ),
           {
-            fromUserId: currentUser.uid,
-            fromName: currentUser.displayName || "WorldMitra User",
-            fromEmail: currentUser.email || "",
-            toUserId: targetUser.uid,
-            toName: targetUser.name || "WorldMitra User",
-            toCountry: targetUser.country || "",
-            fromCountry: currentUser.country || "",
-            status: "pending",
-            createdAt: new Date()
+
+            fromUserId:
+              currentUser.uid,
+
+            fromName:
+              currentUserProfile?.name ||
+              currentUser.displayName ||
+              "WorldMitra User",
+
+            fromEmail:
+              currentUser.email || "",
+
+            fromCountry:
+              currentUserProfile?.country ||
+              "",
+
+            toUserId:
+              targetUser.uid,
+
+            toName:
+              targetUser.name ||
+              "WorldMitra User",
+
+            toCountry:
+              targetUser.country ||
+              "",
+
+            status:
+              "pending",
+
+            createdAt:
+              new Date()
+
           }
         );
 
 
-        alert("Connection request sent! 🎉");
+        alert(
+          "Connection request sent! 🎉"
+        );
 
-        button.textContent = "Requested";
+        button.textContent =
+          "Requested";
 
 
       } catch (error) {
@@ -295,12 +432,15 @@
 
         button.disabled = false;
 
-        button.textContent = "Connect";
+        button.textContent =
+          "Connect";
 
       }
 
     }
 
+
+    // Show users
 
     function showUsers(users) {
 
@@ -316,6 +456,7 @@
         `;
 
         return;
+
       }
 
 
@@ -324,7 +465,8 @@
         const card =
           document.createElement("div");
 
-        card.className = "user-card";
+        card.className =
+          "user-card";
 
 
         const firstLetter =
@@ -335,37 +477,75 @@
 
         const isMe =
           currentUser &&
-          user.uid === currentUser.uid;
+          user.uid ===
+          currentUser.uid;
 
 
         card.innerHTML = `
-          <div class="avatar">
-            ${firstLetter}
-          </div>
 
-          <div class="user-info">
+          <div class="top-row">
 
-            <h2>
-              ${user.name || "WorldMitra User"}
-            </h2>
+            <div class="avatar">
+              ${firstLetter}
+            </div>
 
-            <div class="country">
-              🌎 ${user.country || "Country not available"}
+            <div class="user-info">
+
+              <h2>
+                ${user.name ||
+                "WorldMitra User"}
+              </h2>
+
+              <div class="country">
+                🌎 ${user.country ||
+                "Country not available"}
+              </div>
+
             </div>
 
           </div>
+
+
+          <div class="bio">
+
+            📝 ${
+              user.bio ||
+              "No information added yet."
+            }
+
+          </div>
+
+
+          <div class="interests">
+
+            ❤️ ${
+              user.interests ||
+              "Interests not added yet."
+            }
+
+          </div>
+
 
           <button
             class="connect-btn"
             ${isMe ? "disabled" : ""}
           >
-            ${isMe ? "You" : "Connect"}
+
+            ${
+              isMe
+              ? "You"
+              : "Connect"
+            }
+
           </button>
+
         `;
 
 
         const connectButton =
-          card.querySelector(".connect-btn");
+          card.querySelector(
+            ".connect-btn"
+          );
 
 
         if (!isMe) {
@@ -373,10 +553,12 @@
           connectButton.addEventListener(
             "click",
             () => {
+
               sendConnectionRequest(
                 user,
                 connectButton
               );
+
             }
           );
 
@@ -389,6 +571,8 @@
 
     }
 
+
+    // Load all users
 
     async function loadUsers() {
 
@@ -403,14 +587,20 @@
         allUsers = [];
 
 
-        snapshot.forEach((userDoc) => {
+        snapshot.forEach(
+          (userDoc) => {
 
-          allUsers.push({
-            ...userDoc.data(),
-            uid: userDoc.id
-          });
+            allUsers.push({
 
-        });
+              ...userDoc.data(),
+
+              uid:
+                userDoc.id
+
+            });
+
+          }
+        );
 
 
         showUsers(allUsers);
@@ -421,17 +611,25 @@
         console.error(error);
 
         usersList.innerHTML = `
+
           <div class="empty">
+
             People load नहीं हो पाए।
+
             <br><br>
+
             ${error.message}
+
           </div>
+
         `;
 
       }
 
     }
 
+
+    // Search users
 
     searchInput.addEventListener(
       "input",
@@ -444,34 +642,58 @@
 
 
         const filteredUsers =
-          allUsers.filter((user) => {
+          allUsers.filter(
+            (user) => {
 
-            const name =
-              (user.name || "")
-                .toLowerCase();
-
-            const country =
-              (user.country || "")
-                .toLowerCase();
+              const name =
+                (user.name || "")
+                  .toLowerCase();
 
 
-            return (
-              name.includes(search) ||
-              country.includes(search)
-            );
-
-          });
+              const country =
+                (user.country || "")
+                  .toLowerCase();
 
 
-        showUsers(filteredUsers);
+              const bio =
+                (user.bio || "")
+                  .toLowerCase();
+
+
+              const interests =
+                (user.interests || "")
+                  .toLowerCase();
+
+
+              return (
+
+                name.includes(search) ||
+
+                country.includes(search) ||
+
+                bio.includes(search) ||
+
+                interests.includes(search)
+
+              );
+
+            }
+          );
+
+
+        showUsers(
+          filteredUsers
+        );
 
       }
     );
 
 
+    // Authentication
+
     onAuthStateChanged(
       auth,
-      (user) => {
+      async (user) => {
 
         if (!user) {
 
@@ -483,9 +705,13 @@
         }
 
 
-        currentUser = user;
+        currentUser =
+          user;
 
-        loadUsers();
+
+        await loadCurrentUserProfile();
+
+        await loadUsers();
 
       }
     );
