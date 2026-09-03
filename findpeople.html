@@ -61,6 +61,10 @@
       outline: none;
     }
 
+    .search-input:focus {
+      border-color: #2563eb;
+    }
+
     .user-card {
       background: white;
       padding: 18px;
@@ -93,7 +97,6 @@
     .avatar img {
       width: 100%;
       height: 100%;
-      border-radius: 50%;
       object-fit: cover;
       display: block;
     }
@@ -132,7 +135,7 @@
       border: none;
       background: #2563eb;
       color: white;
-      padding: 10px 14px;
+      padding: 11px 14px;
       border-radius: 9px;
       font-weight: bold;
       cursor: pointer;
@@ -143,6 +146,18 @@
     .connect-btn:disabled {
       background: #9ca3af;
       cursor: not-allowed;
+    }
+
+    .connected {
+      background: #16a34a !important;
+    }
+
+    .requested {
+      background: #f59e0b !important;
+    }
+
+    .incoming {
+      background: #7c3aed !important;
     }
 
     .empty {
@@ -257,20 +272,37 @@
 
     let currentUserProfile = null;
 
+    /*
+      Store request status.
 
-    // Load current user's Firestore profile
+      Key format:
+      targetUserId
+
+      Value:
+      pending-sent
+      pending-received
+      accepted
+    */
+
+    let connectionStatuses = new Map();
+
+
+    /*
+      Load current user's profile
+    */
 
     async function loadCurrentUserProfile() {
 
       try {
 
-        const snapshot =
-          await getDocs(
-            query(
-              collection(db, "users"),
-              where("uid", "==", currentUser.uid)
-            )
+        const profileRef =
+          query(
+            collection(db, "users"),
+            where("uid", "==", currentUser.uid)
           );
+
+        const snapshot =
+          await getDocs(profileRef);
 
 
         if (!snapshot.empty) {
@@ -292,7 +324,143 @@
     }
 
 
-    // Send connection request
+    /*
+      Load all connection/request statuses
+    */
+
+    async function loadConnectionStatuses() {
+
+      connectionStatuses =
+        new Map();
+
+
+      try {
+
+        /*
+          Requests sent by current user
+        */
+
+        const sentQuery =
+          query(
+            collection(
+              db,
+              "connectionRequests"
+            ),
+            where(
+              "fromUserId",
+              "==",
+              currentUser.uid
+            )
+          );
+
+
+        const sentSnapshot =
+          await getDocs(sentQuery);
+
+
+        sentSnapshot.forEach(
+          (requestDoc) => {
+
+            const data =
+              requestDoc.data();
+
+
+            if (
+              data.status ===
+              "accepted"
+            ) {
+
+              connectionStatuses.set(
+                data.toUserId,
+                "accepted"
+              );
+
+            } else if (
+              data.status ===
+              "pending"
+            ) {
+
+              connectionStatuses.set(
+                data.toUserId,
+                "pending-sent"
+              );
+
+            }
+
+          }
+        );
+
+
+        /*
+          Requests received by current user
+        */
+
+        const receivedQuery =
+          query(
+            collection(
+              db,
+              "connectionRequests"
+            ),
+            where(
+              "toUserId",
+              "==",
+              currentUser.uid
+            )
+          );
+
+
+        const receivedSnapshot =
+          await getDocs(receivedQuery);
+
+
+        receivedSnapshot.forEach(
+          (requestDoc) => {
+
+            const data =
+              requestDoc.data();
+
+
+            if (
+              data.status ===
+              "accepted"
+            ) {
+
+              connectionStatuses.set(
+                data.fromUserId,
+                "accepted"
+              );
+
+            } else if (
+              data.status ===
+              "pending"
+            ) {
+
+              connectionStatuses.set(
+                data.fromUserId,
+                "pending-received"
+              );
+
+            }
+
+          }
+        );
+
+
+      } catch (error) {
+
+        console.error(
+          "Connection status error:",
+          error
+        );
+
+      }
+
+    }
+
+
+    /*
+      Send connection request
+    */
 
     async function sendConnectionRequest(
       targetUser,
@@ -301,7 +469,9 @@
 
       if (!currentUser) {
 
-        alert("Please login first.");
+        alert(
+          "Please login first."
+        );
 
         return;
 
@@ -333,12 +503,75 @@
       }
 
 
-      button.disabled = true;
+      const currentStatus =
+        connectionStatuses.get(
+          targetUser.uid
+        );
 
-      button.textContent = "Sending...";
+
+      /*
+        Prevent duplicate actions
+      */
+
+      if (
+        currentStatus ===
+        "accepted"
+      ) {
+
+        button.textContent =
+          "Connected";
+
+        return;
+
+      }
+
+
+      if (
+        currentStatus ===
+        "pending-sent"
+      ) {
+
+        button.textContent =
+          "Requested";
+
+        return;
+
+      }
+
+
+      if (
+        currentStatus ===
+        "pending-received"
+      ) {
+
+        alert(
+          "This person has already sent you a request. Check Connection Requests."
+        );
+
+        button.textContent =
+          "Accept in Requests";
+
+        button.classList.add(
+          "incoming"
+        );
+
+        return;
+
+      }
+
+
+      button.disabled =
+        true;
+
+      button.textContent =
+        "Sending...";
 
 
       try {
+
+        /*
+          Double-check in Firebase
+        */
 
         const existingQuery =
           query(
@@ -362,22 +595,35 @@
 
 
         const existingSnapshot =
-          await getDocs(existingQuery);
+          await getDocs(
+            existingQuery
+          );
 
 
-        if (!existingSnapshot.empty) {
+        if (
+          !existingSnapshot.empty
+        ) {
 
           button.textContent =
             "Requested";
 
-          alert(
-            "Connection request already sent."
+          button.classList.add(
+            "requested"
+          );
+
+          connectionStatuses.set(
+            targetUser.uid,
+            "pending-sent"
           );
 
           return;
 
         }
 
+
+        /*
+          Create new request
+        */
 
         await addDoc(
           collection(
@@ -395,7 +641,8 @@
               "WorldMitra User",
 
             fromEmail:
-              currentUser.email || "",
+              currentUser.email ||
+              "",
 
             fromCountry:
               currentUserProfile?.country ||
@@ -422,24 +669,41 @@
         );
 
 
-        alert(
-          "Connection request sent! 🎉"
+        connectionStatuses.set(
+          targetUser.uid,
+          "pending-sent"
         );
+
 
         button.textContent =
           "Requested";
 
+        button.classList.add(
+          "requested"
+        );
+
+
+        alert(
+          "Connection request sent! 🎉"
+        );
+
 
       } catch (error) {
 
-        console.error(error);
+        console.error(
+          "Connection request error:",
+          error
+        );
+
 
         alert(
           "Request send नहीं हुई: " +
           error.message
         );
 
-        button.disabled = false;
+
+        button.disabled =
+          false;
 
         button.textContent =
           "Connect";
@@ -449,18 +713,101 @@
     }
 
 
-    // Show users
+    /*
+      Get button state
+    */
+
+    function getButtonState(
+      user
+    ) {
+
+      const status =
+        connectionStatuses.get(
+          user.uid
+        );
+
+
+      if (
+        status ===
+        "accepted"
+      ) {
+
+        return {
+          text: "Connected",
+          disabled: true,
+          className: "connected"
+        };
+
+      }
+
+
+      if (
+        status ===
+        "pending-sent"
+      ) {
+
+        return {
+          text: "Requested",
+          disabled: true,
+          className: "requested"
+        };
+
+      }
+
+
+      if (
+        status ===
+        "pending-received"
+      ) {
+
+        return {
+          text: "Accept in Requests",
+          disabled: true,
+          className: "incoming"
+        };
+
+      }
+
+
+      return {
+        text: "Connect",
+        disabled: false,
+        className: ""
+      };
+
+    }
+
+
+    /*
+      Show users
+    */
 
     function showUsers(users) {
 
-      usersList.innerHTML = "";
+      usersList.innerHTML =
+        "";
 
 
-      if (users.length === 0) {
+      /*
+        Don't show current user
+      */
+
+      const otherUsers =
+        users.filter(
+          (user) =>
+            user.uid !==
+            currentUser.uid
+        );
+
+
+      if (
+        otherUsers.length ===
+        0
+      ) {
 
         usersList.innerHTML = `
           <div class="empty">
-            No people found.
+            No other people found yet. 🌍
           </div>
         `;
 
@@ -469,128 +816,142 @@
       }
 
 
-      users.forEach((user) => {
+      otherUsers.forEach(
+        (user) => {
 
-        const card =
-          document.createElement("div");
-
-        card.className =
-          "user-card";
-
-
-        const firstLetter =
-          (user.name || "U")
-            .charAt(0)
-            .toUpperCase();
+          const card =
+            document.createElement(
+              "div"
+            );
 
 
-        const isMe =
-          currentUser &&
-          user.uid ===
-          currentUser.uid;
+          card.className =
+            "user-card";
 
 
-        card.innerHTML = `
+          const firstLetter =
+            (
+              user.name ||
+              "U"
+            )
+              .charAt(0)
+              .toUpperCase();
 
-          <div class="top-row">
 
-            <div class="avatar">
+          const buttonState =
+            getButtonState(
+              user
+            );
 
-              ${
-                user.profileImage
-                  ? `<img
-                      src="${user.profileImage}"
-                      alt="Profile Photo"
-                    >`
-                  : firstLetter
-              }
 
-            </div>
+          card.innerHTML = `
 
-            <div class="user-info">
+            <div class="top-row">
 
-              <h2>
-                ${user.name ||
-                "WorldMitra User"}
-              </h2>
+              <div class="avatar">
 
-              <div class="country">
-                🌎 ${user.country ||
-                "Country not available"}
+                ${
+                  user.profileImage
+                    ? `<img
+                        src="${user.profileImage}"
+                        alt="Profile Photo"
+                      >`
+                    : firstLetter
+                }
+
+              </div>
+
+              <div class="user-info">
+
+                <h2>
+                  ${
+                    user.name ||
+                    "WorldMitra User"
+                  }
+                </h2>
+
+                <div class="country">
+                  🌎 ${
+                    user.country ||
+                    "Country not available"
+                  }
+                </div>
+
               </div>
 
             </div>
 
-          </div>
+
+            <div class="bio">
+
+              📝 ${
+                user.bio ||
+                "No information added yet."
+              }
+
+            </div>
 
 
-          <div class="bio">
+            <div class="interests">
 
-            📝 ${
-              user.bio ||
-              "No information added yet."
-            }
+              ❤️ ${
+                user.interests ||
+                "Interests not added yet."
+              }
 
-          </div>
-
-
-          <div class="interests">
-
-            ❤️ ${
-              user.interests ||
-              "Interests not added yet."
-            }
-
-          </div>
+            </div>
 
 
-          <button
-            class="connect-btn"
-            ${isMe ? "disabled" : ""}
-          >
+            <button
+              class="connect-btn ${buttonState.className}"
+              ${buttonState.disabled ? "disabled" : ""}
+            >
 
-            ${
-              isMe
-              ? "You"
-              : "Connect"
-            }
+              ${buttonState.text}
 
-          </button>
+            </button>
 
-        `;
+          `;
 
 
-        const connectButton =
-          card.querySelector(
-            ".connect-btn"
-          );
+          const connectButton =
+            card.querySelector(
+              ".connect-btn"
+            );
 
 
-        if (!isMe) {
+          if (
+            !buttonState.disabled
+          ) {
 
-          connectButton.addEventListener(
-            "click",
-            () => {
+            connectButton.addEventListener(
+              "click",
+              () => {
 
-              sendConnectionRequest(
-                user,
-                connectButton
-              );
+                sendConnectionRequest(
+                  user,
+                  connectButton
+                );
 
-            }
+              }
+            );
+
+          }
+
+
+          usersList.appendChild(
+            card
           );
 
         }
-
-
-        usersList.appendChild(card);
-
-      });
+      );
 
     }
 
 
-    // Load all users
+    /*
+      Load all users
+    */
 
     async function loadUsers() {
 
@@ -598,21 +959,35 @@
 
         const snapshot =
           await getDocs(
-            collection(db, "users")
+            collection(
+              db,
+              "users"
+            )
           );
 
 
-        allUsers = [];
+        allUsers =
+          [];
 
 
         snapshot.forEach(
           (userDoc) => {
 
+            const data =
+              userDoc.data();
+
+
             allUsers.push({
 
-              ...userDoc.data(),
+              ...data,
+
+              /*
+                Firestore document ID
+                is the safest UID fallback
+              */
 
               uid:
+                data.uid ||
                 userDoc.id
 
             });
@@ -621,12 +996,21 @@
         );
 
 
-        showUsers(allUsers);
+        await loadConnectionStatuses();
+
+
+        showUsers(
+          allUsers
+        );
 
 
       } catch (error) {
 
-        console.error(error);
+        console.error(
+          "Users load error:",
+          error
+        );
+
 
         usersList.innerHTML = `
 
@@ -647,7 +1031,9 @@
     }
 
 
-    // Search users
+    /*
+      Search users
+    */
 
     searchInput.addEventListener(
       "input",
@@ -664,34 +1050,54 @@
             (user) => {
 
               const name =
-                (user.name || "")
+                (
+                  user.name ||
+                  ""
+                )
                   .toLowerCase();
 
 
               const country =
-                (user.country || "")
+                (
+                  user.country ||
+                  ""
+                )
                   .toLowerCase();
 
 
               const bio =
-                (user.bio || "")
+                (
+                  user.bio ||
+                  ""
+                )
                   .toLowerCase();
 
 
               const interests =
-                (user.interests || "")
+                (
+                  user.interests ||
+                  ""
+                )
                   .toLowerCase();
 
 
               return (
 
-                name.includes(search) ||
+                name.includes(
+                  search
+                ) ||
 
-                country.includes(search) ||
+                country.includes(
+                  search
+                ) ||
 
-                bio.includes(search) ||
+                bio.includes(
+                  search
+                ) ||
 
-                interests.includes(search)
+                interests.includes(
+                  search
+                )
 
               );
 
@@ -707,7 +1113,9 @@
     );
 
 
-    // Authentication
+    /*
+      Authentication
+    */
 
     onAuthStateChanged(
       auth,
