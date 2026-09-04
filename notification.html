@@ -1,0 +1,554 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+  <title>Notifications - WorldMitra</title>
+
+  <style>
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+      font-family: Arial, sans-serif;
+    }
+
+    body {
+      background: #f5f8ff;
+      color: #222;
+      min-height: 100vh;
+    }
+
+    .header {
+      background: #2563eb;
+      color: white;
+      padding: 18px;
+      text-align: center;
+      font-size: 24px;
+      font-weight: bold;
+    }
+
+    .container {
+      width: 92%;
+      max-width: 650px;
+      margin: 25px auto;
+    }
+
+    h1 {
+      margin-bottom: 8px;
+    }
+
+    .subtitle {
+      color: #667085;
+      margin-bottom: 20px;
+    }
+
+    .notification-card {
+      background: white;
+      padding: 18px;
+      border-radius: 16px;
+      margin-bottom: 14px;
+      box-shadow: 0 5px 18px rgba(0,0,0,0.07);
+
+      display: flex;
+      align-items: center;
+      gap: 14px;
+    }
+
+    .icon {
+      width: 50px;
+      height: 50px;
+      min-width: 50px;
+
+      border-radius: 50%;
+      background: #eef4ff;
+
+      display: flex;
+      align-items: center;
+      justify-content: center;
+
+      font-size: 24px;
+    }
+
+    .notification-content {
+      flex: 1;
+    }
+
+    .notification-message {
+      font-size: 16px;
+      font-weight: bold;
+      line-height: 1.4;
+    }
+
+    .notification-time {
+      color: #667085;
+      font-size: 13px;
+      margin-top: 5px;
+    }
+
+    .unread {
+      border-left: 5px solid #2563eb;
+    }
+
+    .empty {
+      background: white;
+      padding: 40px 20px;
+      border-radius: 16px;
+
+      text-align: center;
+      color: #667085;
+
+      box-shadow: 0 5px 18px rgba(0,0,0,0.05);
+    }
+
+    .back {
+      display: block;
+      text-align: center;
+      text-decoration: none;
+
+      margin-top: 20px;
+      padding: 13px;
+
+      background: #111827;
+      color: white;
+
+      border-radius: 10px;
+      font-weight: bold;
+    }
+
+    .loading {
+      text-align: center;
+      color: #667085;
+      padding: 30px;
+    }
+
+  </style>
+
+</head>
+
+<body>
+
+  <div class="header">
+    🌍 WorldMitra
+  </div>
+
+
+  <div class="container">
+
+    <h1>🔔 Notifications</h1>
+
+    <p class="subtitle">
+      Stay updated with your WorldMitra activity.
+    </p>
+
+
+    <div id="notificationsList">
+
+      <div class="loading">
+        Loading notifications...
+      </div>
+
+    </div>
+
+
+    <a href="profile.html" class="back">
+      ← Back to Profile
+    </a>
+
+  </div>
+
+
+  <script type="module">
+
+    import {
+      initializeApp
+    }
+    from "https://www.gstatic.com/firebasejs/12.1.0/firebase-app.js";
+
+
+    import {
+      getAuth,
+      onAuthStateChanged
+    }
+    from "https://www.gstatic.com/firebasejs/12.1.0/firebase-auth.js";
+
+
+    import {
+      getFirestore,
+      collection,
+      query,
+      where,
+      orderBy,
+      getDocs,
+      doc,
+      updateDoc
+    }
+    from "https://www.gstatic.com/firebasejs/12.1.0/firebase-firestore.js";
+
+
+    const firebaseConfig = {
+
+      apiKey:
+        "AIzaSyBAhtPH_elsDDkBsxZsvMO8FYwdOGna84g",
+
+      authDomain:
+        "worldmitra-33ca6.firebaseapp.com",
+
+      projectId:
+        "worldmitra-33ca6",
+
+      storageBucket:
+        "worldmitra-33ca6.firebasestorage.app",
+
+      messagingSenderId:
+        "1089520845776",
+
+      appId:
+        "1:1089520845776:web:2789654cc6061e7034afd5"
+
+    };
+
+
+    const app =
+      initializeApp(firebaseConfig);
+
+
+    const auth =
+      getAuth(app);
+
+
+    const db =
+      getFirestore(app);
+
+
+    const notificationsList =
+      document.getElementById(
+        "notificationsList"
+      );
+
+
+    // -----------------------------------
+    // Format time
+    // -----------------------------------
+
+    function formatTime(timestamp) {
+
+      if (!timestamp) {
+        return "";
+      }
+
+
+      try {
+
+        const date =
+          timestamp.toDate
+            ? timestamp.toDate()
+            : new Date(timestamp);
+
+
+        return date.toLocaleString();
+
+      } catch (error) {
+
+        return "";
+
+      }
+
+    }
+
+
+    // -----------------------------------
+    // Get notification icon
+    // -----------------------------------
+
+    function getIcon(type) {
+
+      if (type === "connection_request") {
+        return "🤝";
+      }
+
+      if (type === "connection_accepted") {
+        return "✅";
+      }
+
+      if (type === "message") {
+        return "💬";
+      }
+
+      if (type === "voice_call") {
+        return "📞";
+      }
+
+      if (type === "video_call") {
+        return "📹";
+      }
+
+      return "🔔";
+
+    }
+
+
+    // -----------------------------------
+    // Load notifications
+    // -----------------------------------
+
+    async function loadNotifications(user) {
+
+      try {
+
+        const notificationsQuery =
+          query(
+
+            collection(
+              db,
+              "notifications"
+            ),
+
+            where(
+              "userId",
+              "==",
+              user.uid
+            ),
+
+            orderBy(
+              "createdAt",
+              "desc"
+            )
+
+          );
+
+
+        const snapshot =
+          await getDocs(
+            notificationsQuery
+          );
+
+
+        notificationsList.innerHTML =
+          "";
+
+
+        if (snapshot.empty) {
+
+          notificationsList.innerHTML = `
+
+            <div class="empty">
+
+              🔔 No notifications yet.
+
+              <br><br>
+
+              New activity will appear here.
+
+            </div>
+
+          `;
+
+          return;
+
+        }
+
+
+        snapshot.forEach(
+          (notificationDoc) => {
+
+            const notification =
+              notificationDoc.data();
+
+
+            const card =
+              document.createElement(
+                "div"
+              );
+
+
+            card.className =
+              "notification-card";
+
+
+            if (
+              notification.read !== true
+            ) {
+
+              card.classList.add(
+                "unread"
+              );
+
+            }
+
+
+            const icon =
+              document.createElement(
+                "div"
+              );
+
+
+            icon.className =
+              "icon";
+
+
+            icon.textContent =
+              getIcon(
+                notification.type
+              );
+
+
+            const content =
+              document.createElement(
+                "div"
+              );
+
+
+            content.className =
+              "notification-content";
+
+
+            const message =
+              document.createElement(
+                "div"
+              );
+
+
+            message.className =
+              "notification-message";
+
+
+            message.textContent =
+              notification.message ||
+              "You have a new notification.";
+
+
+            const time =
+              document.createElement(
+                "div"
+              );
+
+
+            time.className =
+              "notification-time";
+
+
+            time.textContent =
+              formatTime(
+                notification.createdAt
+              );
+
+
+            content.appendChild(
+              message
+            );
+
+            content.appendChild(
+              time
+            );
+
+
+            card.appendChild(
+              icon
+            );
+
+            card.appendChild(
+              content
+            );
+
+
+            notificationsList.appendChild(
+              card
+            );
+
+
+            // --------------------------------
+            // Mark notification as read
+            // --------------------------------
+
+            if (
+              notification.read !== true
+            ) {
+
+              updateDoc(
+
+                doc(
+                  db,
+                  "notifications",
+                  notificationDoc.id
+                ),
+
+                {
+                  read: true
+                }
+
+              ).catch(
+                (error) => {
+
+                  console.error(
+                    "Read update error:",
+                    error
+                  );
+
+                }
+              );
+
+            }
+
+          }
+        );
+
+
+      } catch (error) {
+
+        console.error(
+          "Notifications error:",
+          error
+        );
+
+
+        notificationsList.innerHTML = `
+
+          <div class="empty">
+
+            ❌ Notifications load नहीं हो पाईं।
+
+            <br><br>
+
+            ${error.message}
+
+          </div>
+
+        `;
+
+      }
+
+    }
+
+
+    // -----------------------------------
+    // Authentication
+    // -----------------------------------
+
+    onAuthStateChanged(
+      auth,
+      (user) => {
+
+        if (!user) {
+
+          window.location.href =
+            "login.html";
+
+          return;
+
+        }
+
+
+        loadNotifications(
+          user
+        );
+
+      }
+    );
+
+  </script>
+
+</body>
+</html>
