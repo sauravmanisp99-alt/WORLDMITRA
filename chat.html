@@ -14,34 +14,40 @@
       font-family: Arial, sans-serif;
     }
 
+    html,
     body {
-      background: #e5ddd5;
-      height: 100vh;
       width: 100%;
+      height: 100%;
       overflow: hidden;
     }
 
-    /* Main Chat */
+    body {
+      background: #e5ddd5;
+    }
+
+    /* MAIN CHAT */
     .chat-container {
       width: 100%;
       max-width: 600px;
-      height: 100vh;
-      margin: auto;
+      height: 100dvh;
+      margin: 0 auto;
       background: #efeae2;
       display: flex;
       flex-direction: column;
       position: relative;
+      overflow: hidden;
     }
 
-    /* Header */
+    /* HEADER */
     .chat-header {
-      height: 65px;
+      height: 64px;
+      min-height: 64px;
       background: #4f46e5;
       color: white;
       display: flex;
       align-items: center;
-      padding: 8px 12px;
-      gap: 12px;
+      padding: 7px 10px;
+      gap: 10px;
       flex-shrink: 0;
     }
 
@@ -49,15 +55,18 @@
       color: white;
       text-decoration: none;
       font-size: 28px;
-      width: 35px;
+      width: 34px;
+      min-width: 34px;
+      height: 44px;
       display: flex;
       align-items: center;
       justify-content: center;
     }
 
     .user-avatar {
-      width: 43px;
-      height: 43px;
+      width: 42px;
+      min-width: 42px;
+      height: 42px;
       border-radius: 50%;
       background: white;
       color: #4f46e5;
@@ -65,23 +74,23 @@
       align-items: center;
       justify-content: center;
       font-weight: bold;
-      font-size: 19px;
-      flex-shrink: 0;
+      font-size: 18px;
     }
 
     .user-info {
+      flex: 1;
+      min-width: 0;
       display: flex;
       flex-direction: column;
-      min-width: 0;
+      justify-content: center;
     }
 
     .user-name {
-      font-size: 17px;
+      font-size: 16px;
       font-weight: bold;
       white-space: nowrap;
       overflow: hidden;
       text-overflow: ellipsis;
-      max-width: 300px;
     }
 
     .online-status {
@@ -97,50 +106,48 @@
       color: #e5e7eb;
     }
 
-    /* Messages Area */
+    /* MESSAGES */
     .messages {
       flex: 1;
-      padding: 15px 10px;
+      min-height: 0;
+      width: 100%;
+      padding: 12px 8px;
       overflow-y: auto;
       display: flex;
       flex-direction: column;
       gap: 7px;
-
       background-color: #efeae2;
 
-      /* Simple chat pattern */
       background-image:
         radial-gradient(
           rgba(0,0,0,0.035) 1px,
           transparent 1px
         );
+
       background-size: 18px 18px;
     }
 
-    /* Message Row */
     .message-wrapper {
-      display: flex;
       width: 100%;
+      display: flex;
     }
 
-    .message-wrapper.sent-wrapper {
+    .sent-wrapper {
       justify-content: flex-end;
     }
 
-    .message-wrapper.received-wrapper {
+    .received-wrapper {
       justify-content: flex-start;
     }
 
-    /* Message Bubble */
     .message {
       max-width: 78%;
-      padding: 9px 12px;
+      padding: 9px 11px;
       border-radius: 10px;
       word-wrap: break-word;
       overflow-wrap: anywhere;
       font-size: 15px;
       line-height: 1.4;
-      position: relative;
       box-shadow: 0 1px 1px rgba(0,0,0,0.08);
     }
 
@@ -156,25 +163,28 @@
       border-top-left-radius: 3px;
     }
 
-    /* Delete Button */
+    /* DELETE */
     .delete-btn {
+      display: block;
       border: none;
       background: transparent;
       color: #777;
-      font-size: 13px;
+      font-size: 12px;
       cursor: pointer;
-      margin-top: 5px;
-      padding: 2px 4px;
-      display: block;
       margin-left: auto;
+      margin-top: 5px;
+      padding: 2px 3px;
     }
 
     .delete-btn:hover {
       color: #dc2626;
     }
 
-    /* Input Area */
+    /* INPUT AREA */
     .input-area {
+      width: 100%;
+      min-height: 62px;
+      height: 62px;
       display: flex;
       align-items: center;
       gap: 7px;
@@ -182,36 +192,48 @@
       background: #f0f2f5;
       border-top: 1px solid #ddd;
       flex-shrink: 0;
+      position: relative;
+      z-index: 20;
     }
 
-    .message-input-box {
+    /* MESSAGE INPUT */
+    #messageInput {
       flex: 1;
-      display: flex;
-      align-items: center;
-      background: white;
-      border-radius: 25px;
-      padding: 0 15px;
-      min-width: 0;
-    }
-
-    .message-input-box input {
       width: 100%;
-      border: none;
+      min-width: 0;
+      height: 46px;
+      border: 1px solid #ddd;
       outline: none;
-      padding: 12px 0;
+      background: white;
+      border-radius: 24px;
+      padding: 0 16px;
       font-size: 15px;
-      background: transparent;
+      color: #111827;
+      display: block;
     }
 
+    #messageInput:focus {
+      border-color: #4f46e5;
+    }
+
+    #messageInput::placeholder {
+      color: #777;
+    }
+
+    /* SEND BUTTON */
     .send-btn {
-      width: 45px;
-      height: 45px;
+      width: 46px;
+      min-width: 46px;
+      height: 46px;
       border: none;
       border-radius: 50%;
       background: #4f46e5;
       color: white;
       font-size: 19px;
       cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
       flex-shrink: 0;
     }
 
@@ -219,7 +241,7 @@
       transform: scale(0.94);
     }
 
-    /* Mobile */
+    /* MOBILE */
     @media (max-width: 600px) {
 
       .chat-container {
@@ -228,48 +250,56 @@
 
       .chat-header {
         height: 62px;
-        padding: 7px 9px;
+        min-height: 62px;
+        padding: 6px 8px;
       }
 
       .user-avatar {
         width: 40px;
+        min-width: 40px;
         height: 40px;
-        font-size: 17px;
       }
 
       .user-name {
         font-size: 16px;
-        max-width: 220px;
       }
 
       .messages {
-        padding: 12px 7px;
+        padding: 10px 6px;
       }
 
       .message {
-        max-width: 82%;
+        max-width: 84%;
         font-size: 15px;
       }
 
       .input-area {
+        height: 60px;
+        min-height: 60px;
         padding: 7px;
+      }
+
+      #messageInput {
+        height: 44px;
+        font-size: 15px;
       }
 
       .send-btn {
         width: 44px;
+        min-width: 44px;
         height: 44px;
       }
     }
 
-    /* Very small phones */
+    /* SMALL PHONES */
     @media (max-width: 360px) {
-
-      .user-name {
-        max-width: 170px;
-      }
 
       .message {
         max-width: 88%;
+      }
+
+      .user-name {
+        max-width: 180px;
       }
 
     }
@@ -281,18 +311,29 @@
 
   <div class="chat-container">
 
-    <!-- Header -->
+    <!-- HEADER -->
     <div class="chat-header">
 
-      <a href="connections.html" class="back-btn">←</a>
+      <a
+        href="connections.html"
+        class="back-btn"
+      >
+        ←
+      </a>
 
-      <div class="user-avatar" id="userAvatar">
+      <div
+        class="user-avatar"
+        id="userAvatar"
+      >
         W
       </div>
 
       <div class="user-info">
 
-        <div class="user-name" id="otherUserName">
+        <div
+          class="user-name"
+          id="otherUserName"
+        >
           Loading...
         </div>
 
@@ -308,7 +349,7 @@
     </div>
 
 
-    <!-- Messages -->
+    <!-- MESSAGES -->
     <div
       class="messages"
       id="messages"
@@ -327,21 +368,18 @@
     </div>
 
 
-    <!-- Message Input -->
+    <!-- MESSAGE INPUT -->
     <div class="input-area">
 
-      <div class="message-input-box">
-
-        <input
-          type="text"
-          id="messageInput"
-          placeholder="Type a message..."
-          autocomplete="off"
-        >
-
-      </div>
+      <input
+        type="text"
+        id="messageInput"
+        placeholder="Type a message..."
+        autocomplete="off"
+      >
 
       <button
+        type="button"
         class="send-btn"
         id="sendBtn"
       >
@@ -379,7 +417,7 @@
     } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
 
 
-    /* Firebase */
+    /* FIREBASE */
 
     const firebaseConfig = {
       apiKey: "AIzaSyBAhtPH_elsDDkBsxZsvMO8FYwdOGna84g",
@@ -401,7 +439,7 @@
       getFirestore(app);
 
 
-    /* Elements */
+    /* ELEMENTS */
 
     const otherUserNameElement =
       document.getElementById(
@@ -439,7 +477,7 @@
     let otherUserName = null;
 
 
-    /* Chat ID */
+    /* CHAT ID */
 
     function getChatId(
       userA,
@@ -456,7 +494,7 @@
     }
 
 
-    /* Online / Offline */
+    /* ONLINE / OFFLINE */
 
     function updateOnlineStatus(
       data
@@ -485,7 +523,7 @@
     }
 
 
-    /* Listen to other user */
+    /* LISTEN TO USER STATUS */
 
     function listenToOtherUserStatus() {
 
@@ -518,13 +556,24 @@
 
           }
 
+        },
+        (error) => {
+
+          console.error(
+            "Status error:",
+            error
+          );
+
+          onlineStatus.textContent =
+            "⚪ Offline";
+
         }
       );
 
     }
 
 
-    /* Current user Online */
+    /* CURRENT USER ONLINE */
 
     async function setOnline() {
 
@@ -556,7 +605,7 @@
     }
 
 
-    /* Current user Offline */
+    /* CURRENT USER OFFLINE */
 
     async function setOffline() {
 
@@ -588,7 +637,7 @@
     }
 
 
-    /* Load Profile */
+    /* LOAD PROFILE */
 
     async function loadOtherUserProfile() {
 
@@ -624,8 +673,6 @@
             otherUserName;
 
 
-          /* Avatar */
-
           userAvatar.textContent =
             otherUserName
               .charAt(0)
@@ -645,7 +692,7 @@
     }
 
 
-    /* Delete Message */
+    /* DELETE MESSAGE */
 
     async function deleteMessage(
       messageId
@@ -701,7 +748,7 @@
     }
 
 
-    /* Load Messages */
+    /* LOAD MESSAGES */
 
     function loadMessages() {
 
@@ -758,9 +805,8 @@
                 );
 
 
-              wrapper.classList.add(
-                "message-wrapper"
-              );
+              wrapper.className =
+                "message-wrapper";
 
 
               const messageDiv =
@@ -769,12 +815,11 @@
                 );
 
 
-              messageDiv.classList.add(
-                "message"
-              );
+              messageDiv.className =
+                "message";
 
 
-              /* Sent */
+              /* SENT */
 
               if (
                 data.senderId ===
@@ -791,7 +836,7 @@
 
               }
 
-              /* Received */
+              /* RECEIVED */
 
               else {
 
@@ -806,7 +851,7 @@
               }
 
 
-              /* Message text */
+              /* TEXT */
 
               const textElement =
                 document.createElement(
@@ -822,7 +867,7 @@
               );
 
 
-              /* Delete button only for own messages */
+              /* DELETE ONLY OWN MESSAGE */
 
               if (
                 data.senderId ===
@@ -833,6 +878,10 @@
                   document.createElement(
                     "button"
                   );
+
+
+                deleteButton.type =
+                  "button";
 
 
                 deleteButton.className =
@@ -909,7 +958,7 @@
     }
 
 
-    /* Send Message */
+    /* SEND MESSAGE */
 
     async function sendMessage() {
 
@@ -945,7 +994,6 @@
             "messages"
           ),
           {
-
             senderId:
               currentUser.uid,
 
@@ -957,7 +1005,6 @@
 
             createdAt:
               serverTimestamp()
-
           }
         );
 
@@ -967,14 +1014,12 @@
 
         messageInput.focus();
 
-
       } catch (error) {
 
         console.error(
           "Message sending error:",
           error
         );
-
 
         alert(
           "Message send nahi hua."
@@ -985,7 +1030,7 @@
     }
 
 
-    /* Send button */
+    /* SEND BUTTON */
 
     sendBtn.addEventListener(
       "click",
@@ -993,7 +1038,7 @@
     );
 
 
-    /* Enter key */
+    /* ENTER TO SEND */
 
     messageInput.addEventListener(
       "keydown",
@@ -1013,7 +1058,7 @@
     );
 
 
-    /* Authentication */
+    /* AUTH */
 
     onAuthStateChanged(
       auth,
@@ -1033,20 +1078,7 @@
           user;
 
 
-        /* Set Online */
-
-        await setOnline();
-
-
-        /* Set Offline when leaving */
-
-        window.addEventListener(
-          "beforeunload",
-          setOffline
-        );
-
-
-        /* URL Parameters */
+        /* GET URL DATA FIRST */
 
         const params =
           new URLSearchParams(
@@ -1073,6 +1105,8 @@
         }
 
 
+        /* SHOW NAME IMMEDIATELY */
+
         otherUserNameElement.textContent =
           otherUserName ||
           "WorldMitra User";
@@ -1087,17 +1121,37 @@
           .toUpperCase();
 
 
-        /* Load profile */
+        /*
+          IMPORTANT:
+          Input area is already visible
+          and does not depend on Firebase.
+        */
+
+
+        /* SET ONLINE */
+
+        await setOnline();
+
+
+        /* OFFLINE WHEN LEAVING */
+
+        window.addEventListener(
+          "beforeunload",
+          setOffline
+        );
+
+
+        /* PROFILE */
 
         await loadOtherUserProfile();
 
 
-        /* Online / Offline */
+        /* STATUS */
 
         listenToOtherUserStatus();
 
 
-        /* Messages */
+        /* MESSAGES */
 
         loadMessages();
 
