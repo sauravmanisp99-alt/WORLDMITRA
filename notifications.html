@@ -134,7 +134,6 @@
     🌍 WorldMitra
   </div>
 
-
   <div class="container">
 
     <h1>🔔 Notifications</h1>
@@ -142,7 +141,6 @@
     <p class="subtitle">
       Stay updated with your WorldMitra activity.
     </p>
-
 
     <div id="notificationsList">
 
@@ -152,27 +150,23 @@
 
     </div>
 
-
     <a href="profile.html" class="back">
       ← Back to Profile
     </a>
 
   </div>
 
-
   <script type="module">
 
     import {
       initializeApp
-    }
-    from "https://www.gstatic.com/firebasejs/12.1.0/firebase-app.js";
+    } from "https://www.gstatic.com/firebasejs/12.1.0/firebase-app.js";
 
 
     import {
       getAuth,
       onAuthStateChanged
-    }
-    from "https://www.gstatic.com/firebasejs/12.1.0/firebase-auth.js";
+    } from "https://www.gstatic.com/firebasejs/12.1.0/firebase-auth.js";
 
 
     import {
@@ -180,12 +174,10 @@
       collection,
       query,
       where,
-      orderBy,
       getDocs,
       doc,
       updateDoc
-    }
-    from "https://www.gstatic.com/firebasejs/12.1.0/firebase-firestore.js";
+    } from "https://www.gstatic.com/firebasejs/12.1.0/firebase-firestore.js";
 
 
     const firebaseConfig = {
@@ -239,7 +231,6 @@
         return "";
       }
 
-
       try {
 
         const date =
@@ -247,12 +238,38 @@
             ? timestamp.toDate()
             : new Date(timestamp);
 
-
         return date.toLocaleString();
 
       } catch (error) {
 
         return "";
+
+      }
+
+    }
+
+
+    // -----------------------------------
+    // Convert timestamp to date
+    // -----------------------------------
+
+    function getNotificationDate(timestamp) {
+
+      try {
+
+        if (!timestamp) {
+          return new Date(0);
+        }
+
+        if (timestamp.toDate) {
+          return timestamp.toDate();
+        }
+
+        return new Date(timestamp);
+
+      } catch (error) {
+
+        return new Date(0);
 
       }
 
@@ -310,11 +327,6 @@
               "userId",
               "==",
               user.uid
-            ),
-
-            orderBy(
-              "createdAt",
-              "desc"
             )
 
           );
@@ -351,11 +363,58 @@
         }
 
 
+        // -----------------------------------
+        // Convert documents to array
+        // and sort newest first
+        // -----------------------------------
+
+        const notifications = [];
+
         snapshot.forEach(
           (notificationDoc) => {
 
+            notifications.push({
+
+              id:
+                notificationDoc.id,
+
+              data:
+                notificationDoc.data()
+
+            });
+
+          }
+        );
+
+
+        notifications.sort(
+          (a, b) => {
+
+            const dateA =
+              getNotificationDate(
+                a.data.createdAt
+              );
+
+            const dateB =
+              getNotificationDate(
+                b.data.createdAt
+              );
+
+            return dateB - dateA;
+
+          }
+        );
+
+
+        // -----------------------------------
+        // Display notifications
+        // -----------------------------------
+
+        notifications.forEach(
+          (item) => {
+
             const notification =
-              notificationDoc.data();
+              item.data;
 
 
             const card =
@@ -472,7 +531,7 @@
                 doc(
                   db,
                   "notifications",
-                  notificationDoc.id
+                  item.id
                 ),
 
                 {
