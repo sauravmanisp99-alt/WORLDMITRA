@@ -155,6 +155,33 @@
       font-weight: bold;
       min-height: 20px;
     }
+
+    /* Notifications button */
+
+    .notification-btn {
+      position: relative;
+      background: #7c3aed;
+    }
+
+    .notification-badge {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      min-width: 24px;
+      height: 24px;
+      padding: 0 7px;
+      margin-left: 7px;
+      border-radius: 20px;
+      background: #ef4444;
+      color: white;
+      font-size: 13px;
+      font-weight: bold;
+      vertical-align: middle;
+    }
+
+    .notification-badge.hidden {
+      display: none;
+    }
   </style>
 </head>
 
@@ -237,6 +264,20 @@
       🤝 My Connections
     </a>
 
+    <!-- Notifications -->
+
+    <a href="notifications.html" class="btn notification-btn">
+      🔔 Notifications
+
+      <span
+        id="notificationBadge"
+        class="notification-badge hidden"
+      >
+        0
+      </span>
+
+    </a>
+
     <a href="editprofile.html" class="btn">
       ✏️ Edit Profile
     </a>
@@ -267,7 +308,11 @@
       doc,
       getDoc,
       updateDoc,
-      setDoc
+      setDoc,
+      collection,
+      getDocs,
+      query,
+      where
     } from "https://www.gstatic.com/firebasejs/12.1.0/firebase-firestore.js";
 
 
@@ -326,6 +371,9 @@
 
     const logoutBtn =
       document.getElementById("logoutBtn");
+
+    const notificationBadge =
+      document.getElementById("notificationBadge");
 
 
     let currentUser = null;
@@ -452,6 +500,86 @@
 
         userInterests.textContent =
           "❤️ Interests not available";
+
+      }
+
+    }
+
+
+    /*
+      Load unread notification count
+    */
+
+    async function loadNotificationCount() {
+
+      if (!currentUser) {
+        return;
+      }
+
+
+      try {
+
+        const notificationQuery =
+          query(
+            collection(
+              db,
+              "notifications"
+            ),
+
+            where(
+              "userId",
+              "==",
+              currentUser.uid
+            ),
+
+            where(
+              "read",
+              "==",
+              false
+            )
+          );
+
+
+        const snapshot =
+          await getDocs(
+            notificationQuery
+          );
+
+
+        const count =
+          snapshot.size;
+
+
+        if (count > 0) {
+
+          notificationBadge.textContent =
+            count > 99
+              ? "99+"
+              : count;
+
+          notificationBadge.classList.remove(
+            "hidden"
+          );
+
+        } else {
+
+          notificationBadge.classList.add(
+            "hidden"
+          );
+
+        }
+
+
+      } catch (error) {
+
+        console.error(
+          "Notification count error:",
+          error
+        );
+
+        notificationBadge.classList.add(
+          "hidden"
+        );
 
       }
 
@@ -791,6 +919,11 @@
         await loadProfile(
           user
         );
+
+
+        // Load unread notification count
+
+        await loadNotificationCount();
 
       }
     );
