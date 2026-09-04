@@ -66,15 +66,25 @@
       justify-content: center;
       font-size: 25px;
       font-weight: bold;
+      overflow: hidden;
+    }
+
+    .avatar img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      display: block;
     }
 
     .info {
       flex: 1;
+      min-width: 0;
     }
 
     .info h2 {
       font-size: 18px;
       margin-bottom: 5px;
+      word-break: break-word;
     }
 
     .country {
@@ -94,6 +104,12 @@
       border-radius: 8px;
       font-weight: bold;
       cursor: pointer;
+      min-width: 70px;
+    }
+
+    .btn:disabled {
+      opacity: 0.6;
+      cursor: not-allowed;
     }
 
     .accept {
@@ -125,6 +141,28 @@
       border-radius: 10px;
       font-weight: bold;
     }
+
+    @media (max-width: 500px) {
+
+      .request-card {
+        align-items: flex-start;
+        flex-wrap: wrap;
+      }
+
+      .info {
+        padding-top: 5px;
+      }
+
+      .actions {
+        width: 100%;
+      }
+
+      .btn {
+        flex: 1;
+        min-width: 0;
+      }
+
+    }
   </style>
 </head>
 
@@ -154,6 +192,7 @@
 
   </div>
 
+
   <script type="module">
 
     import { initializeApp }
@@ -172,7 +211,8 @@
       getDocs,
       doc,
       updateDoc,
-      deleteDoc
+      deleteDoc,
+      getDoc
     } from "https://www.gstatic.com/firebasejs/12.1.0/firebase-firestore.js";
 
 
@@ -196,6 +236,49 @@
       document.getElementById("requestsList");
 
 
+    // ----------------------------------
+    // Get sender's latest profile
+    // ----------------------------------
+
+    async function getUserProfile(uid) {
+
+      try {
+
+        const profileRef =
+          doc(
+            db,
+            "users",
+            uid
+          );
+
+        const profileSnapshot =
+          await getDoc(profileRef);
+
+
+        if (profileSnapshot.exists()) {
+
+          return profileSnapshot.data();
+
+        }
+
+      } catch (error) {
+
+        console.error(
+          "Profile load error:",
+          error
+        );
+
+      }
+
+      return {};
+
+    }
+
+
+    // ----------------------------------
+    // Load Requests
+    // ----------------------------------
+
     async function loadRequests(user) {
 
       try {
@@ -205,6 +288,7 @@
           where("toUserId", "==", user.uid),
           where("status", "==", "pending")
         );
+
 
         const snapshot =
           await getDocs(requestsQuery);
@@ -222,64 +306,218 @@
           `;
 
           return;
+
         }
 
 
         for (const requestDoc of snapshot.docs) {
 
-          const request = requestDoc.data();
+          const request =
+            requestDoc.data();
+
+
+          /*
+            Get sender profile
+          */
+
+          const senderProfile =
+            await getUserProfile(
+              request.fromUserId
+            );
+
+
+          const senderName =
+            senderProfile.name ||
+            request.fromName ||
+            "WorldMitra User";
+
+
+          const senderCountry =
+            senderProfile.country ||
+            request.fromCountry ||
+            "Country not available";
+
+
+          const senderPhoto =
+            senderProfile.profileImage ||
+            "";
+
 
           const card =
             document.createElement("div");
 
-          card.className = "request-card";
+          card.className =
+            "request-card";
 
 
-          const firstLetter =
-            (request.fromName || "U")
-              .charAt(0)
-              .toUpperCase();
+          // ----------------------------------
+          // Avatar
+          // ----------------------------------
+
+          const avatar =
+            document.createElement("div");
+
+          avatar.className =
+            "avatar";
 
 
-          card.innerHTML = `
-            <div class="avatar">
-              ${firstLetter}
-            </div>
+          if (senderPhoto) {
 
-            <div class="info">
-              <h2>
-                ${request.fromName || "WorldMitra User"}
-              </h2>
+            const image =
+              document.createElement("img");
 
-              <div class="country">
-                🌎 ${request.fromCountry || "Country not available"}
-              </div>
-            </div>
+            image.src =
+              senderPhoto;
 
-            <div class="actions">
+            image.alt =
+              "Profile Photo";
 
-              <button class="btn accept">
-                Accept
-              </button>
 
-              <button class="btn reject">
-                Reject
-              </button>
+            image.onerror =
+              function() {
 
-            </div>
-          `;
+                this.remove();
+
+                avatar.textContent =
+                  senderName
+                    .charAt(0)
+                    .toUpperCase();
+
+              };
+
+
+            avatar.appendChild(
+              image
+            );
+
+          } else {
+
+            avatar.textContent =
+              senderName
+                .charAt(0)
+                .toUpperCase();
+
+          }
+
+
+          // ----------------------------------
+          // User information
+          // ----------------------------------
+
+          const info =
+            document.createElement("div");
+
+          info.className =
+            "info";
+
+
+          const name =
+            document.createElement("h2");
+
+          name.textContent =
+            senderName;
+
+
+          const country =
+            document.createElement("div");
+
+          country.className =
+            "country";
+
+          country.textContent =
+            "🌎 " +
+            senderCountry;
+
+
+          info.appendChild(
+            name
+          );
+
+          info.appendChild(
+            country
+          );
+
+
+          // ----------------------------------
+          // Action buttons
+          // ----------------------------------
+
+          const actions =
+            document.createElement("div");
+
+          actions.className =
+            "actions";
 
 
           const acceptButton =
-            card.querySelector(".accept");
+            document.createElement("button");
+
+          acceptButton.className =
+            "btn accept";
+
+          acceptButton.type =
+            "button";
+
+          acceptButton.textContent =
+            "Accept";
+
 
           const rejectButton =
-            card.querySelector(".reject");
+            document.createElement("button");
 
+          rejectButton.className =
+            "btn reject";
+
+          rejectButton.type =
+            "button";
+
+          rejectButton.textContent =
+            "Reject";
+
+
+          actions.appendChild(
+            acceptButton
+          );
+
+          actions.appendChild(
+            rejectButton
+          );
+
+
+          // ----------------------------------
+          // Add everything to card
+          // ----------------------------------
+
+          card.appendChild(
+            avatar
+          );
+
+          card.appendChild(
+            info
+          );
+
+          card.appendChild(
+            actions
+          );
+
+
+          // ----------------------------------
+          // ACCEPT
+          // ----------------------------------
 
           acceptButton.addEventListener(
             "click",
             async () => {
+
+              acceptButton.disabled =
+                true;
+
+              rejectButton.disabled =
+                true;
+
+              acceptButton.textContent =
+                "Accepting...";
+
 
               try {
 
@@ -294,11 +532,50 @@
                   }
                 );
 
-                alert("Connection accepted! 🎉");
+
+                alert(
+                  "Connection accepted! 🎉"
+                );
+
 
                 card.remove();
 
+
+                /*
+                  Check if no requests remain
+                */
+
+                if (
+                  requestsList.children.length ===
+                  0
+                ) {
+
+                  requestsList.innerHTML = `
+                    <div class="empty">
+                      No connection requests yet. 🌍
+                    </div>
+                  `;
+
+                }
+
+
               } catch (error) {
+
+                console.error(
+                  "Accept error:",
+                  error
+                );
+
+
+                acceptButton.disabled =
+                  false;
+
+                rejectButton.disabled =
+                  false;
+
+                acceptButton.textContent =
+                  "Accept";
+
 
                 alert(
                   "Could not accept request: " +
@@ -311,9 +588,23 @@
           );
 
 
+          // ----------------------------------
+          // REJECT
+          // ----------------------------------
+
           rejectButton.addEventListener(
             "click",
             async () => {
+
+              acceptButton.disabled =
+                true;
+
+              rejectButton.disabled =
+                true;
+
+              rejectButton.textContent =
+                "Rejecting...";
+
 
               try {
 
@@ -325,11 +616,46 @@
                   )
                 );
 
-                alert("Request rejected.");
+
+                alert(
+                  "Request rejected."
+                );
+
 
                 card.remove();
 
+
+                if (
+                  requestsList.children.length ===
+                  0
+                ) {
+
+                  requestsList.innerHTML = `
+                    <div class="empty">
+                      No connection requests yet. 🌍
+                    </div>
+                  `;
+
+                }
+
+
               } catch (error) {
+
+                console.error(
+                  "Reject error:",
+                  error
+                );
+
+
+                acceptButton.disabled =
+                  false;
+
+                rejectButton.disabled =
+                  false;
+
+                rejectButton.textContent =
+                  "Reject";
+
 
                 alert(
                   "Could not reject request: " +
@@ -342,19 +668,30 @@
           );
 
 
-          requestsList.appendChild(card);
+          requestsList.appendChild(
+            card
+          );
 
         }
 
+
       } catch (error) {
 
-        console.error(error);
+        console.error(
+          "Requests load error:",
+          error
+        );
+
 
         requestsList.innerHTML = `
           <div class="empty">
+
             Requests load नहीं हो पाए।
+
             <br><br>
+
             ${error.message}
+
           </div>
         `;
 
@@ -363,19 +700,30 @@
     }
 
 
-    onAuthStateChanged(auth, (user) => {
+    // ----------------------------------
+    // Authentication
+    // ----------------------------------
 
-      if (!user) {
+    onAuthStateChanged(
+      auth,
+      (user) => {
 
-        window.location.href = "login.html";
+        if (!user) {
 
-        return;
+          window.location.href =
+            "login.html";
+
+          return;
+
+        }
+
+
+        loadRequests(
+          user
+        );
 
       }
-
-      loadRequests(user);
-
-    });
+    );
 
   </script>
 
