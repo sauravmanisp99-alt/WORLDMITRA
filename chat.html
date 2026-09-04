@@ -3,6 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
   <title>Chat - WorldMitra</title>
 
   <style>
@@ -15,222 +16,179 @@
 
     body {
       background: #f5f8ff;
-      min-height: 100vh;
-    }
-
-    .header {
-      background: #2563eb;
-      color: white;
-      padding: 16px;
-      text-align: center;
-      font-size: 22px;
-      font-weight: bold;
+      height: 100vh;
+      display: flex;
+      justify-content: center;
+      align-items: center;
     }
 
     .chat-container {
-      width: 94%;
-      max-width: 700px;
-      margin: 20px auto;
+      width: 100%;
+      max-width: 500px;
+      height: 100vh;
       background: white;
-      border-radius: 16px;
-      overflow: hidden;
-      box-shadow: 0 5px 20px rgba(0,0,0,0.08);
+      display: flex;
+      flex-direction: column;
+      box-shadow: 0 0 15px rgba(0,0,0,0.08);
     }
 
-    .person {
-      padding: 16px;
-      border-bottom: 1px solid #eee;
+    .chat-header {
+      background: #4f46e5;
+      color: white;
+      padding: 15px;
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+
+    .back-btn {
+      color: white;
+      text-decoration: none;
+      font-size: 22px;
+    }
+
+    .user-info {
+      display: flex;
+      flex-direction: column;
+    }
+
+    .user-name {
       font-size: 18px;
       font-weight: bold;
     }
 
-    .person-country {
-      display: block;
-      margin-top: 5px;
-      color: #667085;
-      font-size: 14px;
-      font-weight: normal;
-    }
-
     .online-status {
-      display: block;
-      margin-top: 6px;
       font-size: 13px;
-      font-weight: normal;
+      margin-top: 3px;
     }
 
     .online {
-      color: #16a34a;
+      color: #22c55e;
     }
 
     .offline {
-      color: #667085;
+      color: #e5e7eb;
     }
 
     .messages {
-      height: 55vh;
-      min-height: 350px;
-      padding: 18px;
+      flex: 1;
+      padding: 15px;
       overflow-y: auto;
       background: #f8fafc;
-    }
-
-    .empty {
-      text-align: center;
-      color: #667085;
-      margin-top: 100px;
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
     }
 
     .message {
-      margin-bottom: 12px;
-      display: flex;
-    }
-
-    .message.mine {
-      justify-content: flex-end;
-    }
-
-    .bubble {
       max-width: 75%;
-      padding: 10px 14px;
-      border-radius: 14px;
-      background: #e5e7eb;
+      padding: 10px 13px;
+      border-radius: 15px;
       word-wrap: break-word;
+      font-size: 15px;
     }
 
-    .mine .bubble {
-      background: #2563eb;
+    .sent {
+      align-self: flex-end;
+      background: #4f46e5;
       color: white;
+      border-bottom-right-radius: 4px;
     }
 
-    .time {
-      display: block;
-      font-size: 10px;
-      margin-top: 5px;
-      opacity: 0.7;
+    .received {
+      align-self: flex-start;
+      background: #e5e7eb;
+      color: #111827;
+      border-bottom-left-radius: 4px;
     }
 
     .input-area {
       display: flex;
+      padding: 10px;
+      border-top: 1px solid #ddd;
+      background: white;
       gap: 8px;
-      padding: 12px;
-      border-top: 1px solid #eee;
     }
 
-    #messageInput {
+    .input-area input {
       flex: 1;
       padding: 12px;
-      border: 1px solid #d0d5dd;
-      border-radius: 10px;
+      border: 1px solid #ddd;
+      border-radius: 22px;
       outline: none;
       font-size: 15px;
     }
 
-    #sendBtn {
+    .input-area button {
       border: none;
-      background: #2563eb;
+      background: #4f46e5;
       color: white;
-      padding: 12px 18px;
-      border-radius: 10px;
-      font-weight: bold;
+      width: 45px;
+      height: 45px;
+      border-radius: 50%;
       cursor: pointer;
+      font-size: 18px;
     }
 
-    #sendBtn:disabled {
-      background: #9ca3af;
-      cursor: not-allowed;
-    }
-
-    .back {
-      display: block;
-      width: 94%;
-      max-width: 700px;
-      margin: 15px auto;
-      padding: 13px;
-      text-align: center;
-      background: #111827;
-      color: white;
-      text-decoration: none;
-      border-radius: 10px;
-      font-weight: bold;
+    .input-area button:hover {
+      background: #4338ca;
     }
   </style>
 </head>
 
 <body>
 
-  <div class="header">
-    🌍 WorldMitra
-  </div>
-
   <div class="chat-container">
 
-    <div class="person">
+    <div class="chat-header">
 
-      <span id="personName">
-        Loading...
-      </span>
+      <a href="connections.html" class="back-btn">←</a>
 
-      <span
-        class="person-country"
-        id="personCountry"
-      >
-        🌍 Loading country...
-      </span>
+      <div class="user-info">
 
-      <span
-        class="online-status offline"
-        id="onlineStatus"
-      >
-        ⚪ Checking status...
-      </span>
+        <div class="user-name" id="otherUserName">
+          Loading...
+        </div>
 
-    </div>
+        <span class="online-status offline" id="onlineStatus">
+          ⚪ Offline
+        </span>
 
-
-    <div class="messages" id="messages">
-
-      <div class="empty">
-        Loading messages...
       </div>
 
     </div>
 
+    <div class="messages" id="messages">
+      <div style="text-align:center;color:#888;">
+        Loading messages...
+      </div>
+    </div>
 
     <div class="input-area">
 
       <input
         type="text"
         id="messageInput"
-        placeholder="Write a message..."
+        placeholder="Type a message..."
         autocomplete="off"
       >
 
-      <button id="sendBtn">
-        Send
-      </button>
+      <button id="sendBtn">➤</button>
 
     </div>
 
   </div>
 
-
-  <a href="connections.html" class="back">
-    ← Back to Connections
-  </a>
-
-
   <script type="module">
 
-    import { initializeApp }
-      from "https://www.gstatic.com/firebasejs/12.1.0/firebase-app.js";
-
+    import {
+      initializeApp
+    } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
 
     import {
       getAuth,
       onAuthStateChanged
-    } from "https://www.gstatic.com/firebasejs/12.1.0/firebase-auth.js";
-
+    } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js";
 
     import {
       getFirestore,
@@ -243,96 +201,50 @@
       onSnapshot,
       serverTimestamp,
       updateDoc
-    } from "https://www.gstatic.com/firebasejs/12.1.0/firebase-firestore.js";
+    } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
 
 
+    // Firebase Configuration
     const firebaseConfig = {
-
-      apiKey:
-        "AIzaSyBAhtPH_elsDDkBsxZsvMO8FYwdOGna84g",
-
-      authDomain:
-        "worldmitra-33ca6.firebaseapp.com",
-
-      projectId:
-        "worldmitra-33ca6",
-
-      storageBucket:
-        "worldmitra-33ca6.firebasestorage.app",
-
-      messagingSenderId:
-        "1089520845776",
-
-      appId:
-        "1:1089520845776:web:2789654cc6061e7034afd5"
-
+      apiKey: "AIzaSyBAhtPH_elsDDkBsxZsvMO8FYwdOGna84g",
+      authDomain: "worldmitra-33ca6.firebaseapp.com",
+      projectId: "worldmitra-33ca6",
+      storageBucket: "worldmitra-33ca6.firebasestorage.app",
+      messagingSenderId: "1089520845776",
+      appId: "1:1089520845776:web:2789654cc6061e7034afd5"
     };
 
 
-    const app =
-      initializeApp(firebaseConfig);
+    const app = initializeApp(firebaseConfig);
+
+    const auth = getAuth(app);
+
+    const db = getFirestore(app);
 
 
-    const auth =
-      getAuth(app);
-
-
-    const db =
-      getFirestore(app);
-
-
-    const personName =
-      document.getElementById(
-        "personName"
-      );
-
-
-    const personCountry =
-      document.getElementById(
-        "personCountry"
-      );
-
+    const otherUserNameElement =
+      document.getElementById("otherUserName");
 
     const onlineStatus =
-      document.getElementById(
-        "onlineStatus"
-      );
+      document.getElementById("onlineStatus");
 
-
-    const messages =
-      document.getElementById(
-        "messages"
-      );
-
+    const messagesContainer =
+      document.getElementById("messages");
 
     const messageInput =
-      document.getElementById(
-        "messageInput"
-      );
-
+      document.getElementById("messageInput");
 
     const sendBtn =
-      document.getElementById(
-        "sendBtn"
-      );
+      document.getElementById("sendBtn");
 
 
     let currentUser = null;
-
     let otherUserId = null;
-
-    let otherUserName =
-      "WorldMitra User";
+    let otherUserName = null;
 
 
-    // -----------------------------------
-    // Get Chat ID
-    // -----------------------------------
-
-    function getChatId(
-      userA,
-      userB
-    ) {
+    // Create same chat ID for both users
+    function getChatId(userA, userB) {
 
       return [userA, userB]
         .sort()
@@ -341,155 +253,19 @@
     }
 
 
-    // -----------------------------------
-    // Format Last Seen
-    // -----------------------------------
+    // Update Online / Offline status
+    function updateOnlineStatus(data) {
 
-    function formatLastSeen(timestamp) {
+      if (data.online === true) {
 
-      if (!timestamp) {
-        return "Last seen unavailable";
-      }
-
-      try {
-
-        const date =
-          timestamp.toDate
-            ? timestamp.toDate()
-            : new Date(timestamp);
-
-        return "Last seen " +
-          date.toLocaleString();
-
-      } catch (error) {
-
-        return "Last seen unavailable";
-
-      }
-
-    }
-
-
-    // -----------------------------------
-    // Load Other User Profile
-    // -----------------------------------
-
-    async function loadOtherUserProfile() {
-
-      if (!otherUserId) {
-        return;
-      }
-
-
-      try {
-
-        const profileRef =
-          doc(
-            db,
-            "users",
-            otherUserId
-          );
-
-
-        const profileSnapshot =
-          await getDoc(
-            profileRef
-          );
-
-
-        if (
-          profileSnapshot.exists()
-        ) {
-
-          const data =
-            profileSnapshot.data();
-
-
-          otherUserName =
-            data.name ||
-            otherUserName;
-
-
-          personName.textContent =
-            "💬 " +
-            otherUserName;
-
-
-          personCountry.textContent =
-            "🌍 " +
-            (
-              data.country ||
-              "Country not added"
-            );
-
-
-          updateOnlineStatus(
-            data
-          );
-
-        } else {
-
-          personName.textContent =
-            "💬 " +
-            otherUserName;
-
-          personCountry.textContent =
-            "🌍 Country not available";
-
-          onlineStatus.textContent =
-            "⚪ Status unavailable";
-
-        }
-
-
-      } catch (error) {
-
-        console.error(
-          "Profile load error:",
-          error
-        );
-
-
-        personName.textContent =
-          "💬 " +
-          otherUserName;
-
-        personCountry.textContent =
-          "🌍 Country not available";
-
-        onlineStatus.textContent =
-          "⚪ Status unavailable";
-
-      }
-
-    }
-
-
-    // -----------------------------------
-    // Update Online Status
-    // -----------------------------------
-
-    function updateOnlineStatus(
-      data
-    ) {
-
-      if (
-        data.online === true
-      ) {
-
-        onlineStatus.textContent =
-          "🟢 Online";
+        onlineStatus.textContent = "🟢 Online";
 
         onlineStatus.className =
           "online-status online";
 
       } else {
 
-        onlineStatus.textContent =
-          "⚪ " +
-          formatLastSeen(
-            data.lastSeen
-          );
+        onlineStatus.textContent = "⚪ Offline";
 
         onlineStatus.className =
           "online-status offline";
@@ -499,82 +275,44 @@
     }
 
 
-    // -----------------------------------
-    // Listen to Other User Status
-    // -----------------------------------
-
+    // Listen to other user's status
     function listenToOtherUserStatus() {
 
-      if (!otherUserId) {
-        return;
-      }
-
+      if (!otherUserId) return;
 
       const userRef =
-        doc(
-          db,
-          "users",
-          otherUserId
-        );
+        doc(db, "users", otherUserId);
 
+      onSnapshot(userRef, (snapshot) => {
 
-      onSnapshot(
-        userRef,
+        if (snapshot.exists()) {
 
-        (snapshot) => {
+          updateOnlineStatus(snapshot.data());
 
-          if (
-            snapshot.exists()
-          ) {
+        } else {
 
-            updateOnlineStatus(
-              snapshot.data()
-            );
-
-          }
-
-        },
-
-        (error) => {
-
-          console.error(
-            "Status listener error:",
-            error
-          );
+          onlineStatus.textContent = "⚪ Offline";
 
         }
 
-      );
+      });
 
     }
 
 
-    // -----------------------------------
-    // Set Current User Online
-    // -----------------------------------
-
+    // Set current user Online
     async function setOnline() {
 
-      if (!currentUser) {
-        return;
-      }
-
+      if (!currentUser) return;
 
       try {
 
         await updateDoc(
-
-          doc(
-            db,
-            "users",
-            currentUser.uid
-          ),
-
+          doc(db, "users", currentUser.uid),
           {
             online: true,
             lastSeen: serverTimestamp()
           }
-
         );
 
       } catch (error) {
@@ -589,32 +327,19 @@
     }
 
 
-    // -----------------------------------
-    // Set Current User Offline
-    // -----------------------------------
-
+    // Set current user Offline
     async function setOffline() {
 
-      if (!currentUser) {
-        return;
-      }
-
+      if (!currentUser) return;
 
       try {
 
         await updateDoc(
-
-          doc(
-            db,
-            "users",
-            currentUser.uid
-          ),
-
+          doc(db, "users", currentUser.uid),
           {
             online: false,
             lastSeen: serverTimestamp()
           }
-
         );
 
       } catch (error) {
@@ -629,11 +354,151 @@
     }
 
 
-    // -----------------------------------
-    // Load Messages
-    // -----------------------------------
+    // Load other user's profile
+    async function loadOtherUserProfile() {
 
+      if (!otherUserId) return;
+
+      try {
+
+        const userDoc =
+          await getDoc(
+            doc(db, "users", otherUserId)
+          );
+
+        if (userDoc.exists()) {
+
+          const data =
+            userDoc.data();
+
+          otherUserName =
+            data.name ||
+            otherUserName ||
+            "WorldMitra User";
+
+          otherUserNameElement.textContent =
+            otherUserName;
+
+        }
+
+      } catch (error) {
+
+        console.error(
+          "Profile loading error:",
+          error
+        );
+
+      }
+
+    }
+
+
+    // Load messages
     function loadMessages() {
+
+      if (!currentUser || !otherUserId) return;
+
+      const chatId =
+        getChatId(
+          currentUser.uid,
+          otherUserId
+        );
+
+      const messagesRef =
+        collection(
+          db,
+          "chats",
+          chatId,
+          "messages"
+        );
+
+      const messagesQuery =
+        query(
+          messagesRef,
+          orderBy("createdAt", "asc")
+        );
+
+
+      onSnapshot(
+        messagesQuery,
+        (snapshot) => {
+
+          messagesContainer.innerHTML = "";
+
+          snapshot.forEach((messageDoc) => {
+
+            const data =
+              messageDoc.data();
+
+            const messageDiv =
+              document.createElement("div");
+
+            messageDiv.classList.add("message");
+
+
+            if (
+              data.senderId ===
+              currentUser.uid
+            ) {
+
+              messageDiv.classList.add("sent");
+
+            } else {
+
+              messageDiv.classList.add("received");
+
+            }
+
+
+            messageDiv.textContent =
+              data.text || "";
+
+
+            messagesContainer.appendChild(
+              messageDiv
+            );
+
+          });
+
+
+          messagesContainer.scrollTop =
+            messagesContainer.scrollHeight;
+
+        },
+        (error) => {
+
+          console.error(
+            "Messages loading error:",
+            error
+          );
+
+          messagesContainer.innerHTML =
+            `<div style="text-align:center;color:red;">
+              Unable to load messages
+            </div>`;
+
+        }
+      );
+
+    }
+
+
+    // Send message
+    async function sendMessage() {
+
+      const text =
+        messageInput.value.trim();
+
+      if (
+        !text ||
+        !currentUser ||
+        !otherUserId
+      ) {
+
+        return;
+
+      }
+
 
       const chatId =
         getChatId(
@@ -642,277 +507,57 @@
         );
 
 
-      const messagesQuery =
-        query(
-          collection(
-            db,
-            "chats",
-            chatId,
-            "messages"
-          ),
-          orderBy(
-            "createdAt",
-            "asc"
-          )
-        );
-
-
-      onSnapshot(
-        messagesQuery,
-
-        (snapshot) => {
-
-          messages.innerHTML =
-            "";
-
-
-          if (
-            snapshot.empty
-          ) {
-
-            messages.innerHTML = `
-
-              <div class="empty">
-
-                No messages yet.
-                Say hello! 👋
-
-              </div>
-
-            `;
-
-            return;
-
-          }
-
-
-          snapshot.forEach(
-            (messageDoc) => {
-
-              const data =
-                messageDoc.data();
-
-
-              const wrapper =
-                document.createElement(
-                  "div"
-                );
-
-
-              wrapper.className =
-                "message " +
-                (
-                  data.senderId ===
-                  currentUser.uid
-                    ? "mine"
-                    : ""
-                );
-
-
-              const bubble =
-                document.createElement(
-                  "div"
-                );
-
-
-              bubble.className =
-                "bubble";
-
-
-              bubble.textContent =
-                data.text || "";
-
-
-              if (
-                data.createdAt
-              ) {
-
-                const time =
-                  data.createdAt
-                    .toDate()
-                    .toLocaleTimeString(
-                      [],
-                      {
-                        hour:
-                          "2-digit",
-
-                        minute:
-                          "2-digit"
-                      }
-                    );
-
-
-                const timeElement =
-                  document.createElement(
-                    "span"
-                  );
-
-
-                timeElement.className =
-                  "time";
-
-
-                timeElement.textContent =
-                  time;
-
-
-                bubble.appendChild(
-                  timeElement
-                );
-
-              }
-
-
-              wrapper.appendChild(
-                bubble
-              );
-
-
-              messages.appendChild(
-                wrapper
-              );
-
-            }
-          );
-
-
-          messages.scrollTop =
-            messages.scrollHeight;
-
-        },
-
-        (error) => {
-
-          console.error(error);
-
-
-          messages.innerHTML = `
-
-            <div class="empty">
-
-              Messages load नहीं हो पाए।
-
-              <br><br>
-
-              ${error.message}
-
-            </div>
-
-          `;
-
-        }
-
-      );
-
-    }
-
-
-    // -----------------------------------
-    // Send Message
-    // -----------------------------------
-
-    async function sendMessage() {
-
-      const text =
-        messageInput.value.trim();
-
-
-      if (!text) {
-        return;
-      }
-
-
-      if (
-        !currentUser ||
-        !otherUserId
-      ) {
-
-        alert(
-          "Chat user information missing."
-        );
-
-        return;
-
-      }
-
-
-      sendBtn.disabled =
-        true;
-
-
       try {
 
-        const chatId =
-          getChatId(
-            currentUser.uid,
-            otherUserId
-          );
-
-
         await addDoc(
-
           collection(
             db,
             "chats",
             chatId,
             "messages"
           ),
-
           {
-
-            senderId:
-              currentUser.uid,
-
-            receiverId:
-              otherUserId,
-
-            text:
-              text,
-
-            createdAt:
-              serverTimestamp()
-
+            senderId: currentUser.uid,
+            receiverId: otherUserId,
+            text: text,
+            createdAt: serverTimestamp()
           }
-
         );
 
 
-        messageInput.value =
-          "";
+        messageInput.value = "";
 
+        messageInput.focus();
 
       } catch (error) {
 
-        console.error(error);
-
+        console.error(
+          "Message sending error:",
+          error
+        );
 
         alert(
-          "Message send नहीं हुआ: " +
-          error.message
+          "Message send nahi hua."
         );
 
       }
 
-
-      sendBtn.disabled =
-        false;
-
     }
 
 
+    // Send button
     sendBtn.addEventListener(
       "click",
       sendMessage
     );
 
 
+    // Enter key
     messageInput.addEventListener(
       "keydown",
       (event) => {
 
-        if (
-          event.key === "Enter"
-        ) {
+        if (event.key === "Enter") {
 
           sendMessage();
 
@@ -922,10 +567,7 @@
     );
 
 
-    // -----------------------------------
     // Authentication
-    // -----------------------------------
-
     onAuthStateChanged(
       auth,
       async (user) => {
@@ -940,21 +582,21 @@
         }
 
 
-        currentUser =
-          user;
+        currentUser = user;
 
 
-        // Set current user online
+        // Current user online
         await setOnline();
 
 
-        // Set offline when page is left
+        // When leaving chat
         window.addEventListener(
           "beforeunload",
           setOffline
         );
 
 
+        // Get other user's ID
         const params =
           new URLSearchParams(
             window.location.search
@@ -964,56 +606,35 @@
         otherUserId =
           params.get("uid");
 
-
         otherUserName =
-          params.get("name") ||
-          "WorldMitra User";
+          params.get("name");
 
 
         if (!otherUserId) {
 
-          personName.textContent =
-            "Chat user not found";
-
-
-          personCountry.textContent =
-            "";
-
-
-          onlineStatus.textContent =
-            "";
-
-
-          messages.innerHTML = `
-
-            <div class="empty">
-
-              Please open Chat from
-              My Connections.
-
-            </div>
-
-          `;
-
-
-          sendBtn.disabled =
-            true;
-
+          alert(
+            "User information not found."
+          );
 
           return;
 
         }
 
 
-        personName.textContent =
-          "💬 " +
-          otherUserName;
+        otherUserNameElement.textContent =
+          otherUserName ||
+          "WorldMitra User";
 
 
+        // Load profile
         await loadOtherUserProfile();
 
+
+        // Listen to Online / Offline
         listenToOtherUserStatus();
 
+
+        // Load messages
         loadMessages();
 
       }
