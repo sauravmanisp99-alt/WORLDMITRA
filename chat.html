@@ -1240,9 +1240,45 @@
             "W"
           )
           .charAt(0)
-          .toUpperCase();
+          .toUpperCase()
 
 
         /* SET CALL LINKS IMMEDIATELY */
 
         updateCallLinks();
+        /* SET ONLINE */
+
+        await setOnline();
+
+
+        /* OFFLINE WHEN LEAVING */
+
+        window.addEventListener(
+          "beforeunload",
+          setOffline
+        );
+
+
+        /* PROFILE */
+
+        await loadOtherUserProfile();
+
+
+        /* STATUS */
+
+        listenToOtherUserStatus();
+
+
+        /* MESSAGES */
+
+        loadMessages();
+
+      }
+    );
+
+  </script>
+
+</body>
+</html>
+        
+        
