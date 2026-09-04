@@ -52,6 +52,21 @@
       font-weight: normal;
     }
 
+    .online-status {
+      display: block;
+      margin-top: 6px;
+      font-size: 13px;
+      font-weight: normal;
+    }
+
+    .online {
+      color: #16a34a;
+    }
+
+    .offline {
+      color: #667085;
+    }
+
     .messages {
       height: 55vh;
       min-height: 350px;
@@ -163,6 +178,13 @@
         🌍 Loading country...
       </span>
 
+      <span
+        class="online-status offline"
+        id="onlineStatus"
+      >
+        ⚪ Checking status...
+      </span>
+
     </div>
 
 
@@ -219,7 +241,8 @@
       query,
       orderBy,
       onSnapshot,
-      serverTimestamp
+      serverTimestamp,
+      updateDoc
     } from "https://www.gstatic.com/firebasejs/12.1.0/firebase-firestore.js";
 
 
@@ -270,6 +293,12 @@
       );
 
 
+    const onlineStatus =
+      document.getElementById(
+        "onlineStatus"
+      );
+
+
     const messages =
       document.getElementById(
         "messages"
@@ -296,6 +325,10 @@
       "WorldMitra User";
 
 
+    // -----------------------------------
+    // Get Chat ID
+    // -----------------------------------
+
     function getChatId(
       userA,
       userB
@@ -307,6 +340,39 @@
 
     }
 
+
+    // -----------------------------------
+    // Format Last Seen
+    // -----------------------------------
+
+    function formatLastSeen(timestamp) {
+
+      if (!timestamp) {
+        return "Last seen unavailable";
+      }
+
+      try {
+
+        const date =
+          timestamp.toDate
+            ? timestamp.toDate()
+            : new Date(timestamp);
+
+        return "Last seen " +
+          date.toLocaleString();
+
+      } catch (error) {
+
+        return "Last seen unavailable";
+
+      }
+
+    }
+
+
+    // -----------------------------------
+    // Load Other User Profile
+    // -----------------------------------
 
     async function loadOtherUserProfile() {
 
@@ -356,6 +422,11 @@
               "Country not added"
             );
 
+
+          updateOnlineStatus(
+            data
+          );
+
         } else {
 
           personName.textContent =
@@ -364,6 +435,9 @@
 
           personCountry.textContent =
             "🌍 Country not available";
+
+          onlineStatus.textContent =
+            "⚪ Status unavailable";
 
         }
 
@@ -383,10 +457,181 @@
         personCountry.textContent =
           "🌍 Country not available";
 
+        onlineStatus.textContent =
+          "⚪ Status unavailable";
+
       }
 
     }
 
+
+    // -----------------------------------
+    // Update Online Status
+    // -----------------------------------
+
+    function updateOnlineStatus(
+      data
+    ) {
+
+      if (
+        data.online === true
+      ) {
+
+        onlineStatus.textContent =
+          "🟢 Online";
+
+        onlineStatus.className =
+          "online-status online";
+
+      } else {
+
+        onlineStatus.textContent =
+          "⚪ " +
+          formatLastSeen(
+            data.lastSeen
+          );
+
+        onlineStatus.className =
+          "online-status offline";
+
+      }
+
+    }
+
+
+    // -----------------------------------
+    // Listen to Other User Status
+    // -----------------------------------
+
+    function listenToOtherUserStatus() {
+
+      if (!otherUserId) {
+        return;
+      }
+
+
+      const userRef =
+        doc(
+          db,
+          "users",
+          otherUserId
+        );
+
+
+      onSnapshot(
+        userRef,
+
+        (snapshot) => {
+
+          if (
+            snapshot.exists()
+          ) {
+
+            updateOnlineStatus(
+              snapshot.data()
+            );
+
+          }
+
+        },
+
+        (error) => {
+
+          console.error(
+            "Status listener error:",
+            error
+          );
+
+        }
+
+      );
+
+    }
+
+
+    // -----------------------------------
+    // Set Current User Online
+    // -----------------------------------
+
+    async function setOnline() {
+
+      if (!currentUser) {
+        return;
+      }
+
+
+      try {
+
+        await updateDoc(
+
+          doc(
+            db,
+            "users",
+            currentUser.uid
+          ),
+
+          {
+            online: true,
+            lastSeen: serverTimestamp()
+          }
+
+        );
+
+      } catch (error) {
+
+        console.error(
+          "Online status error:",
+          error
+        );
+
+      }
+
+    }
+
+
+    // -----------------------------------
+    // Set Current User Offline
+    // -----------------------------------
+
+    async function setOffline() {
+
+      if (!currentUser) {
+        return;
+      }
+
+
+      try {
+
+        await updateDoc(
+
+          doc(
+            db,
+            "users",
+            currentUser.uid
+          ),
+
+          {
+            online: false,
+            lastSeen: serverTimestamp()
+          }
+
+        );
+
+      } catch (error) {
+
+        console.error(
+          "Offline status error:",
+          error
+        );
+
+      }
+
+    }
+
+
+    // -----------------------------------
+    // Load Messages
+    // -----------------------------------
 
     function loadMessages() {
 
@@ -562,6 +807,10 @@
     }
 
 
+    // -----------------------------------
+    // Send Message
+    // -----------------------------------
+
     async function sendMessage() {
 
       const text =
@@ -673,6 +922,10 @@
     );
 
 
+    // -----------------------------------
+    // Authentication
+    // -----------------------------------
+
     onAuthStateChanged(
       auth,
       async (user) => {
@@ -689,6 +942,17 @@
 
         currentUser =
           user;
+
+
+        // Set current user online
+        await setOnline();
+
+
+        // Set offline when page is left
+        window.addEventListener(
+          "beforeunload",
+          setOffline
+        );
 
 
         const params =
@@ -713,6 +977,10 @@
 
 
           personCountry.textContent =
+            "";
+
+
+          onlineStatus.textContent =
             "";
 
 
@@ -743,6 +1011,8 @@
 
 
         await loadOtherUserProfile();
+
+        listenToOtherUserStatus();
 
         loadMessages();
 
