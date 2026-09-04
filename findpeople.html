@@ -605,7 +605,9 @@
         }
 
 
-        // Create request
+        // ----------------------------------
+        // Create connection request
+        // ----------------------------------
 
         await addDoc(
           collection(
@@ -648,6 +650,68 @@
 
           }
         );
+
+
+        // ----------------------------------
+        // Create notification
+        // ----------------------------------
+
+        try {
+
+          await addDoc(
+            collection(
+              db,
+              "notifications"
+            ),
+            {
+
+              userId:
+                targetUser.uid,
+
+              type:
+                "connection_request",
+
+              message:
+                (
+                  currentUserProfile?.name ||
+                  currentUser.displayName ||
+                  currentUser.email ||
+                  "Someone"
+                ) +
+                " sent you a connection request.",
+
+              fromUserId:
+                currentUser.uid,
+
+              fromName:
+                currentUserProfile?.name ||
+                currentUser.displayName ||
+                "WorldMitra User",
+
+              read:
+                false,
+
+              createdAt:
+                new Date()
+
+            }
+          );
+
+          console.log(
+            "Notification created successfully."
+          );
+
+        } catch (notificationError) {
+
+          // Notification fail होने पर
+          // connection request को fail नहीं मानेंगे.
+
+          console.error(
+            "Notification error:",
+            notificationError
+          );
+
+        }
 
 
         connectionStatuses.set(
