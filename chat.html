@@ -1,12 +1,7 @@
-<!DOCTYPE html>
-<html lang="en">
+<!DOCTYPE html><html lang="en">
 <head>
   <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-
-  <title>Chat - WorldMitra</title>
-
-  <style>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">  <title>Chat - WorldMitra</title>  <style>
     * {
       box-sizing: border-box;
       margin: 0;
@@ -104,6 +99,38 @@
 
     .offline {
       color: #e5e7eb;
+    }
+
+    /* CALL BUTTONS */
+    .call-buttons {
+      display: flex;
+      align-items: center;
+      gap: 5px;
+      flex-shrink: 0;
+    }
+
+    .call-btn {
+      width: 40px;
+      min-width: 40px;
+      height: 40px;
+      border-radius: 50%;
+      background: rgba(255, 255, 255, 0.18);
+      color: white;
+      text-decoration: none;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 20px;
+      cursor: pointer;
+      transition: background 0.2s, transform 0.1s;
+    }
+
+    .call-btn:hover {
+      background: rgba(255, 255, 255, 0.30);
+    }
+
+    .call-btn:active {
+      transform: scale(0.92);
     }
 
     /* MESSAGES */
@@ -252,6 +279,12 @@
         height: 62px;
         min-height: 62px;
         padding: 6px 8px;
+        gap: 7px;
+      }
+
+      .back-btn {
+        width: 30px;
+        min-width: 30px;
       }
 
       .user-avatar {
@@ -262,6 +295,17 @@
 
       .user-name {
         font-size: 16px;
+      }
+
+      .call-buttons {
+        gap: 3px;
+      }
+
+      .call-btn {
+        width: 37px;
+        min-width: 37px;
+        height: 37px;
+        font-size: 18px;
       }
 
       .messages {
@@ -299,99 +343,122 @@
       }
 
       .user-name {
-        max-width: 180px;
+        max-width: 140px;
+      }
+
+      .call-btn {
+        width: 34px;
+        min-width: 34px;
+        height: 34px;
+        font-size: 17px;
       }
 
     }
 
-  </style>
-</head>
+  </style></head><body>  <div class="chat-container"><!-- HEADER -->
+<div class="chat-header">
 
-<body>
+  <a
+    href="connections.html"
+    class="back-btn"
+  >
+    ←
+  </a>
 
-  <div class="chat-container">
+  <div
+    class="user-avatar"
+    id="userAvatar"
+  >
+    W
+  </div>
 
-    <!-- HEADER -->
-    <div class="chat-header">
+  <div class="user-info">
 
-      <a
-        href="connections.html"
-        class="back-btn"
-      >
-        ←
-      </a>
-
-      <div
-        class="user-avatar"
-        id="userAvatar"
-      >
-        W
-      </div>
-
-      <div class="user-info">
-
-        <div
-          class="user-name"
-          id="otherUserName"
-        >
-          Loading...
-        </div>
-
-        <span
-          class="online-status offline"
-          id="onlineStatus"
-        >
-          ⚪ Offline
-        </span>
-
-      </div>
-
-    </div>
-
-
-    <!-- MESSAGES -->
     <div
-      class="messages"
-      id="messages"
+      class="user-name"
+      id="otherUserName"
     >
-
-      <div
-        style="
-          text-align:center;
-          color:#777;
-          margin-top:20px;
-        "
-      >
-        Loading messages...
-      </div>
-
+      Loading...
     </div>
 
-
-    <!-- MESSAGE INPUT -->
-    <div class="input-area">
-
-      <input
-        type="text"
-        id="messageInput"
-        placeholder="Type a message..."
-        autocomplete="off"
-      >
-
-      <button
-        type="button"
-        class="send-btn"
-        id="sendBtn"
-      >
-        ➤
-      </button>
-
-    </div>
+    <span
+      class="online-status offline"
+      id="onlineStatus"
+    >
+      ⚪ Offline
+    </span>
 
   </div>
 
 
-  <script type="module">
+  <!-- VOICE + VIDEO CALL -->
+  <div class="call-buttons">
+
+    <a
+      href="#"
+      class="call-btn"
+      id="voiceCallBtn"
+      title="Voice Call"
+      aria-label="Voice Call"
+    >
+      📞
+    </a>
+
+    <a
+      href="#"
+      class="call-btn"
+      id="videoCallBtn"
+      title="Video Call"
+      aria-label="Video Call"
+    >
+      📹
+    </a>
+
+  </div>
+
+</div>
+
+
+<!-- MESSAGES -->
+<div
+  class="messages"
+  id="messages"
+>
+
+  <div
+    style="
+      text-align:center;
+      color:#777;
+      margin-top:20px;
+    "
+  >
+    Loading messages...
+  </div>
+
+</div>
+
+
+<!-- MESSAGE INPUT -->
+<div class="input-area">
+
+  <input
+    type="text"
+    id="messageInput"
+    placeholder="Type a message..."
+    autocomplete="off"
+  >
+
+  <button
+    type="button"
+    class="send-btn"
+    id="sendBtn"
+  >
+    ➤
+  </button>
+
+</div>
+
+  </div>  <script type="module">
 
     import {
       initializeApp
@@ -472,6 +539,19 @@
       );
 
 
+    /* CALL BUTTON ELEMENTS */
+
+    const voiceCallBtn =
+      document.getElementById(
+        "voiceCallBtn"
+      );
+
+    const videoCallBtn =
+      document.getElementById(
+        "videoCallBtn"
+      );
+
+
     let currentUser = null;
     let otherUserId = null;
     let otherUserName = null;
@@ -490,6 +570,43 @@
       ]
       .sort()
       .join("_");
+
+    }
+
+
+    /* CALL LINKS */
+
+    function updateCallLinks() {
+
+      if (!otherUserId) {
+        return;
+      }
+
+      const name =
+        otherUserName ||
+        "WorldMitra User";
+
+
+      voiceCallBtn.href =
+        "call.html?uid=" +
+        encodeURIComponent(
+          otherUserId
+        ) +
+        "&name=" +
+        encodeURIComponent(
+          name
+        );
+
+
+      videoCallBtn.href =
+        "video-call.html?uid=" +
+        encodeURIComponent(
+          otherUserId
+        ) +
+        "&name=" +
+        encodeURIComponent(
+          name
+        );
 
     }
 
@@ -677,6 +794,11 @@
             otherUserName
               .charAt(0)
               .toUpperCase();
+
+
+          /* UPDATE CALL LINKS AFTER PROFILE LOAD */
+
+          updateCallLinks();
 
         }
 
@@ -1121,44 +1243,6 @@
           .toUpperCase();
 
 
-        /*
-          IMPORTANT:
-          Input area is already visible
-          and does not depend on Firebase.
-        */
+        /* SET CALL LINKS IMMEDIATELY */
 
-
-        /* SET ONLINE */
-
-        await setOnline();
-
-
-        /* OFFLINE WHEN LEAVING */
-
-        window.addEventListener(
-          "beforeunload",
-          setOffline
-        );
-
-
-        /* PROFILE */
-
-        await loadOtherUserProfile();
-
-
-        /* STATUS */
-
-        listenToOtherUserStatus();
-
-
-        /* MESSAGES */
-
-        loadMessages();
-
-      }
-    );
-
-  </script>
-
-</body>
-</html>
+        updateCallLinks();
