@@ -1,12 +1,7 @@
-<!DOCTYPE html>
-<html lang="en">
+<!DOCTYPE html><html lang="en">
 <head>
   <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-
-  <title>WorldMitra - Profile</title>
-
-  <style>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">  <title>WorldMitra</title>  <style>
     * {
       box-sizing: border-box;
       margin: 0;
@@ -15,455 +10,288 @@
     }
 
     body {
-      background: #f4f6f8;
       min-height: 100vh;
+      background: linear-gradient(135deg, #eef4ff, #ffffff);
+      color: #111827;
     }
 
     /* =========================
-       OTP SCREEN
+       HEADER
        ========================= */
 
-    #authScreen {
-      min-height: 100vh;
+    header {
+      width: 100%;
+      background: white;
+      padding: 18px 7%;
       display: flex;
-      align-items: center;
       justify-content: center;
-      padding: 20px;
-      background: linear-gradient(
-        135deg,
-        #4f46e5,
-        #2563eb
-      );
+      align-items: center;
+      box-shadow: 0 2px 12px rgba(0,0,0,0.08);
     }
 
-    .auth-card {
+    .logo {
+      font-size: 26px;
+      font-weight: bold;
+      color: #2563eb;
+    }
+
+
+    /* =========================
+       MAIN
+       ========================= */
+
+    .main {
+      min-height: calc(100vh - 75px);
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      padding: 30px 20px;
+    }
+
+    .container {
       width: 100%;
-      max-width: 420px;
-      background: white;
-      padding: 30px 25px;
-      border-radius: 20px;
-      box-shadow: 0 15px 40px rgba(0,0,0,0.18);
+      max-width: 650px;
       text-align: center;
     }
 
-    .auth-logo {
-      font-size: 42px;
-      margin-bottom: 10px;
-    }
 
-    .auth-card h1 {
-      color: #2563eb;
-      margin-bottom: 8px;
-    }
+    /* =========================
+       WELCOME
+       ========================= */
 
-    .auth-card p {
-      color: #666;
-      margin-bottom: 25px;
-      line-height: 1.5;
-    }
-
-    .phone-input,
-    .otp-input {
-      width: 100%;
-      padding: 14px;
-      border: 1px solid #ddd;
-      border-radius: 10px;
-      font-size: 16px;
-      outline: none;
+    .world-icon {
+      font-size: 65px;
       margin-bottom: 15px;
     }
 
-    .phone-input:focus,
-    .otp-input:focus {
-      border-color: #2563eb;
+    h1 {
+      font-size: 36px;
+      margin-bottom: 12px;
+      color: #111827;
     }
 
-    .otp-btn {
-      width: 100%;
-      padding: 14px;
-      border: none;
-      border-radius: 10px;
-      background: #2563eb;
-      color: white;
-      font-size: 16px;
-      font-weight: bold;
-      cursor: pointer;
+    .subtitle {
+      color: #667085;
+      font-size: 17px;
+      line-height: 1.6;
+      margin-bottom: 35px;
     }
 
-    .otp-btn:disabled {
-      opacity: 0.6;
-      cursor: not-allowed;
-    }
-
-    #recaptcha-container {
-      margin: 15px 0;
-      display: flex;
-      justify-content: center;
-    }
-
-    #otpSection {
-      display: none;
-    }
-
-    #otpMessage {
-      margin-top: 15px;
-      font-size: 14px;
-      min-height: 20px;
-    }
 
     /* =========================
-       PROFILE APP
+       OPTIONS
        ========================= */
 
-    #profileApp {
-      display: none;
+    .options {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 18px;
     }
 
-    header {
-      background: #2563eb;
-      color: white;
-      padding: 18px 20px;
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-    }
-
-    header h2 {
-      font-size: 22px;
-    }
-
-    .profile-container {
-      max-width: 800px;
-      margin: 25px auto;
-      padding: 0 15px;
-    }
-
-    .profile-card {
-      background: white;
-      border-radius: 18px;
-      padding: 25px;
-      box-shadow: 0 5px 20px rgba(0,0,0,0.08);
-    }
-
-    .profile-top {
-      text-align: center;
-      margin-bottom: 25px;
-    }
-
-    #profilePhoto {
-      width: 120px;
-      height: 120px;
-      border-radius: 50%;
-      object-fit: cover;
-      border: 4px solid #2563eb;
-      margin-bottom: 12px;
-    }
-
-    #userName {
-      font-size: 25px;
-      color: #222;
-      margin-bottom: 5px;
-    }
-
-    #userEmail {
-      color: #666;
-      font-size: 14px;
-    }
-
-    .profile-info {
-      margin-top: 20px;
-    }
-
-    .info-box {
-      padding: 15px;
-      border-bottom: 1px solid #eee;
-    }
-
-    .info-box:last-child {
-      border-bottom: none;
-    }
-
-    .info-box strong {
-      display: block;
-      color: #2563eb;
-      margin-bottom: 6px;
-    }
-
-    .menu {
-      margin-top: 25px;
-    }
-
-    .menu a,
-    .menu button {
-      display: block;
-      width: 100%;
-      padding: 13px 15px;
-      margin-bottom: 10px;
-      border-radius: 10px;
-      border: none;
-      background: #f1f5f9;
-      color: #222;
+    .option {
       text-decoration: none;
-      text-align: left;
-      font-size: 15px;
-      cursor: pointer;
+      background: white;
+      padding: 30px 18px;
+      border-radius: 18px;
+      box-shadow: 0 6px 22px rgba(0,0,0,0.08);
+      transition: 0.25s;
+      color: #111827;
     }
 
-    .menu a:hover,
-    .menu button:hover {
-      background: #e2e8f0;
+    .option:hover {
+      transform: translateY(-5px);
+      box-shadow: 0 10px 28px rgba(0,0,0,0.12);
     }
 
-    .photo-upload {
-      margin-top: 15px;
+    .option-icon {
+      font-size: 45px;
+      margin-bottom: 15px;
     }
 
-    .photo-upload input {
-      width: 100%;
-      padding: 10px;
+    .option h2 {
+      font-size: 20px;
+      margin-bottom: 8px;
     }
 
-    .logout-btn {
-      background: #fee2e2 !important;
-      color: #dc2626 !important;
+    .option p {
+      font-size: 14px;
+      color: #667085;
+      line-height: 1.5;
     }
 
-    @media (max-width: 600px) {
-      .profile-card {
-        padding: 18px;
+
+    /* =========================
+       FOOTER
+       ========================= */
+
+    footer {
+      text-align: center;
+      padding: 18px;
+      color: #667085;
+      font-size: 13px;
+    }
+
+
+    /* =========================
+       MOBILE
+       ========================= */
+
+    @media (max-width: 650px) {
+
+      header {
+        padding: 16px 5%;
       }
 
-      #profilePhoto {
-        width: 100px;
-        height: 100px;
+      .logo {
+        font-size: 23px;
       }
 
-      #userName {
-        font-size: 22px;
+      h1 {
+        font-size: 30px;
+      }
+
+      .subtitle {
+        font-size: 16px;
+        margin-bottom: 28px;
+      }
+
+      .options {
+        grid-template-columns: 1fr;
+        gap: 15px;
+      }
+
+      .option {
+        padding: 22px 18px;
+      }
+
+      .option-icon {
+        font-size: 40px;
+        margin-bottom: 10px;
+      }
+
+      .world-icon {
+        font-size: 55px;
       }
     }
-  </style>
-</head>
+  </style></head><body>  <!-- =========================
+       HEADER
+       ========================= -->  <header><div class="logo">
+  🌍 WorldMitra
+</div>
 
-<body>
+  </header>  <!-- =========================
+       MAIN
+       ========================= -->  <main class="main"><div class="container">
+
+  <div class="world-icon">
+    🌍
+  </div>
+
+  <h1>
+    Welcome to WorldMitra
+  </h1>
+
+  <p class="subtitle">
+    Connect with people around the world
+    through chat, voice and video.
+  </p>
+
 
   <!-- =========================
-       OTP AUTH SCREEN
+       THREE OPTIONS ONLY
        ========================= -->
 
-  <div id="authScreen">
+  <div class="options">
 
-    <div class="auth-card">
+    <!-- CHAT -->
 
-      <div class="auth-logo">🌍</div>
+    <a
+      href="chat.html"
+      class="option"
+    >
 
-      <h1>WorldMitra</h1>
+      <div class="option-icon">
+        💬
+      </div>
+
+      <h2>
+        Chat
+      </h2>
 
       <p>
-        अपने मोबाइल नंबर से OTP verify करें
-        और WorldMitra शुरू करें।
+        Chat with your connections
+        around the world.
       </p>
 
-      <!-- PHONE SECTION -->
+    </a>
 
-      <div id="phoneSection">
 
-        <input
-          type="tel"
-          id="phoneNumber"
-          class="phone-input"
-          placeholder="Mobile Number"
-          autocomplete="tel"
-        >
+    <!-- VOICE CALL -->
 
-        <div id="recaptcha-container"></div>
+    <a
+      href="call.html"
+      class="option"
+    >
 
-        <button
-          id="sendOtpBtn"
-          class="otp-btn"
-        >
-          Send OTP
-        </button>
-
+      <div class="option-icon">
+        📞
       </div>
 
+      <h2>
+        Voice Call
+      </h2>
 
-      <!-- OTP SECTION -->
+      <p>
+        Talk with your connections
+        using voice calls.
+      </p>
 
-      <div id="otpSection">
+    </a>
 
-        <input
-          type="text"
-          id="otpCode"
-          class="otp-input"
-          placeholder="Enter 6-digit OTP"
-          maxlength="6"
-          inputmode="numeric"
-        >
 
-        <button
-          id="verifyOtpBtn"
-          class="otp-btn"
-        >
-          Verify OTP
-        </button>
+    <!-- VIDEO CALL -->
 
+    <a
+      href="video-call.html"
+      class="option"
+    >
+
+      <div class="option-icon">
+        📹
       </div>
 
-      <div id="otpMessage"></div>
+      <h2>
+        Video Call
+      </h2>
 
-    </div>
+      <p>
+        Connect face-to-face
+        with video calls.
+      </p>
+
+    </a>
 
   </div>
 
+</div>
 
-  <!-- =========================
-       PROFILE APP
-       ========================= -->
+  </main>  <footer>
+    © 2026 WorldMitra · Connect with the World
+  </footer>  <!-- =========================
+       FIREBASE AUTH CHECK
+       ========================= -->  <script type="module">
 
-  <div id="profileApp">
-
-    <header>
-
-      <h2>🌍 WorldMitra</h2>
-
-    </header>
-
-    <div class="profile-container">
-
-      <div class="profile-card">
-
-        <div class="profile-top">
-
-          <img
-            id="profilePhoto"
-            src="https://via.placeholder.com/150"
-            alt="Profile Photo"
-          >
-
-          <h1 id="userName">
-            WorldMitra User
-          </h1>
-
-          <p id="userEmail">
-            Phone verified
-          </p>
-
-          <div class="photo-upload">
-
-            <input
-              type="file"
-              id="photoInput"
-              accept="image/*"
-            >
-
-          </div>
-
-        </div>
-
-        <div class="profile-info">
-
-          <div class="info-box">
-            <strong>🌍 Country</strong>
-            <span id="userCountry">
-              India
-            </span>
-          </div>
-
-          <div class="info-box">
-            <strong>📝 Bio</strong>
-            <span id="userBio">
-              Hello! I am using WorldMitra.
-            </span>
-          </div>
-
-          <div class="info-box">
-            <strong>❤️ Interests</strong>
-            <span id="userInterests">
-              Add your interests
-            </span>
-          </div>
-
-        </div>
-
-        <div class="menu">
-
-          <a href="index.html">
-            🏠 Home
-          </a>
-
-          <a href="find-people.html">
-            🔎 Find People
-          </a>
-
-          <a href="chat.html">
-            💬 Chat
-          </a>
-
-          <a href="call.html">
-            📞 Voice Call
-          </a>
-
-          <a href="video-call.html">
-            📹 Video Call
-          </a>
-
-          <a href="notifications.html">
-            🔔 Notifications
-            <span
-              id="notificationCount"
-              style="display:none;"
-            ></span>
-          </a>
-
-          <a href="edit-profile.html">
-            ✏️ Edit Profile
-          </a>
-
-          <button
-            id="logoutBtn"
-            class="logout-btn"
-          >
-            🚪 Logout
-          </button>
-
-        </div>
-
-      </div>
-
-    </div>
-
-  </div>
-  <!-- =========================
-       FIREBASE
-       ========================= -->
-
-  <script type="module">
-
-    import { initializeApp }
+    import {
+      initializeApp
+    }
     from "https://www.gstatic.com/firebasejs/12.1.0/firebase-app.js";
+
 
     import {
       getAuth,
-      RecaptchaVerifier,
-      signInWithPhoneNumber,
-      onAuthStateChanged,
-      signOut
+      onAuthStateChanged
     }
     from "https://www.gstatic.com/firebasejs/12.1.0/firebase-auth.js";
-
-    import {
-      getFirestore,
-      doc,
-      getDoc,
-      setDoc,
-      updateDoc,
-      collection,
-      getDocs,
-      query,
-      where
-    }
-    from "https://www.gstatic.com/firebasejs/12.1.0/firebase-firestore.js";
 
 
     // =========================
@@ -471,12 +299,25 @@
     // =========================
 
     const firebaseConfig = {
-      apiKey: "AIzaSyBAhtPH_elsDDkBsxZsvMO8FYwdOGna84g",
-      authDomain: "worldmitra-33ca6.firebaseapp.com",
-      projectId: "worldmitra-33ca6",
-      storageBucket: "worldmitra-33ca6.firebasestorage.app",
-      messagingSenderId: "1089520845776",
-      appId: "1:1089520845776:web:2789654cc6061e7034afd5"
+
+      apiKey:
+        "AIzaSyBAhtPH_elsDDkBsxZsvMO8FYwdOGna84g",
+
+      authDomain:
+        "worldmitra-33ca6.firebaseapp.com",
+
+      projectId:
+        "worldmitra-33ca6",
+
+      storageBucket:
+        "worldmitra-33ca6.firebasestorage.app",
+
+      messagingSenderId:
+        "1089520845776",
+
+      appId:
+        "1:1089520845776:web:2789654cc6061e7034afd5"
+
     };
 
 
@@ -484,824 +325,33 @@
     // INITIALIZE FIREBASE
     // =========================
 
-    const app = initializeApp(firebaseConfig);
+    const app =
+      initializeApp(firebaseConfig);
 
-    const auth = getAuth(app);
-
-    const db = getFirestore(app);
-
-
-    // =========================
-    // ELEMENTS
-    // =========================
-
-    const authScreen =
-      document.getElementById("authScreen");
-
-    const profileApp =
-      document.getElementById("profileApp");
-
-    const phoneSection =
-      document.getElementById("phoneSection");
-
-    const otpSection =
-      document.getElementById("otpSection");
-
-    const phoneNumber =
-      document.getElementById("phoneNumber");
-
-    const otpCode =
-      document.getElementById("otpCode");
-
-    const sendOtpBtn =
-      document.getElementById("sendOtpBtn");
-
-    const verifyOtpBtn =
-      document.getElementById("verifyOtpBtn");
-
-    const otpMessage =
-      document.getElementById("otpMessage");
-
-    const notificationCount =
-      document.getElementById("notificationCount");
-
-    const userName =
-      document.getElementById("userName");
-
-    const userEmail =
-      document.getElementById("userEmail");
-
-    const userCountry =
-      document.getElementById("userCountry");
-
-    const userBio =
-      document.getElementById("userBio");
-
-    const userInterests =
-      document.getElementById("userInterests");
-
-    const profilePhoto =
-      document.getElementById("profilePhoto");
-
-    const photoInput =
-      document.getElementById("photoInput");
-
-    const logoutBtn =
-      document.getElementById("logoutBtn");
+    const auth =
+      getAuth(app);
 
 
     // =========================
-    // VARIABLES
-    // =========================
-
-    let currentUser = null;
-
-    let confirmationResult = null;
-
-    let recaptchaVerifier = null;
-
-
-    // =========================
-    // MESSAGE
-    // =========================
-
-    function showMessage(message, type) {
-
-      otpMessage.textContent = message;
-
-      if (type === "error") {
-        otpMessage.style.color = "#dc2626";
-      } else {
-        otpMessage.style.color = "#16a34a";
-      }
-    }
-
-
-    // =========================
-    // RECAPTCHA
-    // =========================
-
-    async function setupRecaptcha() {
-
-      try {
-
-        if (recaptchaVerifier) {
-          recaptchaVerifier.clear();
-          recaptchaVerifier = null;
-        }
-
-        recaptchaVerifier =
-          new RecaptchaVerifier(
-            auth,
-            "recaptcha-container",
-            {
-              size: "normal",
-
-              callback: () => {
-                showMessage(
-                  "reCAPTCHA verified.",
-                  "success"
-                );
-              },
-
-              "expired-callback": () => {
-                showMessage(
-                  "reCAPTCHA expire हो गया। दोबारा verify करें।",
-                  "error"
-                );
-              }
-            }
-          );
-
-        await recaptchaVerifier.render();
-
-      } catch (error) {
-
-        console.error(
-          "reCAPTCHA error:",
-          error
-        );
-
-      }
-    }
-
-
-    // =========================
-    // START RECAPTCHA
-    // =========================
-
-    setupRecaptcha();
-
-
-    // =========================
-    // SEND OTP
-    // =========================
-
-    sendOtpBtn.addEventListener(
-      "click",
-      async () => {
-
-        let phone =
-          phoneNumber.value.trim();
-
-        if (!phone) {
-
-          showMessage(
-            "कृपया मोबाइल नंबर डालें।",
-            "error"
-          );
-
-          return;
-        }
-
-
-        // Indian 10 digit number
-        if (
-          /^[6-9][0-9]{9}$/.test(phone)
-        ) {
-
-          phone = "+91" + phone;
-
-        } else if (
-          !phone.startsWith("+")
-        ) {
-
-          showMessage(
-            "नंबर सही format में डालें। उदाहरण: 9876543210",
-            "error"
-          );
-
-          return;
-        }
-
-
-        sendOtpBtn.disabled = true;
-
-        showMessage(
-          "OTP भेजा जा रहा है...",
-          "success"
-        );
-
-
-        try {
-
-          confirmationResult =
-            await signInWithPhoneNumber(
-              auth,
-              phone,
-              recaptchaVerifier
-            );
-
-
-          phoneSection.style.display =
-            "none";
-
-          otpSection.style.display =
-            "block";
-
-          showMessage(
-            "OTP आपके मोबाइल नंबर पर भेज दिया गया है।",
-            "success"
-          );
-
-          otpCode.focus();
-
-
-        } catch (error) {
-
-          console.error(
-            "Send OTP error:",
-            error
-          );
-
-          showMessage(
-            "OTP भेजने में समस्या हुई। कृपया दोबारा कोशिश करें।",
-            "error"
-          );
-
-          sendOtpBtn.disabled = false;
-
-
-          try {
-
-            if (recaptchaVerifier) {
-              recaptchaVerifier.clear();
-              recaptchaVerifier = null;
-            }
-
-            await setupRecaptcha();
-
-          } catch (e) {
-
-            console.log(
-              "reCAPTCHA reset error:",
-              e
-            );
-
-          }
-        }
-      }
-    );
-    // =========================
-    // VERIFY OTP
-    // =========================
-
-    verifyOtpBtn.addEventListener(
-      "click",
-      async () => {
-
-        const code =
-          otpCode.value.trim();
-
-        if (!code || code.length !== 6) {
-
-          showMessage(
-            "कृपया 6 अंकों का OTP डालें।",
-            "error"
-          );
-
-          return;
-        }
-
-        if (!confirmationResult) {
-
-          showMessage(
-            "पहले OTP भेजें।",
-            "error"
-          );
-
-          return;
-        }
-
-        verifyOtpBtn.disabled = true;
-
-        showMessage(
-          "OTP verify हो रहा है...",
-          "success"
-        );
-
-
-        try {
-
-          const result =
-            await confirmationResult.confirm(code);
-
-          currentUser = result.user;
-
-
-          // =========================
-          // CREATE / UPDATE USER
-          // =========================
-
-          const profileRef =
-            doc(
-              db,
-              "users",
-              currentUser.uid
-            );
-
-          await setDoc(
-            profileRef,
-            {
-              phone:
-                currentUser.phoneNumber ||
-                phoneNumber.value.trim(),
-
-              email:
-                currentUser.email || ""
-            },
-            {
-              merge: true
-            }
-          );
-
-
-          // =========================
-          // OPEN PROFILE
-          // =========================
-
-          authScreen.style.display =
-            "none";
-
-          profileApp.style.display =
-            "block";
-
-
-          await loadProfile(currentUser);
-
-          await loadNotificationCount();
-
-
-        } catch (error) {
-
-          console.error(
-            "OTP verification error:",
-            error
-          );
-
-          showMessage(
-            "OTP गलत है या expire हो गया है।",
-            "error"
-          );
-
-          verifyOtpBtn.disabled = false;
-        }
-      }
-    );
-
-
-    // =========================
-    // LOAD PROFILE
-    // =========================
-
-    async function loadProfile(user) {
-
-      try {
-
-        const profileRef =
-          doc(
-            db,
-            "users",
-            user.uid
-          );
-
-        const profileSnap =
-          await getDoc(profileRef);
-
-        let data = {};
-
-
-        if (profileSnap.exists()) {
-
-          data =
-            profileSnap.data();
-
-        } else {
-
-          data = {
-            name: "WorldMitra User",
-            country: "India",
-            bio:
-              "Hello! I am using WorldMitra.",
-            interests: "",
-            phone:
-              user.phoneNumber || "",
-            email:
-              user.email || ""
-          };
-
-
-          await setDoc(
-            profileRef,
-            data,
-            {
-              merge: true
-            }
-          );
-        }
-
-
-        userName.textContent =
-          data.name ||
-          "WorldMitra User";
-
-
-        if (user.phoneNumber) {
-
-          userEmail.textContent =
-            "📱 " + user.phoneNumber;
-
-        } else {
-
-          userEmail.textContent =
-            data.email ||
-            "Phone verified";
-        }
-
-
-        userCountry.textContent =
-          data.country ||
-          "India";
-
-
-        userBio.textContent =
-          data.bio ||
-          "Hello! I am using WorldMitra.";
-
-
-        userInterests.textContent =
-          data.interests ||
-          "Add your interests";
-
-
-        if (data.photo) {
-
-          profilePhoto.src =
-            data.photo;
-
-        } else {
-
-          profilePhoto.src =
-            "https://via.placeholder.com/150";
-        }
-
-
-      } catch (error) {
-
-        console.error(
-          "Profile loading error:",
-          error
-        );
-      }
-    }
-
-
-    // =========================
-    // NOTIFICATION COUNT
-    // =========================
-
-    async function loadNotificationCount() {
-
-      if (!currentUser) return;
-
-      try {
-
-        const notificationsRef =
-          collection(
-            db,
-            "notifications"
-          );
-
-        const q =
-          query(
-            notificationsRef,
-            where(
-              "userId",
-              "==",
-              currentUser.uid
-            ),
-            where(
-              "read",
-              "==",
-              false
-            )
-          );
-
-        const snapshot =
-          await getDocs(q);
-
-
-        if (snapshot.size > 0) {
-
-          notificationCount.textContent =
-            snapshot.size;
-
-          notificationCount.style.display =
-            "inline-block";
-
-        } else {
-
-          notificationCount.style.display =
-            "none";
-        }
-
-
-      } catch (error) {
-
-        console.log(
-          "Notification count error:",
-          error
-        );
-
-        notificationCount.style.display =
-          "none";
-      }
-    }
-
-
-    // =========================
-    // IMAGE COMPRESSION
-    // =========================
-
-    function compressImage(file) {
-
-      return new Promise(
-        (resolve, reject) => {
-
-          const reader =
-            new FileReader();
-
-
-          reader.onload =
-            event => {
-
-              const img =
-                new Image();
-
-
-              img.onload =
-                () => {
-
-                  const canvas =
-                    document.createElement(
-                      "canvas"
-                    );
-
-                  const maxSize = 500;
-
-                  let width =
-                    img.width;
-
-                  let height =
-                    img.height;
-
-
-                  if (width > height) {
-
-                    if (width > maxSize) {
-
-                      height =
-                        height *
-                        (maxSize / width);
-
-                      width =
-                        maxSize;
-                    }
-
-                  } else {
-
-                    if (height > maxSize) {
-
-                      width =
-                        width *
-                        (maxSize / height);
-
-                      height =
-                        maxSize;
-                    }
-                  }
-
-
-                  canvas.width =
-                    width;
-
-                  canvas.height =
-                    height;
-
-
-                  const ctx =
-                    canvas.getContext(
-                      "2d"
-                    );
-
-
-                  ctx.drawImage(
-                    img,
-                    0,
-                    0,
-                    width,
-                    height
-                  );
-
-
-                  const compressedImage =
-                    canvas.toDataURL(
-                      "image/jpeg",
-                      0.75
-                    );
-
-
-                  resolve(
-                    compressedImage
-                  );
-                };
-
-
-              img.onerror =
-                reject;
-
-              img.src =
-                event.target.result;
-            };
-
-
-          reader.onerror =
-            reject;
-
-          reader.readAsDataURL(file);
-        }
-      );
-    }
-
-
-    // =========================
-    // PROFILE PHOTO
-    // =========================
-
-    photoInput.addEventListener(
-      "change",
-      async event => {
-
-        if (!currentUser) {
-
-          alert(
-            "पहले phone number verify करें।"
-          );
-
-          return;
-        }
-
-
-        const file =
-          event.target.files[0];
-
-        if (!file) return;
-
-
-        try {
-
-          if (
-            !file.type.startsWith("image/")
-          ) {
-
-            alert(
-              "कृपया image file select करें।"
-            );
-
-            return;
-          }
-
-
-          const compressedImage =
-            await compressImage(file);
-
-
-          profilePhoto.src =
-            compressedImage;
-
-
-          const profileRef =
-            doc(
-              db,
-              "users",
-              currentUser.uid
-            );
-
-
-          await updateDoc(
-            profileRef,
-            {
-              photo:
-                compressedImage
-            }
-          );
-
-
-          alert(
-            "Profile photo updated successfully!"
-          );
-
-
-        } catch (error) {
-
-          console.error(
-            "Photo upload error:",
-            error
-          );
-
-          alert(
-            "Photo upload failed."
-          );
-        }
-      }
-    );
-
-
-    // =========================
-    // AUTH STATE
+    // AUTH CHECK
     // =========================
 
     onAuthStateChanged(
       auth,
-      async user => {
+      (user) => {
 
-        if (user) {
+        if (!user) {
 
-          currentUser =
-            user;
+          // User is not logged in.
+          // Send them to mobile OTP page.
 
-          authScreen.style.display =
-            "none";
+          window.location.href =
+            "signup.html";
 
-          profileApp.style.display =
-            "block";
-
-
-          await loadProfile(user);
-
-          await loadNotificationCount();
-
-
-        } else {
-
-          currentUser =
-            null;
-
-          profileApp.style.display =
-            "none";
-
-          authScreen.style.display =
-            "flex";
-
-          otpSection.style.display =
-            "none";
-
-          phoneSection.style.display =
-            "block";
-
-          phoneNumber.value =
-            "";
-
-          otpCode.value =
-            "";
-
-          sendOtpBtn.disabled =
-            false;
-
-          verifyOtpBtn.disabled =
-            false;
         }
+
       }
     );
 
-
-    // =========================
-    // LOGOUT
-    // =========================
-
-    logoutBtn.addEventListener(
-      "click",
-      async () => {
-
-        try {
-
-          await signOut(auth);
-
-        } catch (error) {
-
-          console.error(
-            "Logout error:",
-            error
-          );
-
-          alert(
-            "Logout failed. Please try again."
-          );
-        }
-      }
-    );
-
-  </script>
-
-</body>
+  </script></body>
 </html>
