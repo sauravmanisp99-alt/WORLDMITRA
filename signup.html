@@ -1,11 +1,7 @@
-<!DOCTYPE html>
-<html lang="en">
+<!DOCTYPE html><html lang="en">
 <head>
   <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Create Account - WorldMitra</title>
-
-  <style>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">  <title>WorldMitra - Mobile OTP</title>  <style>
     * {
       box-sizing: border-box;
       margin: 0;
@@ -15,7 +11,7 @@
 
     body {
       min-height: 100vh;
-      background: #f5f8ff;
+      background: linear-gradient(135deg, #eef4ff, #ffffff);
       display: flex;
       align-items: center;
       justify-content: center;
@@ -33,49 +29,49 @@
 
     .logo {
       text-align: center;
-      font-size: 27px;
+      font-size: 28px;
       font-weight: bold;
-      margin-bottom: 10px;
+      color: #2563eb;
+      margin-bottom: 25px;
     }
 
     .title {
       text-align: center;
-      font-size: 28px;
-      margin-top: 15px;
-      margin-bottom: 8px;
+      font-size: 27px;
+      color: #111827;
+      margin-bottom: 10px;
     }
 
     .subtitle {
       text-align: center;
       color: #667085;
-      margin-bottom: 25px;
       line-height: 1.5;
+      margin-bottom: 25px;
     }
 
     label {
       display: block;
-      margin-bottom: 7px;
+      margin-bottom: 8px;
       font-weight: bold;
       font-size: 14px;
+      color: #344054;
     }
 
-    input,
-    select {
+    input {
       width: 100%;
-      padding: 13px;
+      padding: 14px;
       margin-bottom: 18px;
       border: 1px solid #d0d5dd;
-      border-radius: 9px;
-      font-size: 15px;
+      border-radius: 10px;
+      font-size: 16px;
       outline: none;
     }
 
-    input:focus,
-    select:focus {
+    input:focus {
       border-color: #2563eb;
     }
 
-    .create-btn {
+    button {
       width: 100%;
       padding: 14px;
       border: none;
@@ -87,24 +83,28 @@
       cursor: pointer;
     }
 
-    .create-btn:hover {
+    button:hover {
       background: #1d4ed8;
     }
 
-    .login-text {
-      text-align: center;
-      margin-top: 22px;
-      color: #667085;
+    button:disabled {
+      background: #94a3b8;
+      cursor: not-allowed;
     }
 
-    .login-text a {
-      color: #2563eb;
-      text-decoration: none;
-      font-weight: bold;
+    #otpSection {
+      display: none;
+    }
+
+    .message {
+      margin-top: 18px;
+      text-align: center;
+      font-size: 14px;
+      line-height: 1.5;
     }
 
     .safety {
-      margin-top: 20px;
+      margin-top: 22px;
       padding: 12px;
       background: #f5f8ff;
       border-radius: 10px;
@@ -113,110 +113,126 @@
       line-height: 1.5;
       text-align: center;
     }
-  </style>
-</head>
 
-<body>
+    #recaptcha-container {
+      margin-bottom: 15px;
+    }
 
-  <div class="container">
+    @media (max-width: 600px) {
+      .container {
+        padding: 30px 22px;
+      }
 
-    <div class="logo">🌍 WorldMitra</div>
+      .logo {
+        font-size: 25px;
+      }
 
-    <h1 class="title">Create Account</h1>
+      .title {
+        font-size: 24px;
+      }
+    }
+  </style></head><body>  <div class="container"><div class="logo">
+  🌍 WorldMitra
+</div>
 
-    <p class="subtitle">
-      Join WorldMitra and connect with people around the world.
-    </p>
+<h1 class="title">
+  Connect with the World
+</h1>
 
-    <form>
+<p class="subtitle">
+  Enter your mobile number to continue.
+  We will send you a verification OTP.
+</p>
 
-      <label for="name">Your Name</label>
 
-      <input
-        type="text"
-        id="name"
-        placeholder="Enter your name"
-        required
-      >
+<!-- MOBILE NUMBER -->
+<div id="phoneSection">
 
-      <label for="email">Email</label>
+  <label for="phone">
+    Mobile Number
+  </label>
 
-      <input
-        type="email"
-        id="email"
-        placeholder="Enter your email"
-        required
-      >
+  <input
+    type="tel"
+    id="phone"
+    placeholder="+91 9876543210"
+    autocomplete="tel"
+  >
 
-      <label for="country">Country</label>
+  <div id="recaptcha-container"></div>
 
-      <select id="country" required>
-        <option value="">Select your country</option>
-        <option value="India">India</option>
-        <option value="United Arab Emirates">United Arab Emirates</option>
-        <option value="United Kingdom">United Kingdom</option>
-        <option value="United States">United States</option>
-        <option value="Canada">Canada</option>
-        <option value="Australia">Australia</option>
-        <option value="Germany">Germany</option>
-        <option value="France">France</option>
-        <option value="Austria">Austria</option>
-        <option value="Japan">Japan</option>
-        <option value="Other">Other</option>
-      </select>
+  <button id="sendOtpBtn">
+    Send OTP
+  </button>
 
-      <label for="password">Password</label>
+</div>
 
-      <input
-        type="password"
-        id="password"
-        placeholder="Create a password"
-        required
-      >
 
-      <button type="submit" class="create-btn">
-        Create Account
-      </button>
+<!-- OTP -->
+<div id="otpSection">
 
-    </form>
+  <label for="otp">
+    Enter OTP
+  </label>
 
-    <p class="login-text">
-      Already have an account?
-      <a href="login.html">Login</a>
-    </p>
+  <input
+    type="text"
+    id="otp"
+    placeholder="Enter 6-digit OTP"
+    maxlength="6"
+    inputmode="numeric"
+    autocomplete="one-time-code"
+  >
 
-    <div class="safety">
-      🛡️ Please keep personal information private and use
-      WorldMitra respectfully and safely.
-    </div>
+  <button id="verifyOtpBtn">
+    Verify OTP
+  </button>
 
-  </div>
+  <button
+    id="changeNumberBtn"
+    style="margin-top:10px; background:#e5e7eb; color:#111827;"
+  >
+    Change Number
+  </button>
 
-  <script type="module">
+</div>
+
+
+<div id="message" class="message"></div>
+
+
+<div class="safety">
+  🛡️ Your phone number is used for secure verification.
+  Please use WorldMitra respectfully and safely.
+</div>
+
+  </div>  <script type="module">
 
     import { initializeApp }
       from "https://www.gstatic.com/firebasejs/12.1.0/firebase-app.js";
 
     import {
       getAuth,
-      createUserWithEmailAndPassword,
-      updateProfile
-    } from "https://www.gstatic.com/firebasejs/12.1.0/firebase-auth.js";
-
-    import {
-      getFirestore,
-      doc,
-      setDoc
-    } from "https://www.gstatic.com/firebasejs/12.1.0/firebase-firestore.js";
+      RecaptchaVerifier,
+      signInWithPhoneNumber
+    }
+      from "https://www.gstatic.com/firebasejs/12.1.0/firebase-auth.js";
 
 
     const firebaseConfig = {
+
       apiKey: "AIzaSyBAhtPH_elsDDkBsxZsvMO8FYwdOGna84g",
+
       authDomain: "worldmitra-33ca6.firebaseapp.com",
+
       projectId: "worldmitra-33ca6",
+
       storageBucket: "worldmitra-33ca6.firebasestorage.app",
+
       messagingSenderId: "1089520845776",
+
       appId: "1:1089520845776:web:2789654cc6061e7034afd5"
+
     };
 
 
@@ -224,68 +240,213 @@
 
     const auth = getAuth(app);
 
-    const db = getFirestore(app);
+
+    const phoneInput =
+      document.getElementById("phone");
+
+    const otpInput =
+      document.getElementById("otp");
+
+    const sendOtpBtn =
+      document.getElementById("sendOtpBtn");
+
+    const verifyOtpBtn =
+      document.getElementById("verifyOtpBtn");
+
+    const changeNumberBtn =
+      document.getElementById("changeNumberBtn");
+
+    const phoneSection =
+      document.getElementById("phoneSection");
+
+    const otpSection =
+      document.getElementById("otpSection");
+
+    const message =
+      document.getElementById("message");
 
 
-    document.querySelector("form").addEventListener("submit", async (event) => {
-
-      event.preventDefault();
+    let confirmationResult = null;
 
 
-      const name = document.getElementById("name").value.trim();
+    function showMessage(text, success = false) {
 
-      const email = document.getElementById("email").value.trim();
+      message.textContent = text;
 
-      const country = document.getElementById("country").value;
+      message.style.color =
+        success ? "#15803d" : "#dc2626";
 
-      const password = document.getElementById("password").value;
+    }
+
+
+    // Firebase reCAPTCHA
+    const recaptchaVerifier =
+      new RecaptchaVerifier(
+        auth,
+        "recaptcha-container",
+        {
+          size: "normal"
+        }
+      );
+
+
+    // SEND OTP
+    sendOtpBtn.addEventListener("click", async () => {
+
+      const phoneNumber =
+        phoneInput.value.trim();
+
+
+      if (!phoneNumber) {
+
+        showMessage(
+          "Please enter your mobile number."
+        );
+
+        return;
+      }
+
+
+      if (!phoneNumber.startsWith("+")) {
+
+        showMessage(
+          "Please enter the country code also. Example: +91 9876543210"
+        );
+
+        return;
+      }
+
+
+      sendOtpBtn.disabled = true;
+
+      showMessage("Sending OTP...", true);
 
 
       try {
 
-        const userCredential =
-          await createUserWithEmailAndPassword(
+        confirmationResult =
+          await signInWithPhoneNumber(
             auth,
-            email,
-            password
+            phoneNumber,
+            recaptchaVerifier
           );
 
 
-        const user = userCredential.user;
+        phoneSection.style.display = "none";
 
+        otpSection.style.display = "block";
 
-        await updateProfile(user, {
-          displayName: name
-        });
-
-
-        await setDoc(
-          doc(db, "users", user.uid),
-          {
-            name: name,
-            email: email,
-            country: country,
-            uid: user.uid,
-            createdAt: new Date()
-          }
+        showMessage(
+          "OTP sent successfully. Please check your phone.",
+          true
         );
-
-
-        alert("Account created successfully! 🎉");
-
-
-        window.location.href = "login.html";
 
 
       } catch (error) {
 
-        alert("Account create नहीं हुआ: " + error.message);
+        console.error(error);
+
+        sendOtpBtn.disabled = false;
+
+        showMessage(
+          "OTP send नहीं हुआ: " + error.message
+        );
 
       }
 
     });
 
-  </script>
 
-</body>
+    // VERIFY OTP
+    verifyOtpBtn.addEventListener("click", async () => {
+
+      const otp =
+        otpInput.value.trim();
+
+
+      if (!otp || otp.length !== 6) {
+
+        showMessage(
+          "Please enter the 6-digit OTP."
+        );
+
+        return;
+      }
+
+
+      if (!confirmationResult) {
+
+        showMessage(
+          "Please request OTP again."
+        );
+
+        return;
+      }
+
+
+      verifyOtpBtn.disabled = true;
+
+      showMessage("Verifying OTP...", true);
+
+
+      try {
+
+        const result =
+          await confirmationResult.confirm(otp);
+
+
+        const user = result.user;
+
+
+        console.log(
+          "WorldMitra user logged in:",
+          user.uid
+        );
+
+
+        showMessage(
+          "Verification successful! Opening WorldMitra...",
+          true
+        );
+
+
+        setTimeout(() => {
+
+          window.location.href =
+            "profile.html";
+
+        }, 700);
+
+
+      } catch (error) {
+
+        console.error(error);
+
+        verifyOtpBtn.disabled = false;
+
+        showMessage(
+          "Invalid OTP. Please try again."
+        );
+
+      }
+
+    });
+
+
+    // CHANGE NUMBER
+    changeNumberBtn.addEventListener("click", () => {
+
+      otpSection.style.display = "none";
+
+      phoneSection.style.display = "block";
+
+      otpInput.value = "";
+
+      sendOtpBtn.disabled = false;
+
+      showMessage("");
+
+    });
+
+  </script></body>
 </html>
