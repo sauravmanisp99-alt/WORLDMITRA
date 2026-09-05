@@ -3,6 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
   <title>Chat - WorldMitra</title>
 
   <style>
@@ -13,340 +14,164 @@
       font-family: Arial, sans-serif;
     }
 
-    html,
     body {
-      width: 100%;
-      height: 100%;
-      overflow: hidden;
-    }
-
-    body {
-      background: #e5ddd5;
+      background: #f2f5f9;
+      min-height: 100vh;
     }
 
     .chat-container {
       width: 100%;
       max-width: 600px;
-      height: 100dvh;
-      margin: 0 auto;
-      background: #efeae2;
+      height: 100vh;
+      margin: auto;
+      background: white;
       display: flex;
       flex-direction: column;
-      position: relative;
-      overflow: hidden;
     }
 
     .chat-header {
-      height: 64px;
-      min-height: 64px;
-      background: #4f46e5;
+      background: #2563eb;
       color: white;
+      padding: 14px;
       display: flex;
       align-items: center;
-      padding: 7px 10px;
-      gap: 10px;
-      flex-shrink: 0;
+      gap: 12px;
     }
 
     .back-btn {
       color: white;
       text-decoration: none;
-      font-size: 28px;
-      width: 34px;
-      min-width: 34px;
-      height: 44px;
-      display: flex;
-      align-items: center;
-      justify-content: center;
+      font-size: 24px;
     }
 
-    .user-avatar {
+    .avatar {
       width: 42px;
-      min-width: 42px;
       height: 42px;
       border-radius: 50%;
       background: white;
-      color: #4f46e5;
+      color: #2563eb;
       display: flex;
-      align-items: center;
       justify-content: center;
+      align-items: center;
       font-weight: bold;
-      font-size: 18px;
+      overflow: hidden;
+    }
+
+    .avatar img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
     }
 
     .user-info {
       flex: 1;
-      min-width: 0;
-      display: flex;
-      flex-direction: column;
-      justify-content: center;
     }
 
     .user-name {
-      font-size: 16px;
+      font-size: 17px;
       font-weight: bold;
-      white-space: nowrap;
-      overflow: hidden;
-      text-overflow: ellipsis;
     }
 
-    .online-status {
+    .status {
       font-size: 12px;
       margin-top: 3px;
     }
 
-    .online {
-      color: #b7ffca;
-    }
-
-    .offline {
-      color: #e5e7eb;
-    }
-
     .call-buttons {
       display: flex;
-      align-items: center;
-      gap: 5px;
-      flex-shrink: 0;
+      gap: 8px;
     }
 
-    .call-btn {
-      width: 40px;
-      min-width: 40px;
-      height: 40px;
-      border-radius: 50%;
-      background: rgba(255, 255, 255, 0.18);
+    .call-buttons a {
       color: white;
       text-decoration: none;
-      display: flex;
-      align-items: center;
-      justify-content: center;
       font-size: 20px;
-      cursor: pointer;
-      transition: background 0.2s, transform 0.1s;
-    }
-
-    .call-btn:hover {
-      background: rgba(255, 255, 255, 0.30);
-    }
-
-    .call-btn:active {
-      transform: scale(0.92);
+      padding: 5px;
     }
 
     .messages {
       flex: 1;
-      min-height: 0;
-      width: 100%;
-      padding: 12px 8px;
       overflow-y: auto;
-      display: flex;
-      flex-direction: column;
-      gap: 7px;
-      background-color: #efeae2;
-
-      background-image:
-        radial-gradient(
-          rgba(0,0,0,0.035) 1px,
-          transparent 1px
-        );
-
-      background-size: 18px 18px;
-    }
-
-    .message-wrapper {
-      width: 100%;
-      display: flex;
-    }
-
-    .sent-wrapper {
-      justify-content: flex-end;
-    }
-
-    .received-wrapper {
-      justify-content: flex-start;
+      padding: 15px;
+      background: #f8fafc;
     }
 
     .message {
-      max-width: 78%;
-      padding: 9px 11px;
-      border-radius: 10px;
+      max-width: 75%;
+      padding: 10px 13px;
+      margin-bottom: 10px;
+      border-radius: 15px;
       word-wrap: break-word;
-      overflow-wrap: anywhere;
-      font-size: 15px;
-      line-height: 1.4;
-      box-shadow: 0 1px 1px rgba(0,0,0,0.08);
+      position: relative;
     }
 
     .sent {
-      background: #d9fdd3;
-      color: #111827;
-      border-top-right-radius: 3px;
+      margin-left: auto;
+      background: #2563eb;
+      color: white;
+      border-bottom-right-radius: 4px;
     }
 
     .received {
-      background: white;
+      margin-right: auto;
+      background: #e5e7eb;
       color: #111827;
-      border-top-left-radius: 3px;
+      border-bottom-left-radius: 4px;
+    }
+
+    .message-time {
+      font-size: 10px;
+      opacity: 0.7;
+      margin-top: 4px;
+      text-align: right;
     }
 
     .delete-btn {
-      display: block;
       border: none;
       background: transparent;
-      color: #777;
-      font-size: 12px;
+      color: inherit;
       cursor: pointer;
-      margin-left: auto;
-      margin-top: 5px;
-      padding: 2px 3px;
-    }
-
-    .delete-btn:hover {
-      color: #dc2626;
+      font-size: 11px;
+      margin-left: 8px;
     }
 
     .input-area {
-      width: 100%;
-      min-height: 62px;
-      height: 62px;
       display: flex;
-      align-items: center;
-      gap: 7px;
-      padding: 8px;
-      background: #f0f2f5;
+      gap: 8px;
+      padding: 10px;
       border-top: 1px solid #ddd;
-      flex-shrink: 0;
-      position: relative;
-      z-index: 20;
-    }
-
-    #messageInput {
-      flex: 1;
-      width: 100%;
-      min-width: 0;
-      height: 46px;
-      border: 1px solid #ddd;
-      outline: none;
       background: white;
-      border-radius: 24px;
-      padding: 0 16px;
+    }
+
+    .input-area input {
+      flex: 1;
+      padding: 12px;
+      border: 1px solid #ccc;
+      border-radius: 22px;
+      outline: none;
       font-size: 15px;
-      color: #111827;
-      display: block;
-    }
-
-    #messageInput:focus {
-      border-color: #4f46e5;
-    }
-
-    #messageInput::placeholder {
-      color: #777;
     }
 
     .send-btn {
-      width: 46px;
-      min-width: 46px;
-      height: 46px;
+      width: 45px;
+      height: 45px;
       border: none;
       border-radius: 50%;
-      background: #4f46e5;
+      background: #2563eb;
       color: white;
-      font-size: 19px;
       cursor: pointer;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      flex-shrink: 0;
+      font-size: 18px;
     }
 
-    .send-btn:active {
-      transform: scale(0.94);
+    .send-btn:disabled {
+      opacity: 0.6;
+      cursor: not-allowed;
     }
 
-    @media (max-width: 600px) {
-
-      .chat-container {
-        max-width: 100%;
-      }
-
-      .chat-header {
-        height: 62px;
-        min-height: 62px;
-        padding: 6px 8px;
-        gap: 7px;
-      }
-
-      .back-btn {
-        width: 30px;
-        min-width: 30px;
-      }
-
-      .user-avatar {
-        width: 40px;
-        min-width: 40px;
-        height: 40px;
-      }
-
-      .user-name {
-        font-size: 16px;
-      }
-
-      .call-buttons {
-        gap: 3px;
-      }
-
-      .call-btn {
-        width: 37px;
-        min-width: 37px;
-        height: 37px;
-        font-size: 18px;
-      }
-
-      .messages {
-        padding: 10px 6px;
-      }
-
-      .message {
-        max-width: 84%;
-        font-size: 15px;
-      }
-
-      .input-area {
-        height: 60px;
-        min-height: 60px;
-        padding: 7px;
-      }
-
-      #messageInput {
-        height: 44px;
-        font-size: 15px;
-      }
-
-      .send-btn {
-        width: 44px;
-        min-width: 44px;
-        height: 44px;
-      }
-    }
-
-    @media (max-width: 360px) {
-
-      .message {
-        max-width: 88%;
-      }
-
-      .user-name {
-        max-width: 140px;
-      }
-
-      .call-btn {
-        width: 34px;
-        min-width: 34px;
-        height: 34px;
-        font-size: 17px;
-      }
-
+    .empty-message {
+      text-align: center;
+      color: #777;
+      margin-top: 30px;
     }
   </style>
 </head>
@@ -355,62 +180,31 @@
 
   <div class="chat-container">
 
-    <!-- HEADER -->
     <div class="chat-header">
 
-      <!-- UPDATED BACK BUTTON -->
-      <a
-        href="find-people.html"
-        class="back-btn"
-      >
-        ←
-      </a>
+      <a href="profile.html" class="back-btn">←</a>
 
-      <div
-        class="user-avatar"
-        id="userAvatar"
-      >
-        W
+      <div class="avatar" id="avatar">
+        🌍
       </div>
 
       <div class="user-info">
-
-        <div
-          class="user-name"
-          id="otherUserName"
-        >
+        <div class="user-name" id="userName">
           Loading...
         </div>
 
-        <span
-          class="online-status offline"
-          id="onlineStatus"
-        >
+        <div class="status" id="userStatus">
           ⚪ Offline
-        </span>
-
+        </div>
       </div>
 
-      <!-- VOICE + VIDEO CALL -->
       <div class="call-buttons">
 
-        <a
-          href="#"
-          class="call-btn"
-          id="voiceCallBtn"
-          title="Voice Call"
-          aria-label="Voice Call"
-        >
+        <a id="voiceCallBtn" href="#" title="Voice Call">
           📞
         </a>
 
-        <a
-          href="#"
-          class="call-btn"
-          id="videoCallBtn"
-          title="Video Call"
-          aria-label="Video Call"
-        >
+        <a id="videoCallBtn" href="#" title="Video Call">
           📹
         </a>
 
@@ -418,25 +212,12 @@
 
     </div>
 
-    <!-- MESSAGES -->
-    <div
-      class="messages"
-      id="messages"
-    >
-
-      <div
-        style="
-          text-align:center;
-          color:#777;
-          margin-top:20px;
-        "
-      >
+    <div class="messages" id="messages">
+      <div class="empty-message">
         Loading messages...
       </div>
-
     </div>
 
-    <!-- MESSAGE INPUT -->
     <div class="input-area">
 
       <input
@@ -447,7 +228,6 @@
       >
 
       <button
-        type="button"
         class="send-btn"
         id="sendBtn"
       >
@@ -458,7 +238,12 @@
 
   </div>
 
+
   <script type="module">
+
+    /* ================================
+       FIREBASE IMPORTS
+    ================================= */
 
     import {
       initializeApp
@@ -472,19 +257,27 @@
     import {
       getFirestore,
       collection,
-      doc,
-      getDoc,
       addDoc,
-      deleteDoc,
       query,
       orderBy,
       onSnapshot,
       serverTimestamp,
-      updateDoc
+      deleteDoc,
+      doc
     } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
 
+    import {
+      getDatabase,
+      ref,
+      onValue,
+      onDisconnect,
+      set
+    } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-database.js";
 
-    /* FIREBASE */
+
+    /* ================================
+       FIREBASE CONFIG
+    ================================= */
 
     const firebaseConfig = {
       apiKey: "AIzaSyBAhtPH_elsDDkBsxZsvMO8FYwdOGna84g",
@@ -496,219 +289,210 @@
     };
 
 
-    const app =
-      initializeApp(firebaseConfig);
+    /* ================================
+       INITIALIZE FIREBASE
+    ================================= */
 
-    const auth =
-      getAuth(app);
+    const app = initializeApp(firebaseConfig);
 
-    const db =
-      getFirestore(app);
+    const auth = getAuth(app);
+
+    const db = getFirestore(app);
+
+    const realtimeDb = getDatabase(app);
 
 
-    /* ELEMENTS */
+    /* ================================
+       GET HTML ELEMENTS
+    ================================= */
 
-    const otherUserNameElement =
-      document.getElementById(
-        "otherUserName"
-      );
+    const userNameElement =
+      document.getElementById("userName");
 
-    const userAvatar =
-      document.getElementById(
-        "userAvatar"
-      );
+    const userStatusElement =
+      document.getElementById("userStatus");
 
-    const onlineStatus =
-      document.getElementById(
-        "onlineStatus"
-      );
+    const avatarElement =
+      document.getElementById("avatar");
 
-    const messagesContainer =
-      document.getElementById(
-        "messages"
-      );
+    const messagesElement =
+      document.getElementById("messages");
 
     const messageInput =
-      document.getElementById(
-        "messageInput"
-      );
+      document.getElementById("messageInput");
 
     const sendBtn =
-      document.getElementById(
-        "sendBtn"
-      );
-
-
-    /* CALL BUTTON ELEMENTS */
+      document.getElementById("sendBtn");
 
     const voiceCallBtn =
-      document.getElementById(
-        "voiceCallBtn"
-      );
+      document.getElementById("voiceCallBtn");
 
     const videoCallBtn =
-      document.getElementById(
-        "videoCallBtn"
-      );
+      document.getElementById("videoCallBtn");
 
+
+    /* ================================
+       GET OTHER USER DETAILS
+    ================================= */
+
+    const urlParams =
+      new URLSearchParams(window.location.search);
+
+    const otherUserId =
+      urlParams.get("uid");
+
+    const otherUserName =
+      urlParams.get("name") || "WorldMitra User";
+
+
+    /* ================================
+       VARIABLES
+    ================================= */
 
     let currentUser = null;
-    let otherUserId = null;
-    let otherUserName = null;
+
+    let chatId = null;
+
+    let unsubscribeMessages = null;
 
 
-    /* CHAT ID */
+    /* ================================
+       DISPLAY USER
+    ================================= */
 
-    function getChatId(
-      userA,
-      userB
-    ) {
+    userNameElement.textContent =
+      otherUserName;
 
-      return [
-        userA,
-        userB
-      ]
-      .sort()
-      .join("_");
+    if (otherUserName) {
+
+      avatarElement.textContent =
+        otherUserName.charAt(0).toUpperCase();
 
     }
 
 
-    /* CALL LINKS */
+    /* ================================
+       AUTH CHECK
+    ================================= */
 
-    function updateCallLinks() {
+    onAuthStateChanged(auth, async (user) => {
 
-      if (!otherUserId) {
+      if (!user) {
+
+        window.location.href =
+          "signup.html";
+
         return;
+
       }
 
-      const name =
-        otherUserName ||
-        "WorldMitra User";
+      currentUser = user;
 
+
+      /* ================================
+         SET CURRENT USER ONLINE
+      ================================= */
+
+      await setUserOnline();
+
+
+      /* ================================
+         CHECK OTHER USER
+      ================================= */
+
+      if (!otherUserId) {
+
+        messagesElement.innerHTML = `
+          <div class="empty-message">
+            No user selected.
+          </div>
+        `;
+
+        sendBtn.disabled = true;
+
+        return;
+
+      }
+
+
+      /* ================================
+         CREATE CHAT ID
+      ================================= */
+
+      chatId =
+        [currentUser.uid, otherUserId]
+          .sort()
+          .join("_");
+
+
+      /* ================================
+         LISTEN TO OTHER USER STATUS
+      ================================= */
+
+      listenToOtherUserStatus();
+
+
+      /* ================================
+         CALL BUTTONS
+      ================================= */
 
       voiceCallBtn.href =
         "call.html?uid=" +
-        encodeURIComponent(
-          otherUserId
-        ) +
+        encodeURIComponent(otherUserId) +
         "&name=" +
-        encodeURIComponent(
-          name
-        );
+        encodeURIComponent(otherUserName);
 
 
       videoCallBtn.href =
         "video-call.html?uid=" +
-        encodeURIComponent(
-          otherUserId
-        ) +
+        encodeURIComponent(otherUserId) +
         "&name=" +
-        encodeURIComponent(
-          name
-        );
-
-    }
+        encodeURIComponent(otherUserName);
 
 
-    /* ONLINE / OFFLINE */
+      /* ================================
+         LOAD MESSAGES
+      ================================= */
 
-    function updateOnlineStatus(
-      data
-    ) {
+      loadMessages();
 
-      if (
-        data.online === true
-      ) {
-
-        onlineStatus.textContent =
-          "🟢 Online";
-
-        onlineStatus.className =
-          "online-status online";
-
-      } else {
-
-        onlineStatus.textContent =
-          "⚪ Offline";
-
-        onlineStatus.className =
-          "online-status offline";
-
-      }
-
-    }
+    });
 
 
-    /* LISTEN TO USER STATUS */
+    /* ================================
+       SET USER ONLINE
+    ================================= */
 
-    function listenToOtherUserStatus() {
-
-      if (!otherUserId) return;
-
-      const userRef =
-        doc(
-          db,
-          "users",
-          otherUserId
-        );
-
-
-      onSnapshot(
-        userRef,
-        (snapshot) => {
-
-          if (
-            snapshot.exists()
-          ) {
-
-            updateOnlineStatus(
-              snapshot.data()
-            );
-
-          } else {
-
-            onlineStatus.textContent =
-              "⚪ Offline";
-
-          }
-
-        },
-        (error) => {
-
-          console.error(
-            "Status error:",
-            error
-          );
-
-          onlineStatus.textContent =
-            "⚪ Offline";
-
-        }
-      );
-
-    }
-
-
-    /* CURRENT USER ONLINE */
-
-    async function setOnline() {
+    async function setUserOnline() {
 
       if (!currentUser) return;
 
+      const userStatusRef =
+        ref(
+          realtimeDb,
+          "status/" + currentUser.uid
+        );
+
+
       try {
 
-        await updateDoc(
-          doc(
-            db,
-            "users",
-            currentUser.uid
-          ),
-          {
-            online: true,
-            lastSeen: serverTimestamp()
-          }
-        );
+        await set(userStatusRef, {
+
+          online: true,
+
+          lastSeen: Date.now()
+
+        });
+
+
+        onDisconnect(userStatusRef)
+          .set({
+
+            online: false,
+
+            lastSeen: Date.now()
+
+          });
 
       } catch (error) {
 
@@ -720,170 +504,74 @@
       }
 
     }
-    /* CURRENT USER OFFLINE */
 
-    async function setOffline() {
 
-      if (!currentUser) return;
+    /* ================================
+       LISTEN OTHER USER STATUS
+    ================================= */
 
-      try {
+    function listenToOtherUserStatus() {
 
-        await updateDoc(
-          doc(
-            db,
-            "users",
-            currentUser.uid
-          ),
-          {
-            online: false,
-            lastSeen: serverTimestamp()
-          }
+      const statusRef =
+        ref(
+          realtimeDb,
+          "status/" + otherUserId
         );
 
-      } catch (error) {
 
-        console.error(
-          "Offline status error:",
-          error
-        );
+      onValue(statusRef, (snapshot) => {
 
-      }
-
-    }
-
-
-    /* LOAD PROFILE */
-
-    async function loadOtherUserProfile() {
-
-      if (!otherUserId) return;
-
-      try {
-
-        const userDoc =
-          await getDoc(
-            doc(
-              db,
-              "users",
-              otherUserId
-            )
-          );
+        const data =
+          snapshot.val();
 
 
         if (
-          userDoc.exists()
+          data &&
+          data.online === true
         ) {
 
-          const data =
-            userDoc.data();
+          showOnline();
 
+        } else {
 
-          otherUserName =
-            data.name ||
-            otherUserName ||
-            "WorldMitra User";
-
-
-          otherUserNameElement.textContent =
-            otherUserName;
-
-
-          userAvatar.textContent =
-            otherUserName
-              .charAt(0)
-              .toUpperCase();
-
-
-          /* UPDATE CALL LINKS AFTER PROFILE LOAD */
-
-          updateCallLinks();
+          showOffline();
 
         }
 
-      } catch (error) {
-
-        console.error(
-          "Profile loading error:",
-          error
-        );
-
-      }
+      });
 
     }
 
 
-    /* DELETE MESSAGE */
+    /* ================================
+       SHOW ONLINE
+    ================================= */
 
-    async function deleteMessage(
-      messageId
-    ) {
+    function showOnline() {
 
-      if (
-        !currentUser ||
-        !otherUserId
-      ) return;
-
-
-      const confirmDelete =
-        confirm(
-          "Delete this message?"
-        );
-
-
-      if (!confirmDelete) return;
-
-
-      const chatId =
-        getChatId(
-          currentUser.uid,
-          otherUserId
-        );
-
-
-      try {
-
-        await deleteDoc(
-          doc(
-            db,
-            "chats",
-            chatId,
-            "messages",
-            messageId
-          )
-        );
-
-      } catch (error) {
-
-        console.error(
-          "Delete message error:",
-          error
-        );
-
-        alert(
-          "Message delete nahi hua."
-        );
-
-      }
+      userStatusElement.textContent =
+        "🟢 Online";
 
     }
 
 
-    /* LOAD MESSAGES */
+    /* ================================
+       SHOW OFFLINE
+    ================================= */
+
+    function showOffline() {
+
+      userStatusElement.textContent =
+        "⚪ Offline";
+
+    }
+
+
+    /* ================================
+       LOAD MESSAGES
+    ================================= */
 
     function loadMessages() {
-
-      if (
-        !currentUser ||
-        !otherUserId
-      ) return;
-
-
-      const chatId =
-        getChatId(
-          currentUser.uid,
-          otherUserId
-        );
-
 
       const messagesRef =
         collection(
@@ -904,181 +592,162 @@
         );
 
 
-      onSnapshot(
-        messagesQuery,
-        (snapshot) => {
+      if (unsubscribeMessages) {
 
-          messagesContainer.innerHTML =
-            "";
+        unsubscribeMessages();
+
+      }
 
 
-          snapshot.forEach(
-            (messageDoc) => {
+      unsubscribeMessages =
+        onSnapshot(
+          messagesQuery,
+          (snapshot) => {
+
+            messagesElement.innerHTML = "";
+
+
+            if (snapshot.empty) {
+
+              messagesElement.innerHTML = `
+                <div class="empty-message">
+                  Start a conversation 👋
+                </div>
+              `;
+
+              return;
+
+            }
+
+
+            snapshot.forEach((messageDoc) => {
 
               const data =
                 messageDoc.data();
 
 
-              const wrapper =
-                document.createElement(
-                  "div"
-                );
-
-
-              wrapper.className =
-                "message-wrapper";
-
-
               const messageDiv =
-                document.createElement(
-                  "div"
-                );
+                document.createElement("div");
+
+
+              const isSent =
+                data.senderId === currentUser.uid;
 
 
               messageDiv.className =
-                "message";
-
-
-              /* SENT */
-
-              if (
-                data.senderId ===
-                currentUser.uid
-              ) {
-
-                wrapper.classList.add(
-                  "sent-wrapper"
+                "message " +
+                (
+                  isSent
+                    ? "sent"
+                    : "received"
                 );
 
-                messageDiv.classList.add(
-                  "sent"
-                );
 
-              }
+              const textDiv =
+                document.createElement("div");
 
-              /* RECEIVED */
-
-              else {
-
-                wrapper.classList.add(
-                  "received-wrapper"
-                );
-
-                messageDiv.classList.add(
-                  "received"
-                );
-
-              }
-
-
-              /* TEXT */
-
-              const textElement =
-                document.createElement(
-                  "div"
-                );
-
-              textElement.textContent =
+              textDiv.textContent =
                 data.text || "";
 
 
-              messageDiv.appendChild(
-                textElement
-              );
+              const timeDiv =
+                document.createElement("div");
+
+              timeDiv.className =
+                "message-time";
 
 
-              /* DELETE ONLY OWN MESSAGE */
+              if (data.createdAt) {
 
-              if (
-                data.senderId ===
-                currentUser.uid
-              ) {
+                try {
+
+                  const date =
+                    data.createdAt.toDate();
+
+                  timeDiv.textContent =
+                    date.toLocaleTimeString(
+                      [],
+                      {
+                        hour: "2-digit",
+                        minute: "2-digit"
+                      }
+                    );
+
+                } catch (error) {
+
+                  timeDiv.textContent = "";
+
+                }
+
+              }
+
+
+              if (isSent) {
 
                 const deleteButton =
-                  document.createElement(
-                    "button"
-                  );
-
-
-                deleteButton.type =
-                  "button";
-
+                  document.createElement("button");
 
                 deleteButton.className =
                   "delete-btn";
 
-
                 deleteButton.textContent =
-                  "🗑️ Delete";
+                  "Delete";
 
+                deleteButton.onclick =
+                  () => deleteMessage(
+                    messageDoc.id
+                  );
 
-                deleteButton.addEventListener(
-                  "click",
-                  () => {
-
-                    deleteMessage(
-                      messageDoc.id
-                    );
-
-                  }
-                );
-
-
-                messageDiv.appendChild(
+                timeDiv.appendChild(
                   deleteButton
                 );
 
               }
 
 
-              wrapper.appendChild(
+              messageDiv.appendChild(
+                textDiv
+              );
+
+              messageDiv.appendChild(
+                timeDiv
+              );
+
+
+              messagesElement.appendChild(
                 messageDiv
               );
 
-
-              messagesContainer.appendChild(
-                wrapper
-              );
-
-            }
-          );
+            });
 
 
-          messagesContainer.scrollTop =
-            messagesContainer.scrollHeight;
+            messagesElement.scrollTop =
+              messagesElement.scrollHeight;
 
-        },
+          },
 
+          (error) => {
 
-        (error) => {
+            console.error(
+              "Message loading error:",
+              error
+            );
 
-          console.error(
-            "Messages loading error:",
-            error
-          );
-
-
-          messagesContainer.innerHTML =
-            `
-              <div
-                style="
-                  text-align:center;
-                  color:red;
-                  margin-top:20px;
-                "
-              >
-                Unable to load messages
+            messagesElement.innerHTML = `
+              <div class="empty-message">
+                Unable to load messages.
               </div>
             `;
 
-        }
-
-      );
+          }
+        );
 
     }
 
 
-    /* SEND MESSAGE */
+    /* ================================
+       SEND MESSAGE
+    ================================= */
 
     async function sendMessage() {
 
@@ -1086,34 +755,29 @@
         messageInput.value.trim();
 
 
-      if (
-        !text ||
-        !currentUser ||
-        !otherUserId
-      ) {
+      if (!text) return;
 
-        return;
+      if (!currentUser) return;
 
-      }
+      if (!otherUserId) return;
 
 
-      const chatId =
-        getChatId(
-          currentUser.uid,
-          otherUserId
-        );
+      sendBtn.disabled = true;
 
 
       try {
 
         await addDoc(
+
           collection(
             db,
             "chats",
             chatId,
             "messages"
           ),
+
           {
+
             senderId:
               currentUser.uid,
 
@@ -1125,24 +789,67 @@
 
             createdAt:
               serverTimestamp()
+
           }
+
         );
 
 
-        messageInput.value =
-          "";
+        messageInput.value = "";
 
-        messageInput.focus();
 
       } catch (error) {
 
         console.error(
-          "Message sending error:",
+          "Send message error:",
           error
         );
 
         alert(
-          "Message send nahi hua."
+          "Message send nahi ho paya."
+        );
+
+      }
+
+
+      sendBtn.disabled = false;
+
+      messageInput.focus();
+
+    }
+
+
+    /* ================================
+       DELETE MESSAGE
+    ================================= */
+
+    async function deleteMessage(
+      messageId
+    ) {
+
+      try {
+
+        await deleteDoc(
+
+          doc(
+            db,
+            "chats",
+            chatId,
+            "messages",
+            messageId
+          )
+
+        );
+
+      } catch (error) {
+
+        console.error(
+          "Delete message error:",
+          error
+        );
+
+        alert(
+          "Message delete nahi ho paya."
         );
 
       }
@@ -1150,7 +857,9 @@
     }
 
 
-    /* SEND BUTTON */
+    /* ================================
+       SEND BUTTON
+    ================================= */
 
     sendBtn.addEventListener(
       "click",
@@ -1158,7 +867,9 @@
     );
 
 
-    /* ENTER TO SEND */
+    /* ================================
+       ENTER KEY
+    ================================= */
 
     messageInput.addEventListener(
       "keydown",
@@ -1178,100 +889,33 @@
     );
 
 
-    /* AUTH */
+    /* ================================
+       PAGE CLOSE
+    ================================= */
 
-    onAuthStateChanged(
-      auth,
-      async (user) => {
+    window.addEventListener(
+      "beforeunload",
+      () => {
 
-        if (!user) {
+        if (!currentUser) return;
 
-          window.location.href =
-            "login.html";
-
-          return;
-
-        }
-
-
-        currentUser =
-          user;
-
-
-        /* GET URL DATA FIRST */
-
-        const params =
-          new URLSearchParams(
-            window.location.search
+        const userStatusRef =
+          ref(
+            realtimeDb,
+            "status/" + currentUser.uid
           );
 
 
-        otherUserId =
-          params.get("uid");
+        set(
+          userStatusRef,
+          {
 
+            online: false,
 
-        otherUserName =
-          params.get("name");
+            lastSeen: Date.now()
 
-
-        if (!otherUserId) {
-
-          alert(
-            "User information not found."
-          );
-
-          return;
-
-        }
-
-
-        /* SHOW NAME IMMEDIATELY */
-
-        otherUserNameElement.textContent =
-          otherUserName ||
-          "WorldMitra User";
-
-
-        userAvatar.textContent =
-          (
-            otherUserName ||
-            "W"
-          )
-          .charAt(0)
-          .toUpperCase();
-
-
-        /* SET CALL LINKS IMMEDIATELY */
-
-        updateCallLinks();
-
-
-        /* SET ONLINE */
-
-        await setOnline();
-
-
-        /* OFFLINE WHEN LEAVING */
-
-        window.addEventListener(
-          "beforeunload",
-          setOffline
+          }
         );
-
-
-        /* PROFILE */
-
-        await loadOtherUserProfile();
-
-
-        /* STATUS */
-
-        listenToOtherUserStatus();
-
-
-        /* MESSAGES */
-
-        loadMessages();
 
       }
     );
