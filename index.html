@@ -1,12 +1,7 @@
-<!DOCTYPE html>
-<html lang="en">
+<!DOCTYPE html><html lang="en">
 <head>
   <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-
-  <title>WorldMitra - Connect with the World</title>
-
-  <style>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">  <title>WorldMitra - Connect with the World</title>  <style>
     * {
       margin: 0;
       padding: 0;
@@ -23,7 +18,7 @@
       width: 100%;
       padding: 18px 7%;
       display: flex;
-      justify-content: space-between;
+      justify-content: center;
       align-items: center;
       background: white;
       box-shadow: 0 2px 10px rgba(0,0,0,0.08);
@@ -33,15 +28,6 @@
       font-size: 25px;
       font-weight: bold;
       color: #2563eb;
-    }
-
-    .login {
-      text-decoration: none;
-      background: #2563eb;
-      color: white;
-      padding: 10px 20px;
-      border-radius: 25px;
-      font-weight: bold;
     }
 
     .hero {
@@ -166,11 +152,6 @@
         font-size: 21px;
       }
 
-      .login {
-        padding: 8px 16px;
-        font-size: 14px;
-      }
-
       .hero {
         min-height: 70vh;
       }
@@ -191,148 +172,93 @@
         padding: 45px 6%;
       }
     }
-  </style>
-</head>
-
-<body>
-
-  <!-- HEADER -->
-  <header>
-
+  </style></head><body>  <!-- HEADER -->  <header>
     <div class="logo">
       🌍 WorldMitra
     </div>
+  </header>  <!-- HERO SECTION -->  <section class="hero"><div class="hero-content">
 
-    <!-- OLD LOGIN REMOVED -->
-    <!-- NOW PROFILE OPENS DIRECTLY -->
-    <a href="profile.html" class="login">
-      Profile
-    </a>
+  <h1>
+    Connect with the <span>World</span> 🌍
+  </h1>
 
-  </header>
+  <p>
+    Meet people from different countries, discover new cultures,
+    share interests and have meaningful conversations through
+    chat, voice calls and video calls.
+  </p>
 
+  <a href="profile.html" class="start-btn">
+    Start Connecting
+  </a>
 
-  <!-- HERO SECTION -->
-  <section class="hero">
+</div>
 
-    <div class="hero-content">
+  </section>  <!-- FEATURES -->  <section class="features"><h2>
+  Everything You Need to Connect
+</h2>
 
-      <h1>
-        Connect with the <span>World</span> 🌍
-      </h1>
+<div class="feature-container">
 
-      <p>
-        Meet people from different countries, discover new cultures,
-        share interests and have meaningful conversations through
-        chat, voice calls and video calls.
-      </p>
+  <!-- CHAT -->
+  <div class="feature-card">
 
-      <!-- OLD signup.html REMOVED -->
-      <!-- NOW PROFILE + OTP OPENS -->
-      <a href="profile.html" class="start-btn">
-        Start Connecting
-      </a>
-
+    <div class="feature-icon">
+      💬
     </div>
 
-  </section>
+    <h3>
+      Chat
+    </h3>
+
+    <p>
+      Have meaningful conversations with
+      people you connect with around the world.
+    </p>
+
+  </div>
 
 
-  <!-- FEATURES -->
-  <section class="features">
+  <!-- VOICE CALL -->
+  <div class="feature-card">
 
-    <h2>
-      Everything You Need to Connect
-    </h2>
-
-    <div class="feature-container">
-
-      <!-- FEATURE 1 -->
-      <div class="feature-card">
-
-        <div class="feature-icon">
-          🌎
-        </div>
-
-        <h3>
-          Meet the World
-        </h3>
-
-        <p>
-          Discover and connect with people from
-          different countries and cultures.
-        </p>
-
-      </div>
-
-
-      <!-- FEATURE 2 -->
-      <div class="feature-card">
-
-        <div class="feature-icon">
-          💬
-        </div>
-
-        <h3>
-          Chat
-        </h3>
-
-        <p>
-          Have meaningful conversations with
-          people you connect with around the world.
-        </p>
-
-      </div>
-
-
-      <!-- FEATURE 3 -->
-      <div class="feature-card">
-
-        <div class="feature-icon">
-          📞
-        </div>
-
-        <h3>
-          Voice Call
-        </h3>
-
-        <p>
-          Talk with your connections using
-          real-time voice calls.
-        </p>
-
-      </div>
-
-
-      <!-- FEATURE 4 -->
-      <div class="feature-card">
-
-        <div class="feature-icon">
-          📹
-        </div>
-
-        <h3>
-          Video Call
-        </h3>
-
-        <p>
-          Connect face-to-face with video calls
-          using WorldMitra.
-        </p>
-
-      </div>
-
+    <div class="feature-icon">
+      📞
     </div>
 
-  </section>
+    <h3>
+      Voice Call
+    </h3>
+
+    <p>
+      Talk with your connections using
+      real-time voice calls.
+    </p>
+
+  </div>
 
 
-  <!-- FOOTER -->
-  <footer>
+  <!-- VIDEO CALL -->
+  <div class="feature-card">
 
+    <div class="feature-icon">
+      📹
+    </div>
+
+    <h3>
+      Video Call
+    </h3>
+
+    <p>
+      Connect face-to-face with video calls
+      using WorldMitra.
+    </p>
+
+  </div>
+
+</div>
+
+  </section>  <!-- FOOTER -->  <footer>
     © 2026 WorldMitra · Connect with the World
-
-  </footer>
-
-</body>
+  </footer></body>
 </html>
