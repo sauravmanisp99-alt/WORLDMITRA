@@ -1,7 +1,11 @@
-<!DOCTYPE html><html lang="en">
+<!DOCTYPE html>
+<html lang="en">
 <head>
   <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">  <title>Chat - WorldMitra</title>  <style>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Chat - WorldMitra</title>
+
+  <style>
     * {
       box-sizing: border-box;
       margin: 0;
@@ -20,7 +24,6 @@
       background: #e5ddd5;
     }
 
-    /* MAIN CHAT */
     .chat-container {
       width: 100%;
       max-width: 600px;
@@ -33,7 +36,6 @@
       overflow: hidden;
     }
 
-    /* HEADER */
     .chat-header {
       height: 64px;
       min-height: 64px;
@@ -101,7 +103,6 @@
       color: #e5e7eb;
     }
 
-    /* CALL BUTTONS */
     .call-buttons {
       display: flex;
       align-items: center;
@@ -133,7 +134,6 @@
       transform: scale(0.92);
     }
 
-    /* MESSAGES */
     .messages {
       flex: 1;
       min-height: 0;
@@ -190,7 +190,6 @@
       border-top-left-radius: 3px;
     }
 
-    /* DELETE */
     .delete-btn {
       display: block;
       border: none;
@@ -207,7 +206,6 @@
       color: #dc2626;
     }
 
-    /* INPUT AREA */
     .input-area {
       width: 100%;
       min-height: 62px;
@@ -223,7 +221,6 @@
       z-index: 20;
     }
 
-    /* MESSAGE INPUT */
     #messageInput {
       flex: 1;
       width: 100%;
@@ -247,7 +244,6 @@
       color: #777;
     }
 
-    /* SEND BUTTON */
     .send-btn {
       width: 46px;
       min-width: 46px;
@@ -268,7 +264,6 @@
       transform: scale(0.94);
     }
 
-    /* MOBILE */
     @media (max-width: 600px) {
 
       .chat-container {
@@ -335,7 +330,6 @@
       }
     }
 
-    /* SMALL PHONES */
     @media (max-width: 360px) {
 
       .message {
@@ -354,111 +348,117 @@
       }
 
     }
+  </style>
+</head>
 
-  </style></head><body>  <div class="chat-container"><!-- HEADER -->
-<div class="chat-header">
+<body>
 
-  <a
-    href="connections.html"
-    class="back-btn"
-  >
-    ←
-  </a>
+  <div class="chat-container">
 
-  <div
-    class="user-avatar"
-    id="userAvatar"
-  >
-    W
-  </div>
+    <!-- HEADER -->
+    <div class="chat-header">
 
-  <div class="user-info">
+      <!-- UPDATED BACK BUTTON -->
+      <a
+        href="find-people.html"
+        class="back-btn"
+      >
+        ←
+      </a>
 
-    <div
-      class="user-name"
-      id="otherUserName"
-    >
-      Loading...
+      <div
+        class="user-avatar"
+        id="userAvatar"
+      >
+        W
+      </div>
+
+      <div class="user-info">
+
+        <div
+          class="user-name"
+          id="otherUserName"
+        >
+          Loading...
+        </div>
+
+        <span
+          class="online-status offline"
+          id="onlineStatus"
+        >
+          ⚪ Offline
+        </span>
+
+      </div>
+
+      <!-- VOICE + VIDEO CALL -->
+      <div class="call-buttons">
+
+        <a
+          href="#"
+          class="call-btn"
+          id="voiceCallBtn"
+          title="Voice Call"
+          aria-label="Voice Call"
+        >
+          📞
+        </a>
+
+        <a
+          href="#"
+          class="call-btn"
+          id="videoCallBtn"
+          title="Video Call"
+          aria-label="Video Call"
+        >
+          📹
+        </a>
+
+      </div>
+
     </div>
 
-    <span
-      class="online-status offline"
-      id="onlineStatus"
+    <!-- MESSAGES -->
+    <div
+      class="messages"
+      id="messages"
     >
-      ⚪ Offline
-    </span>
+
+      <div
+        style="
+          text-align:center;
+          color:#777;
+          margin-top:20px;
+        "
+      >
+        Loading messages...
+      </div>
+
+    </div>
+
+    <!-- MESSAGE INPUT -->
+    <div class="input-area">
+
+      <input
+        type="text"
+        id="messageInput"
+        placeholder="Type a message..."
+        autocomplete="off"
+      >
+
+      <button
+        type="button"
+        class="send-btn"
+        id="sendBtn"
+      >
+        ➤
+      </button>
+
+    </div>
 
   </div>
 
-
-  <!-- VOICE + VIDEO CALL -->
-  <div class="call-buttons">
-
-    <a
-      href="#"
-      class="call-btn"
-      id="voiceCallBtn"
-      title="Voice Call"
-      aria-label="Voice Call"
-    >
-      📞
-    </a>
-
-    <a
-      href="#"
-      class="call-btn"
-      id="videoCallBtn"
-      title="Video Call"
-      aria-label="Video Call"
-    >
-      📹
-    </a>
-
-  </div>
-
-</div>
-
-
-<!-- MESSAGES -->
-<div
-  class="messages"
-  id="messages"
->
-
-  <div
-    style="
-      text-align:center;
-      color:#777;
-      margin-top:20px;
-    "
-  >
-    Loading messages...
-  </div>
-
-</div>
-
-
-<!-- MESSAGE INPUT -->
-<div class="input-area">
-
-  <input
-    type="text"
-    id="messageInput"
-    placeholder="Type a message..."
-    autocomplete="off"
-  >
-
-  <button
-    type="button"
-    class="send-btn"
-    id="sendBtn"
-  >
-    ➤
-  </button>
-
-</div>
-
-  </div>  <script type="module">
+  <script type="module">
 
     import {
       initializeApp
@@ -720,8 +720,6 @@
       }
 
     }
-
-
     /* CURRENT USER OFFLINE */
 
     async function setOffline() {
@@ -1240,12 +1238,14 @@
             "W"
           )
           .charAt(0)
-          .toUpperCase()
+          .toUpperCase();
 
 
         /* SET CALL LINKS IMMEDIATELY */
 
         updateCallLinks();
+
+
         /* SET ONLINE */
 
         await setOnline();
@@ -1280,5 +1280,3 @@
 
 </body>
 </html>
-        
-        
