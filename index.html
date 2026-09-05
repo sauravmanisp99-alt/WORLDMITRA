@@ -3,144 +3,161 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
   <title>WorldMitra - Connect with the World</title>
 
   <style>
     * {
-      box-sizing: border-box;
       margin: 0;
       padding: 0;
+      box-sizing: border-box;
       font-family: Arial, sans-serif;
     }
 
     body {
-      background: #f5f8ff;
-      color: #172033;
+      background: #f5f7fb;
+      color: #222;
     }
 
     header {
-      background: white;
+      width: 100%;
       padding: 18px 7%;
       display: flex;
       justify-content: space-between;
       align-items: center;
+      background: white;
       box-shadow: 0 2px 10px rgba(0,0,0,0.08);
     }
 
     .logo {
       font-size: 25px;
       font-weight: bold;
-    }
-
-    .logo span {
-      font-size: 30px;
+      color: #2563eb;
     }
 
     .login {
       text-decoration: none;
-      color: #2563eb;
+      background: #2563eb;
+      color: white;
+      padding: 10px 20px;
+      border-radius: 25px;
       font-weight: bold;
     }
 
     .hero {
       min-height: 75vh;
       display: flex;
-      align-items: center;
       justify-content: center;
+      align-items: center;
       text-align: center;
-      padding: 50px 20px;
+      padding: 40px 20px;
+      background: linear-gradient(135deg, #eef4ff, #ffffff);
     }
 
     .hero-content {
-      max-width: 700px;
+      max-width: 750px;
     }
 
-    h1 {
-      font-size: 48px;
+    .hero h1 {
+      font-size: 52px;
       margin-bottom: 20px;
+      color: #111827;
     }
 
-    h1 span {
+    .hero h1 span {
       color: #2563eb;
     }
 
     .hero p {
-      font-size: 19px;
-      line-height: 1.6;
-      color: #5b6475;
+      font-size: 18px;
+      line-height: 1.7;
+      color: #555;
       margin-bottom: 30px;
     }
 
     .start-btn {
       display: inline-block;
+      text-decoration: none;
       background: #2563eb;
       color: white;
       padding: 15px 32px;
-      border-radius: 10px;
-      text-decoration: none;
+      border-radius: 30px;
       font-size: 18px;
       font-weight: bold;
+      transition: 0.3s;
     }
 
     .start-btn:hover {
       background: #1d4ed8;
+      transform: translateY(-2px);
     }
 
     .features {
+      padding: 60px 7%;
       background: white;
-      padding: 50px 7%;
       text-align: center;
     }
 
     .features h2 {
-      margin-bottom: 30px;
-      font-size: 30px;
+      font-size: 32px;
+      margin-bottom: 40px;
+      color: #111827;
     }
 
-    .cards {
-      display: flex;
-      justify-content: center;
-      gap: 20px;
-      flex-wrap: wrap;
+    .feature-container {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 25px;
     }
 
-    .card {
-      width: 220px;
-      padding: 25px;
-      background: #f5f8ff;
-      border-radius: 15px;
+    .feature-card {
+      background: #f8fafc;
+      padding: 30px 20px;
+      border-radius: 18px;
+      box-shadow: 0 5px 20px rgba(0,0,0,0.06);
+      transition: 0.3s;
     }
 
-    .card .icon {
-      font-size: 35px;
-      margin-bottom: 12px;
+    .feature-card:hover {
+      transform: translateY(-5px);
     }
 
-    .card h3 {
-      margin-bottom: 8px;
+    .feature-icon {
+      font-size: 45px;
+      margin-bottom: 15px;
     }
 
-    .card p {
-      color: #667085;
-      line-height: 1.5;
+    .feature-card h3 {
+      font-size: 21px;
+      margin-bottom: 10px;
+      color: #111827;
+    }
+
+    .feature-card p {
+      color: #666;
+      line-height: 1.6;
+      font-size: 15px;
     }
 
     footer {
       text-align: center;
       padding: 25px;
-      color: #667085;
-      background: white;
+      background: #111827;
+      color: white;
+      font-size: 14px;
+    }
+
+    @media (max-width: 900px) {
+      .feature-container {
+        grid-template-columns: repeat(2, 1fr);
+      }
+
+      .hero h1 {
+        font-size: 42px;
+      }
     }
 
     @media (max-width: 600px) {
-      h1 {
-        font-size: 36px;
-      }
-
-      .hero p {
-        font-size: 17px;
-      }
-
       header {
         padding: 15px 5%;
       }
@@ -149,9 +166,29 @@
         font-size: 21px;
       }
 
-      .card {
-        width: 100%;
-        max-width: 320px;
+      .login {
+        padding: 8px 16px;
+        font-size: 14px;
+      }
+
+      .hero {
+        min-height: 70vh;
+      }
+
+      .hero h1 {
+        font-size: 34px;
+      }
+
+      .hero p {
+        font-size: 16px;
+      }
+
+      .feature-container {
+        grid-template-columns: 1fr;
+      }
+
+      .features {
+        padding: 45px 6%;
       }
     }
   </style>
@@ -159,15 +196,23 @@
 
 <body>
 
-  <!-- Header -->
+  <!-- HEADER -->
   <header>
-    <div class="logo">🌍 WorldMitra</div>
 
-    <a href="login.html" class="login">Login</a>
+    <div class="logo">
+      🌍 WorldMitra
+    </div>
+
+    <!-- OLD LOGIN REMOVED -->
+    <!-- NOW PROFILE OPENS DIRECTLY -->
+    <a href="profile.html" class="login">
+      Profile
+    </a>
+
   </header>
 
 
-  <!-- Hero Section -->
+  <!-- HERO SECTION -->
   <section class="hero">
 
     <div class="hero-content">
@@ -182,7 +227,9 @@
         chat, voice calls and video calls.
       </p>
 
-      <a href="signup.html" class="start-btn">
+      <!-- OLD signup.html REMOVED -->
+      <!-- NOW PROFILE + OTP OPENS -->
+      <a href="profile.html" class="start-btn">
         Start Connecting
       </a>
 
@@ -191,55 +238,88 @@
   </section>
 
 
-  <!-- Features -->
+  <!-- FEATURES -->
   <section class="features">
 
-    <h2>What you can do</h2>
+    <h2>
+      Everything You Need to Connect
+    </h2>
 
-    <div class="cards">
+    <div class="feature-container">
 
-      <div class="card">
-        <div class="icon">🌎</div>
-        <h3>Meet the World</h3>
+      <!-- FEATURE 1 -->
+      <div class="feature-card">
+
+        <div class="feature-icon">
+          🌎
+        </div>
+
+        <h3>
+          Meet the World
+        </h3>
+
         <p>
-          Discover and meet people from different countries.
+          Discover and connect with people from
+          different countries and cultures.
         </p>
+
       </div>
 
 
-      <div class="card">
-        <div class="icon">💬</div>
-        <h3>Chat</h3>
+      <!-- FEATURE 2 -->
+      <div class="feature-card">
+
+        <div class="feature-icon">
+          💬
+        </div>
+
+        <h3>
+          Chat
+        </h3>
+
         <p>
-          Have conversations and share experiences with people.
+          Have meaningful conversations with
+          people you connect with around the world.
         </p>
+
       </div>
 
 
-      <div class="card">
-        <div class="icon">📞</div>
-        <h3>Voice Call</h3>
+      <!-- FEATURE 3 -->
+      <div class="feature-card">
+
+        <div class="feature-icon">
+          📞
+        </div>
+
+        <h3>
+          Voice Call
+        </h3>
+
         <p>
-          Talk with people directly through voice calls.
+          Talk with your connections using
+          real-time voice calls.
         </p>
+
       </div>
 
 
-      <div class="card">
-        <div class="icon">📹</div>
-        <h3>Video Call</h3>
-        <p>
-          Connect face-to-face with video calling.
-        </p>
-      </div>
+      <!-- FEATURE 4 -->
+      <div class="feature-card">
 
+        <div class="feature-icon">
+          📹
+        </div>
 
-      <div class="card">
-        <div class="icon">🛡️</div>
-        <h3>Safety</h3>
+        <h3>
+          Video Call
+        </h3>
+
         <p>
-          Report or block users whenever necessary.
+          Connect face-to-face with video calls
+          using WorldMitra.
         </p>
+
       </div>
 
     </div>
@@ -247,9 +327,11 @@
   </section>
 
 
-  <!-- Footer -->
+  <!-- FOOTER -->
   <footer>
+
     © 2026 WorldMitra · Connect with the World
+
   </footer>
 
 </body>
