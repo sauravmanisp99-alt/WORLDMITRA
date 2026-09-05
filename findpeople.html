@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Find People - WorldMitra</title> 
+  <title>Find People - WorldMitra</title>
 
   <style>
     * {
@@ -131,43 +131,51 @@
       line-height: 1.4;
     }
 
-    .connect-btn {
-      display: block;
+    /* Action Buttons */
+
+    .actions {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 9px;
+      margin-top: 15px;
+    }
+
+    .action-btn {
       border: none;
-      background: #2563eb;
       color: white;
-      padding: 13px 14px;
+      padding: 12px 8px;
       border-radius: 9px;
       font-weight: bold;
-      font-size: 16px;
+      font-size: 14px;
       cursor: pointer;
-      margin-top: 14px;
-      width: 100%;
+      text-decoration: none;
+      text-align: center;
       min-height: 46px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
       touch-action: manipulation;
       -webkit-tap-highlight-color: transparent;
     }
 
-    .connect-btn:active {
-      transform: scale(0.98);
+    .action-btn:active {
+      transform: scale(0.97);
     }
 
-    .connect-btn:disabled {
-      background: #9ca3af;
-      cursor: not-allowed;
-      opacity: 0.9;
+    .profile-btn {
+      background: #111827;
     }
 
-    .connected {
-      background: #16a34a !important;
+    .chat-btn {
+      background: #2563eb;
     }
 
-    .requested {
-      background: #f59e0b !important;
+    .voice-btn {
+      background: #16a34a;
     }
 
-    .incoming {
-      background: #7c3aed !important;
+    .video-btn {
+      background: #7c3aed;
     }
 
     .empty {
@@ -189,6 +197,18 @@
       border-radius: 10px;
       font-weight: bold;
     }
+
+    @media (max-width: 520px) {
+
+      .actions {
+        grid-template-columns: 1fr;
+      }
+
+      .action-btn {
+        width: 100%;
+      }
+
+    }
   </style>
 </head>
 
@@ -205,14 +225,14 @@
       <h1>👥 Find People</h1>
 
       <p>
-        Discover people and make new connections around the world.
+        Discover people from around the world and connect directly.
       </p>
 
       <input
         type="text"
         id="searchInput"
         class="search-input"
-        placeholder="Search by name or country..."
+        placeholder="Search by name, country or interests..."
       >
 
     </div>
@@ -245,28 +265,45 @@
     import {
       getFirestore,
       collection,
-      getDocs,
-      addDoc,
-      query,
-      where
+      getDocs
     } from "https://www.gstatic.com/firebasejs/12.1.0/firebase-firestore.js";
 
 
+    // ----------------------------------
+    // Firebase
+    // ----------------------------------
+
     const firebaseConfig = {
-      apiKey: "AIzaSyBAhtPH_elsDDkBsxZsvMO8FYwdOGna84g",
-      authDomain: "worldmitra-33ca6.firebaseapp.com",
-      projectId: "worldmitra-33ca6",
-      storageBucket: "worldmitra-33ca6.firebasestorage.app",
-      messagingSenderId: "1089520845776",
-      appId: "1:1089520845776:web:2789654cc6061e7034afd5"
+
+      apiKey:
+        "AIzaSyBAhtPH_elsDDkBsxZsvMO8FYwdOGna84g",
+
+      authDomain:
+        "worldmitra-33ca6.firebaseapp.com",
+
+      projectId:
+        "worldmitra-33ca6",
+
+      storageBucket:
+        "worldmitra-33ca6.firebasestorage.app",
+
+      messagingSenderId:
+        "1089520845776",
+
+      appId:
+        "1:1089520845776:web:2789654cc6061e7034afd5"
+
     };
 
 
-    const app = initializeApp(firebaseConfig);
+    const app =
+      initializeApp(firebaseConfig);
 
-    const auth = getAuth(app);
+    const auth =
+      getAuth(app);
 
-    const db = getFirestore(app);
+    const db =
+      getFirestore(app);
 
 
     const usersList =
@@ -280,480 +317,69 @@
 
     let currentUser = null;
 
-    let currentUserProfile = null;
-
-    let connectionStatuses = new Map();
-
 
     // ----------------------------------
-    // Load current user's profile
+    // Load Users
     // ----------------------------------
 
-    async function loadCurrentUserProfile() {
+    async function loadUsers() {
 
       try {
-
-        const profileQuery = query(
-          collection(db, "users"),
-          where("uid", "==", currentUser.uid)
-        );
 
         const snapshot =
-          await getDocs(profileQuery);
-
-
-        if (!snapshot.empty) {
-
-          currentUserProfile =
-            snapshot.docs[0].data();
-
-        }
-
-      } catch (error) {
-
-        console.error(
-          "Current profile load error:",
-          error
-        );
-
-      }
-
-    }
-
-
-    // ----------------------------------
-    // Load connection statuses
-    // ----------------------------------
-
-    async function loadConnectionStatuses() {
-
-      connectionStatuses = new Map();
-
-
-      try {
-
-        // Requests sent by current user
-
-        const sentQuery = query(
-          collection(db, "connectionRequests"),
-          where("fromUserId", "==", currentUser.uid)
-        );
-
-
-        const sentSnapshot =
-          await getDocs(sentQuery);
-
-
-        sentSnapshot.forEach((requestDoc) => {
-
-          const data =
-            requestDoc.data();
-
-          if (data.status === "accepted") {
-
-            connectionStatuses.set(
-              data.toUserId,
-              "accepted"
-            );
-
-          } else if (data.status === "pending") {
-
-            connectionStatuses.set(
-              data.toUserId,
-              "pending-sent"
-            );
-
-          }
-
-        });
-
-
-        // Requests received by current user
-
-        const receivedQuery = query(
-          collection(db, "connectionRequests"),
-          where("toUserId", "==", currentUser.uid)
-        );
-
-
-        const receivedSnapshot =
-          await getDocs(receivedQuery);
-
-
-        receivedSnapshot.forEach((requestDoc) => {
-
-          const data =
-            requestDoc.data();
-
-          if (data.status === "accepted") {
-
-            connectionStatuses.set(
-              data.fromUserId,
-              "accepted"
-            );
-
-          } else if (data.status === "pending") {
-
-            connectionStatuses.set(
-              data.fromUserId,
-              "pending-received"
-            );
-
-          }
-
-        });
-
-
-      } catch (error) {
-
-        console.error(
-          "Connection status error:",
-          error
-        );
-
-      }
-
-    }
-
-
-    // ----------------------------------
-    // Get button state
-    // ----------------------------------
-
-    function getButtonState(user) {
-
-      const status =
-        connectionStatuses.get(user.uid);
-
-
-      if (status === "accepted") {
-
-        return {
-          text: "Connected",
-          disabled: true,
-          className: "connected"
-        };
-
-      }
-
-
-      if (status === "pending-sent") {
-
-        return {
-          text: "Requested",
-          disabled: true,
-          className: "requested"
-        };
-
-      }
-
-
-      if (status === "pending-received") {
-
-        return {
-          text: "Accept in Requests",
-          disabled: true,
-          className: "incoming"
-        };
-
-      }
-
-
-      return {
-        text: "Connect",
-        disabled: false,
-        className: ""
-      };
-
-    }
-
-
-    // ----------------------------------
-    // Send connection request
-    // ----------------------------------
-
-    async function sendConnectionRequest(
-      targetUser,
-      button
-    ) {
-
-      if (!currentUser) {
-
-        alert("Please login first.");
-
-        return;
-
-      }
-
-
-      if (!targetUser.uid) {
-
-        alert(
-          "This user's profile is missing a UID."
-        );
-
-        return;
-
-      }
-
-
-      if (
-        targetUser.uid ===
-        currentUser.uid
-      ) {
-
-        alert(
-          "You cannot connect with yourself."
-        );
-
-        return;
-
-      }
-
-
-      const currentStatus =
-        connectionStatuses.get(
-          targetUser.uid
-        );
-
-
-      if (currentStatus === "accepted") {
-
-        button.textContent =
-          "Connected";
-
-        button.disabled = true;
-
-        return;
-
-      }
-
-
-      if (currentStatus === "pending-sent") {
-
-        button.textContent =
-          "Requested";
-
-        button.disabled = true;
-
-        return;
-
-      }
-
-
-      if (currentStatus === "pending-received") {
-
-        button.textContent =
-          "Accept in Requests";
-
-        button.disabled = true;
-
-        return;
-
-      }
-
-
-      button.disabled = true;
-
-      button.textContent =
-        "Sending...";
-
-
-      try {
-
-        // Check for existing outgoing request
-
-        const existingQuery = query(
-          collection(db, "connectionRequests"),
-
-          where(
-            "fromUserId",
-            "==",
-            currentUser.uid
-          ),
-
-          where(
-            "toUserId",
-            "==",
-            targetUser.uid
-          )
-        );
-
-
-        const existingSnapshot =
-          await getDocs(existingQuery);
-
-
-        if (!existingSnapshot.empty) {
-
-          connectionStatuses.set(
-            targetUser.uid,
-            "pending-sent"
+          await getDocs(
+            collection(db, "users")
           );
 
-          button.textContent =
-            "Requested";
 
-          button.classList.add(
-            "requested"
-          );
-
-          button.disabled = true;
-
-          return;
-
-        }
+        allUsers = [];
 
 
-        // ----------------------------------
-        // Create connection request
-        // ----------------------------------
+        snapshot.forEach(
+          (userDoc) => {
 
-        await addDoc(
-          collection(
-            db,
-            "connectionRequests"
-          ),
-          {
+            const data =
+              userDoc.data();
 
-            fromUserId:
-              currentUser.uid,
 
-            fromName:
-              currentUserProfile?.name ||
-              currentUser.displayName ||
-              "WorldMitra User",
+            allUsers.push({
 
-            fromEmail:
-              currentUser.email || "",
+              ...data,
 
-            fromCountry:
-              currentUserProfile?.country ||
-              "",
+              uid:
+                data.uid ||
+                userDoc.id
 
-            toUserId:
-              targetUser.uid,
-
-            toName:
-              targetUser.name ||
-              "WorldMitra User",
-
-            toCountry:
-              targetUser.country ||
-              "",
-
-            status:
-              "pending",
-
-            createdAt:
-              new Date()
+            });
 
           }
         );
 
 
-        // ----------------------------------
-        // Create notification
-        // ----------------------------------
-
-        try {
-
-          await addDoc(
-            collection(
-              db,
-              "notifications"
-            ),
-            {
-
-              userId:
-                targetUser.uid,
-
-              type:
-                "connection_request",
-
-              message:
-                (
-                  currentUserProfile?.name ||
-                  currentUser.displayName ||
-                  currentUser.email ||
-                  "Someone"
-                ) +
-                " sent you a connection request.",
-
-              fromUserId:
-                currentUser.uid,
-
-              fromName:
-                currentUserProfile?.name ||
-                currentUser.displayName ||
-                "WorldMitra User",
-
-              read:
-                false,
-
-              createdAt:
-                new Date()
-
-            }
-          );
-
-          console.log(
-            "Notification created successfully."
-          );
-
-        } catch (notificationError) {
-
-          // Notification fail होने पर
-          // connection request को fail नहीं मानेंगे.
-
-          console.error(
-            "Notification error:",
-            notificationError
-          );
-
-        }
-
-
-        connectionStatuses.set(
-          targetUser.uid,
-          "pending-sent"
-        );
-
-
-        button.textContent =
-          "Requested";
-
-        button.classList.add(
-          "requested"
-        );
-
-        button.disabled = true;
-
-
-        alert(
-          "Connection request sent! 🎉"
-        );
+        showUsers(allUsers);
 
 
       } catch (error) {
 
         console.error(
-          "Connection request error:",
+          "Users load error:",
           error
         );
 
 
-        alert(
-          "Request send नहीं हुई: " +
-          error.message
-        );
+        usersList.innerHTML = `
 
+          <div class="empty">
 
-        button.disabled =
-          false;
+            People load नहीं हो पाए।
 
-        button.textContent =
-          "Connect";
+            <br><br>
+
+            ${error.message}
+
+          </div>
+
+        `;
 
       }
 
@@ -761,7 +387,7 @@
 
 
     // ----------------------------------
-    // Create user card
+    // Create User Card
     // ----------------------------------
 
     function createUserCard(user) {
@@ -773,12 +399,16 @@
         "user-card";
 
 
+      // Top Row
+
       const topRow =
         document.createElement("div");
 
       topRow.className =
         "top-row";
 
+
+      // Avatar
 
       const avatar =
         document.createElement("div");
@@ -809,11 +439,13 @@
             user.name ||
             "U"
           )
-            .charAt(0)
-            .toUpperCase();
+          .charAt(0)
+          .toUpperCase();
 
       }
 
+
+      // User Info
 
       const userInfo =
         document.createElement("div");
@@ -862,6 +494,8 @@
       );
 
 
+      // Bio
+
       const bio =
         document.createElement("div");
 
@@ -875,6 +509,8 @@
           "No information added yet."
         );
 
+
+      // Interests
 
       const interests =
         document.createElement("div");
@@ -890,59 +526,114 @@
         );
 
 
-      const button =
-        document.createElement("button");
+      // ----------------------------------
+      // Action Buttons
+      // ----------------------------------
 
-      button.type =
-        "button";
+      const actions =
+        document.createElement("div");
 
-      button.className =
-        "connect-btn";
-
-
-      const buttonState =
-        getButtonState(user);
+      actions.className =
+        "actions";
 
 
-      button.textContent =
-        buttonState.text;
+      // Profile Button
+
+      const profileButton =
+        document.createElement("a");
+
+      profileButton.className =
+        "action-btn profile-btn";
+
+      profileButton.textContent =
+        "👤 Profile";
+
+      profileButton.href =
+        "user-profile.html?uid=" +
+        encodeURIComponent(user.uid);
 
 
-      if (buttonState.className) {
+      // Chat Button
 
-        button.classList.add(
-          buttonState.className
+      const chatButton =
+        document.createElement("a");
+
+      chatButton.className =
+        "action-btn chat-btn";
+
+      chatButton.textContent =
+        "💬 Chat";
+
+      chatButton.href =
+        "chat.html?uid=" +
+        encodeURIComponent(user.uid) +
+        "&name=" +
+        encodeURIComponent(
+          user.name ||
+          "WorldMitra User"
         );
 
-      }
 
+      // Voice Call Button
 
-      button.disabled =
-        buttonState.disabled;
+      const voiceButton =
+        document.createElement("a");
 
+      voiceButton.className =
+        "action-btn voice-btn";
 
-      // Important: direct click handler
+      voiceButton.textContent =
+        "📞 Voice Call";
 
-      if (!buttonState.disabled) {
-
-        button.addEventListener(
-          "click",
-          function(event) {
-
-            event.preventDefault();
-
-            event.stopPropagation();
-
-            sendConnectionRequest(
-              user,
-              button
-            );
-
-          }
+      voiceButton.href =
+        "voice-call.html?uid=" +
+        encodeURIComponent(user.uid) +
+        "&name=" +
+        encodeURIComponent(
+          user.name ||
+          "WorldMitra User"
         );
 
-      }
 
+      // Video Call Button
+
+      const videoButton =
+        document.createElement("a");
+
+      videoButton.className =
+        "action-btn video-btn";
+
+      videoButton.textContent =
+        "📹 Video Call";
+
+      videoButton.href =
+        "video-call.html?uid=" +
+        encodeURIComponent(user.uid) +
+        "&name=" +
+        encodeURIComponent(
+          user.name ||
+          "WorldMitra User"
+        );
+
+
+      actions.appendChild(
+        profileButton
+      );
+
+      actions.appendChild(
+        chatButton
+      );
+
+      actions.appendChild(
+        voiceButton
+      );
+
+      actions.appendChild(
+        videoButton
+      );
+
+
+      // Add Everything
 
       card.appendChild(
         topRow
@@ -957,7 +648,7 @@
       );
 
       card.appendChild(
-        button
+        actions
       );
 
 
@@ -967,7 +658,7 @@
 
 
     // ----------------------------------
-    // Show users
+    // Show Users
     // ----------------------------------
 
     function showUsers(users) {
@@ -984,14 +675,17 @@
 
 
       if (
-        otherUsers.length ===
-        0
+        otherUsers.length === 0
       ) {
 
         usersList.innerHTML = `
+
           <div class="empty">
+
             No other people found yet. 🌍
+
           </div>
+
         `;
 
         return;
@@ -1011,82 +705,6 @@
 
         }
       );
-
-    }
-
-
-    // ----------------------------------
-    // Load users
-    // ----------------------------------
-
-    async function loadUsers() {
-
-      try {
-
-        const snapshot =
-          await getDocs(
-            collection(
-              db,
-              "users"
-            )
-          );
-
-
-        allUsers = [];
-
-
-        snapshot.forEach(
-          (userDoc) => {
-
-            const data =
-              userDoc.data();
-
-
-            allUsers.push({
-
-              ...data,
-
-              uid:
-                data.uid ||
-                userDoc.id
-
-            });
-
-          }
-        );
-
-
-        await loadConnectionStatuses();
-
-
-        showUsers(
-          allUsers
-        );
-
-
-      } catch (error) {
-
-        console.error(
-          "Users load error:",
-          error
-        );
-
-
-        usersList.innerHTML = `
-
-          <div class="empty">
-
-            People load नहीं हो पाए।
-
-            <br><br>
-
-            ${error.message}
-
-          </div>
-
-        `;
-
-      }
 
     }
 
@@ -1114,7 +732,7 @@
                   user.name ||
                   ""
                 )
-                  .toLowerCase();
+                .toLowerCase();
 
 
               const country =
@@ -1122,7 +740,7 @@
                   user.country ||
                   ""
                 )
-                  .toLowerCase();
+                .toLowerCase();
 
 
               const bio =
@@ -1130,7 +748,7 @@
                   user.bio ||
                   ""
                 )
-                  .toLowerCase();
+                .toLowerCase();
 
 
               const interests =
@@ -1138,7 +756,7 @@
                   user.interests ||
                   ""
                 )
-                  .toLowerCase();
+                .toLowerCase();
 
 
               return (
@@ -1186,8 +804,6 @@
         currentUser =
           user;
 
-
-        await loadCurrentUserProfile();
 
         await loadUsers();
 
