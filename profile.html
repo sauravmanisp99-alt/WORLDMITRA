@@ -1,7 +1,14 @@
-<!DOCTYPE html><html lang="en">
+<!DOCTYPE html>
+<html lang="en">
+
 <head>
   <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">  <title>WorldMitra</title>  <style>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+  <title>WorldMitra</title>
+
+  <style>
+
     * {
       box-sizing: border-box;
       margin: 0;
@@ -24,7 +31,7 @@
       background: white;
       padding: 18px 7%;
       display: flex;
-      justify-content: center;
+      justify-content: space-between;
       align-items: center;
       box-shadow: 0 2px 12px rgba(0,0,0,0.08);
     }
@@ -33,6 +40,32 @@
       font-size: 26px;
       font-weight: bold;
       color: #2563eb;
+    }
+
+    .account-area {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+
+    .account-text {
+      font-size: 14px;
+      color: #667085;
+    }
+
+    .logout-btn {
+      border: none;
+      background: #ef4444;
+      color: white;
+      padding: 10px 16px;
+      border-radius: 10px;
+      cursor: pointer;
+      font-size: 14px;
+      font-weight: bold;
+    }
+
+    .logout-btn:hover {
+      background: #dc2626;
     }
 
 
@@ -143,7 +176,16 @@
       }
 
       .logo {
-        font-size: 23px;
+        font-size: 21px;
+      }
+
+      .account-text {
+        display: none;
+      }
+
+      .logout-btn {
+        padding: 9px 13px;
+        font-size: 13px;
       }
 
       h1 {
@@ -173,113 +215,160 @@
         font-size: 55px;
       }
     }
-  </style></head><body>  <!-- =========================
-       HEADER
-       ========================= -->  <header><div class="logo">
-  🌍 WorldMitra
-</div>
 
-  </header>  <!-- =========================
-       MAIN
-       ========================= -->  <main class="main"><div class="container">
+  </style>
 
-  <div class="world-icon">
-    🌍
-  </div>
+</head>
 
-  <h1>
-    Welcome to WorldMitra
-  </h1>
 
-  <p class="subtitle">
-    Connect with people around the world
-    through chat, voice and video.
-  </p>
+<body>
 
 
   <!-- =========================
-       THREE OPTIONS ONLY
+       HEADER
        ========================= -->
 
-  <div class="options">
+  <header>
 
-    <!-- CHAT -->
+    <div class="logo">
+      🌍 WorldMitra
+    </div>
 
-    <a
-      href="chat.html"
-      class="option"
-    >
+    <div class="account-area">
 
-      <div class="option-icon">
-        💬
+      <span
+        class="account-text"
+        id="userNumber">
+        Account
+      </span>
+
+      <button
+        class="logout-btn"
+        id="logoutBtn">
+        Logout
+      </button>
+
+    </div>
+
+  </header>
+
+
+  <!-- =========================
+       MAIN
+       ========================= -->
+
+  <main class="main">
+
+    <div class="container">
+
+
+      <div class="world-icon">
+        🌍
       </div>
 
-      <h2>
-        Chat
-      </h2>
 
-      <p>
-        Chat with your connections
-        around the world.
+      <h1>
+        Welcome to WorldMitra
+      </h1>
+
+
+      <p class="subtitle">
+        Connect with people around the world
+        through chat, voice and video.
       </p>
 
-    </a>
+
+      <!-- =========================
+           OPTIONS
+           ========================= -->
+
+      <div class="options">
 
 
-    <!-- VOICE CALL -->
+        <!-- CHAT -->
 
-    <a
-      href="call.html"
-      class="option"
-    >
+        <a
+          href="chat.html"
+          class="option">
 
-      <div class="option-icon">
-        📞
+          <div class="option-icon">
+            💬
+          </div>
+
+          <h2>
+            Chat
+          </h2>
+
+          <p>
+            Chat with your connections
+            around the world.
+          </p>
+
+        </a>
+
+
+        <!-- VOICE CALL -->
+
+        <a
+          href="call.html"
+          class="option">
+
+          <div class="option-icon">
+            📞
+          </div>
+
+          <h2>
+            Voice Call
+          </h2>
+
+          <p>
+            Talk with your connections
+            using voice calls.
+          </p>
+
+        </a>
+
+
+        <!-- VIDEO CALL -->
+
+        <a
+          href="video-call.html"
+          class="option">
+
+          <div class="option-icon">
+            📹
+          </div>
+
+          <h2>
+            Video Call
+          </h2>
+
+          <p>
+            Connect face-to-face
+            with video calls.
+          </p>
+
+        </a>
+
+
       </div>
 
-      <h2>
-        Voice Call
-      </h2>
+    </div>
 
-      <p>
-        Talk with your connections
-        using voice calls.
-      </p>
-
-    </a>
+  </main>
 
 
-    <!-- VIDEO CALL -->
-
-    <a
-      href="video-call.html"
-      class="option"
-    >
-
-      <div class="option-icon">
-        📹
-      </div>
-
-      <h2>
-        Video Call
-      </h2>
-
-      <p>
-        Connect face-to-face
-        with video calls.
-      </p>
-
-    </a>
-
-  </div>
-
-</div>
-
-  </main>  <footer>
+  <footer>
     © 2026 WorldMitra · Connect with the World
-  </footer>  <!-- =========================
-       FIREBASE AUTH CHECK
-       ========================= -->  <script type="module">
+  </footer>
+
+
+
+  <!-- =========================
+       FIREBASE AUTH
+       ========================= -->
+
+  <script type="module">
 
     import {
       initializeApp
@@ -289,7 +378,8 @@
 
     import {
       getAuth,
-      onAuthStateChanged
+      onAuthStateChanged,
+      signOut
     }
     from "https://www.gstatic.com/firebasejs/12.1.0/firebase-auth.js";
 
@@ -333,6 +423,17 @@
 
 
     // =========================
+    // GET ELEMENTS
+    // =========================
+
+    const logoutBtn =
+      document.getElementById("logoutBtn");
+
+    const userNumber =
+      document.getElementById("userNumber");
+
+
+    // =========================
     // AUTH CHECK
     // =========================
 
@@ -342,16 +443,66 @@
 
         if (!user) {
 
-          // User is not logged in.
-          // Send them to mobile OTP page.
-
           window.location.href =
             "signup.html";
+
+          return;
+
+        }
+
+
+        // Show logged-in phone number
+
+        if (user.phoneNumber) {
+
+          userNumber.textContent =
+            user.phoneNumber;
+
+        } else {
+
+          userNumber.textContent =
+            "My Account";
 
         }
 
       }
     );
 
-  </script></body>
+
+    // =========================
+    // LOGOUT
+    // =========================
+
+    logoutBtn.addEventListener(
+      "click",
+      async () => {
+
+        try {
+
+          await signOut(auth);
+
+          window.location.href =
+            "signup.html";
+
+        } catch (error) {
+
+          console.error(
+            "Logout Error:",
+            error
+          );
+
+          alert(
+            "Logout failed. Please try again."
+          );
+
+        }
+
+      }
+    );
+
+  </script>
+
+
+</body>
+
 </html>
