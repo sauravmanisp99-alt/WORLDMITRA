@@ -1,7 +1,12 @@
-<!DOCTYPE html><html lang="en">
+<!DOCTYPE html>
+<html lang="en">
 <head>
   <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">  <title>WorldMitra - Connect with the World</title>  <style>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+  <title>WorldMitra</title>
+
+  <style>
     * {
       margin: 0;
       padding: 0;
@@ -14,14 +19,17 @@
       color: #222;
     }
 
-    header {
-      width: 100%;
-      padding: 18px 7%;
-      display: flex;
-      justify-content: center;
-      align-items: center;
+    .header {
       background: white;
+      height: 65px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 0 20px;
       box-shadow: 0 2px 10px rgba(0,0,0,0.08);
+      position: sticky;
+      top: 0;
+      z-index: 10;
     }
 
     .logo {
@@ -30,235 +38,182 @@
       color: #2563eb;
     }
 
-    .hero {
-      min-height: 75vh;
-      display: flex;
-      justify-content: center;
-      align-items: center;
-      text-align: center;
-      padding: 40px 20px;
-      background: linear-gradient(135deg, #eef4ff, #ffffff);
+    .status {
+      font-size: 13px;
+      color: #16a34a;
+      font-weight: bold;
     }
 
-    .hero-content {
-      max-width: 750px;
+    .hero {
+      text-align: center;
+      padding: 30px 15px 20px;
     }
 
     .hero h1 {
-      font-size: 52px;
-      margin-bottom: 20px;
-      color: #111827;
-    }
-
-    .hero h1 span {
-      color: #2563eb;
+      font-size: 28px;
+      margin-bottom: 8px;
     }
 
     .hero p {
-      font-size: 18px;
-      line-height: 1.7;
-      color: #555;
-      margin-bottom: 30px;
+      color: #666;
+      font-size: 15px;
+      line-height: 1.5;
     }
 
-    .start-btn {
-      display: inline-block;
-      text-decoration: none;
+    .online-title {
+      padding: 10px 18px;
+      font-size: 20px;
+      font-weight: bold;
+    }
+
+    .people {
+      padding: 10px 15px 30px;
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+      gap: 15px;
+      max-width: 1000px;
+      margin: auto;
+    }
+
+    .person-card {
+      background: white;
+      border-radius: 18px;
+      padding: 18px;
+      text-align: center;
+      box-shadow: 0 3px 15px rgba(0,0,0,0.08);
+    }
+
+    .avatar {
+      width: 75px;
+      height: 75px;
+      border-radius: 50%;
+      margin: auto;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 30px;
+      background: #e8efff;
+    }
+
+    .person-card h3 {
+      margin-top: 12px;
+      font-size: 18px;
+    }
+
+    .country {
+      color: #777;
+      font-size: 13px;
+      margin: 5px 0 12px;
+    }
+
+    .online {
+      color: #16a34a;
+      font-size: 13px;
+      margin-bottom: 12px;
+    }
+
+    .call-btn {
+      width: 100%;
+      border: none;
       background: #2563eb;
       color: white;
-      padding: 15px 32px;
-      border-radius: 30px;
-      font-size: 18px;
-      font-weight: bold;
-      transition: 0.3s;
-    }
-
-    .start-btn:hover {
-      background: #1d4ed8;
-      transform: translateY(-2px);
-    }
-
-    .features {
-      padding: 60px 7%;
-      background: white;
-      text-align: center;
-    }
-
-    .features h2 {
-      font-size: 32px;
-      margin-bottom: 40px;
-      color: #111827;
-    }
-
-    .feature-container {
-      display: grid;
-      grid-template-columns: repeat(4, 1fr);
-      gap: 25px;
-    }
-
-    .feature-card {
-      background: #f8fafc;
-      padding: 30px 20px;
-      border-radius: 18px;
-      box-shadow: 0 5px 20px rgba(0,0,0,0.06);
-      transition: 0.3s;
-    }
-
-    .feature-card:hover {
-      transform: translateY(-5px);
-    }
-
-    .feature-icon {
-      font-size: 45px;
-      margin-bottom: 15px;
-    }
-
-    .feature-card h3 {
-      font-size: 21px;
-      margin-bottom: 10px;
-      color: #111827;
-    }
-
-    .feature-card p {
-      color: #666;
-      line-height: 1.6;
+      padding: 12px;
+      border-radius: 10px;
       font-size: 15px;
+      font-weight: bold;
+      cursor: pointer;
     }
 
-    footer {
+    .call-btn:hover {
+      background: #1d4ed8;
+    }
+
+    .bottom {
       text-align: center;
-      padding: 25px;
-      background: #111827;
-      color: white;
-      font-size: 14px;
-    }
-
-    @media (max-width: 900px) {
-      .feature-container {
-        grid-template-columns: repeat(2, 1fr);
-      }
-
-      .hero h1 {
-        font-size: 42px;
-      }
+      padding: 25px 15px;
+      color: #888;
+      font-size: 12px;
     }
 
     @media (max-width: 600px) {
-      header {
-        padding: 15px 5%;
-      }
-
-      .logo {
-        font-size: 21px;
-      }
-
-      .hero {
-        min-height: 70vh;
-      }
-
       .hero h1 {
-        font-size: 34px;
+        font-size: 24px;
       }
 
-      .hero p {
-        font-size: 16px;
-      }
-
-      .feature-container {
+      .people {
         grid-template-columns: 1fr;
       }
-
-      .features {
-        padding: 45px 6%;
-      }
     }
-  </style></head><body>  <!-- HEADER -->  <header>
-    <div class="logo">
-      🌍 WorldMitra
-    </div>
-  </header>  <!-- HERO SECTION -->  <section class="hero"><div class="hero-content">
+  </style>
+</head>
 
-  <h1>
-    Connect with the <span>World</span> 🌍
-  </h1>
+<body>
 
-  <p>
-    Meet people from different countries, discover new cultures,
-    share interests and have meaningful conversations through
-    chat, voice calls and video calls.
-  </p>
+  <header class="header">
+    <div class="logo">🌍 WorldMitra</div>
+    <div class="status">● Online</div>
+  </header>
 
-  <a href="profile.html" class="start-btn">
-    Start Connecting
-  </a>
-
-</div>
-
-  </section>  <!-- FEATURES -->  <section class="features"><h2>
-  Everything You Need to Connect
-</h2>
-
-<div class="feature-container">
-
-  <!-- CHAT -->
-  <div class="feature-card">
-
-    <div class="feature-icon">
-      💬
-    </div>
-
-    <h3>
-      Chat
-    </h3>
-
+  <section class="hero">
+    <h1>Connect with the World</h1>
     <p>
-      Have meaningful conversations with
-      people you connect with around the world.
+      Meet people, discover new cultures and start a conversation.
     </p>
+  </section>
 
+  <div class="online-title">
+    🟢 People Online
   </div>
 
+  <section class="people">
 
-  <!-- VOICE CALL -->
-  <div class="feature-card">
+    <div class="person-card">
+      <div class="avatar">👨</div>
+      <h3>Alex</h3>
+      <div class="country">🇺🇸 United States</div>
+      <div class="online">● Available for call</div>
 
-    <div class="feature-icon">
-      📞
+      <button class="call-btn" onclick="startCall('Alex')">
+        📹 Start Video Call
+      </button>
     </div>
 
-    <h3>
-      Voice Call
-    </h3>
+    <div class="person-card">
+      <div class="avatar">👩</div>
+      <h3>Emma</h3>
+      <div class="country">🇬🇧 United Kingdom</div>
+      <div class="online">● Available for call</div>
 
-    <p>
-      Talk with your connections using
-      real-time voice calls.
-    </p>
-
-  </div>
-
-
-  <!-- VIDEO CALL -->
-  <div class="feature-card">
-
-    <div class="feature-icon">
-      📹
+      <button class="call-btn" onclick="startCall('Emma')">
+        📹 Start Video Call
+      </button>
     </div>
 
-    <h3>
-      Video Call
-    </h3>
+    <div class="person-card">
+      <div class="avatar">👨</div>
+      <h3>Daniel</h3>
+      <div class="country">🇨🇦 Canada</div>
+      <div class="online">● Available for call</div>
 
-    <p>
-      Connect face-to-face with video calls
-      using WorldMitra.
-    </p>
+      <button class="call-btn" onclick="startCall('Daniel')">
+        📹 Start Video Call
+      </button>
+    </div>
 
+  </section>
+
+  <div class="bottom">
+    © 2026 WorldMitra · Connect safely with the world
   </div>
 
-</div>
+  <script>
+    function startCall(name) {
+      alert(
+        "Video call with " + name +
+        " will start after we connect the live calling system."
+      );
+    }
+  </script>
 
-  </section>  <!-- FOOTER -->  <footer>
-    © 2026 WorldMitra · Connect with the World
-  </footer></body>
+</body>
 </html>
