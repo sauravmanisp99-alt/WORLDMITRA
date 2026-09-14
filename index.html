@@ -10,268 +10,219 @@
       box-sizing: border-box;
       margin: 0;
       padding: 0;
+      font-family: Arial, sans-serif;
     }
 
     body {
-      font-family: Arial, sans-serif;
-      background: #f6f7fb;
-      color: #111827;
+      background: #f5f7fb;
+      color: #222;
       min-height: 100vh;
     }
 
     .screen {
-      min-height: 100vh;
       display: none;
-      align-items: center;
-      justify-content: center;
-      padding: 24px;
+      min-height: 100vh;
+      padding: 25px 18px;
     }
 
-    .screen.active {
+    .active {
       display: flex;
+      flex-direction: column;
+      justify-content: center;
     }
 
-    .card {
-      width: 100%;
-      max-width: 420px;
-      background: white;
-      border-radius: 24px;
-      padding: 30px 24px;
-      box-shadow: 0 10px 35px rgba(0,0,0,.08);
+    .welcome {
       text-align: center;
     }
 
     .logo {
-      width: 78px;
-      height: 78px;
-      border-radius: 22px;
-      margin: 0 auto 20px;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      background: #111827;
-      color: white;
-      font-size: 32px;
+      font-size: 42px;
       font-weight: bold;
+      color: #2563eb;
+      margin-bottom: 12px;
     }
 
     h1 {
-      font-size: 30px;
+      font-size: 28px;
       margin-bottom: 10px;
     }
 
     h2 {
-      font-size: 24px;
+      font-size: 25px;
       margin-bottom: 12px;
     }
 
     p {
-      color: #6b7280;
+      color: #666;
       line-height: 1.5;
-      margin-bottom: 24px;
+      margin-bottom: 25px;
     }
 
-    .btn {
+    button {
       width: 100%;
-      border: 0;
-      border-radius: 14px;
       padding: 15px;
-      font-size: 16px;
+      border: none;
+      border-radius: 12px;
+      background: #2563eb;
+      color: white;
+      font-size: 17px;
       font-weight: bold;
       cursor: pointer;
       margin-top: 10px;
     }
 
-    .primary {
-      background: #111827;
-      color: white;
+    button:disabled {
+      opacity: 0.6;
     }
 
-    .secondary {
-      background: #eef0f4;
-      color: #111827;
+    .google-btn {
+      background: white;
+      color: #222;
+      border: 1px solid #ddd;
     }
 
-    .age-input {
+    .input {
       width: 100%;
       padding: 15px;
-      border: 1px solid #d1d5db;
-      border-radius: 14px;
-      font-size: 17px;
-      margin-bottom: 10px;
-      outline: none;
+      border: 1px solid #ddd;
+      border-radius: 12px;
+      font-size: 18px;
+      margin: 15px 0;
     }
 
-    .gender-options {
+    .gender-box {
       display: flex;
       gap: 12px;
-      margin: 22px 0;
+      margin: 20px 0;
     }
 
     .gender {
       flex: 1;
-      padding: 20px 10px;
-      border: 2px solid #e5e7eb;
-      border-radius: 16px;
-      background: white;
+      padding: 18px 10px;
+      border: 2px solid #ddd;
+      border-radius: 12px;
+      text-align: center;
       cursor: pointer;
-      font-size: 16px;
-      font-weight: bold;
+      background: white;
+      font-size: 17px;
     }
 
     .gender.selected {
-      border-color: #111827;
-      background: #f0f1f4;
+      border-color: #2563eb;
+      background: #eff6ff;
+    }
+
+    .top {
+      width: 100%;
+      padding-top: 10px;
+    }
+
+    .user-card {
+      background: white;
+      border-radius: 16px;
+      padding: 15px;
+      margin-top: 15px;
+      display: flex;
+      align-items: center;
+      gap: 14px;
+      box-shadow: 0 2px 10px rgba(0,0,0,0.06);
+    }
+
+    .avatar {
+      width: 55px;
+      height: 55px;
+      border-radius: 50%;
+      object-fit: cover;
+      background: #ddd;
+    }
+
+    .user-info {
+      flex: 1;
+    }
+
+    .online {
+      color: #16a34a;
+      font-size: 13px;
+      margin-top: 4px;
+    }
+
+    .empty {
+      text-align: center;
+      margin-top: 40px;
+      color: #777;
+    }
+
+    .logout {
+      background: #dc2626;
+      margin-top: 30px;
     }
 
     .error {
       color: #dc2626;
-      font-size: 14px;
-      margin-top: 10px;
-      min-height: 20px;
-    }
-
-    .home {
-      width: 100%;
-      min-height: 100vh;
-      display: none;
-      padding: 22px 16px 40px;
-    }
-
-    .home.active {
-      display: block;
-    }
-
-    .topbar {
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      max-width: 1000px;
-      margin: auto;
-      padding: 8px 0 22px;
-    }
-
-    .brand {
-      font-size: 24px;
-      font-weight: 800;
-    }
-
-    .live-title {
-      max-width: 1000px;
-      margin: 10px auto 20px;
-    }
-
-    .live-title h2 {
-      margin-bottom: 5px;
-    }
-
-    .live-title p {
-      margin: 0;
-    }
-
-    .live-grid {
-      max-width: 1000px;
-      margin: auto;
-      display: grid;
-      grid-template-columns: repeat(2, 1fr);
-      gap: 14px;
-    }
-
-    .live-card {
-      min-height: 190px;
-      border-radius: 20px;
-      background: #1f2937;
-      color: white;
-      padding: 16px;
-      display: flex;
-      flex-direction: column;
-      justify-content: flex-end;
-      position: relative;
-      overflow: hidden;
-    }
-
-    .live-badge {
-      position: absolute;
-      top: 12px;
-      left: 12px;
-      background: #dc2626;
-      color: white;
-      padding: 5px 9px;
-      border-radius: 20px;
-      font-size: 12px;
-      font-weight: bold;
-    }
-
-    .avatar {
-      width: 62px;
-      height: 62px;
-      border-radius: 50%;
-      background: #6b7280;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      font-size: 25px;
-      margin-bottom: 10px;
-    }
-
-    .live-card h3 {
-      font-size: 17px;
-      margin-bottom: 4px;
-    }
-
-    .live-card small {
-      opacity: .8;
-    }
-
-    @media (min-width: 700px) {
-      .live-grid {
-        grid-template-columns: repeat(4, 1fr);
-      }
+      margin-top: 12px;
+      text-align: center;
     }
   </style>
 </head>
 
 <body>
 
-  <!-- GET STARTED -->
+  <!-- Welcome -->
   <section id="welcomeScreen" class="screen active">
-    <div class="card">
-      <div class="logo">W</div>
+    <div class="welcome">
+      <div class="logo">WorldMitra</div>
 
-      <h1>WorldMitra</h1>
+      <h1>Meet People Around You</h1>
 
       <p>
-        Meet people, connect and discover a live community around the world.
+        Connect, chat and meet new people.
       </p>
 
-      <button class="btn primary" onclick="goToAge()">
+      <button id="getStartedBtn">
         Get Started
       </button>
     </div>
   </section>
 
 
-  <!-- AGE SCREEN -->
-  <section id="ageScreen" class="screen">
-    <div class="card">
-      <div class="logo">18+</div>
-
-      <h2>Age Check</h2>
+  <!-- Google Login -->
+  <section id="loginScreen" class="screen">
+    <div>
+      <h2>Login to WorldMitra</h2>
 
       <p>
-        WorldMitra is intended for adults. You must be 18 or older to continue.
+        Continue securely with your Google account.
+      </p>
+
+      <button id="googleLoginBtn" class="google-btn">
+        Continue with Google
+      </button>
+
+      <div id="loginError" class="error"></div>
+    </div>
+  </section>
+
+
+  <!-- Age -->
+  <section id="ageScreen" class="screen">
+    <div>
+      <h2>18+ Only</h2>
+
+      <p>
+        WorldMitra is for adults only.
+        Enter your age to continue.
       </p>
 
       <input
         id="ageInput"
-        class="age-input"
+        class="input"
         type="number"
         min="1"
-        max="120"
+        max="100"
         placeholder="Enter your age"
       >
 
-      <button class="btn primary" onclick="checkAge()">
+      <button id="ageContinueBtn">
         Continue
       </button>
 
@@ -280,35 +231,29 @@
   </section>
 
 
-  <!-- GENDER SCREEN -->
+  <!-- Gender -->
   <section id="genderScreen" class="screen">
-    <div class="card">
-      <div class="logo">👤</div>
-
-      <h2>Your Profile</h2>
+    <div>
+      <h2>Select Gender</h2>
 
       <p>
-        Select your gender to continue.
+        Choose your gender.
       </p>
 
-      <div class="gender-options">
-        <button
-          id="maleBtn"
-          class="gender"
-          onclick="selectGender('Male')">
-          👨<br><br>Male
-        </button>
+      <div class="gender-box">
 
-        <button
-          id="femaleBtn"
-          class="gender"
-          onclick="selectGender('Female')">
-          👩<br><br>Female
-        </button>
+        <div class="gender" data-gender="Male">
+          Male
+        </div>
+
+        <div class="gender" data-gender="Female">
+          Female
+        </div>
+
       </div>
 
-      <button class="btn primary" onclick="finishSetup()">
-        Continue to WorldMitra
+      <button id="genderContinueBtn">
+        Continue
       </button>
 
       <div id="genderError" class="error"></div>
@@ -316,135 +261,414 @@
   </section>
 
 
-  <!-- HOME -->
-  <main id="homeScreen" class="home">
+  <!-- Home -->
+  <section id="homeScreen" class="screen">
+    <div class="top">
 
-    <div class="topbar">
-      <div class="brand">🌍 WorldMitra</div>
+      <h2>Live People</h2>
 
-      <button
-        class="btn secondary"
-        style="width:auto;padding:10px 14px;margin:0;"
-        onclick="resetApp()">
-        Reset
+      <p>
+        People currently online on WorldMitra.
+      </p>
+
+      <div id="liveUsersList"></div>
+
+      <button id="logoutBtn" class="logout">
+        Logout
       </button>
-    </div>
-
-    <div class="live-title">
-      <h2>🔴 Live People</h2>
-      <p>People who are currently live will appear here.</p>
-    </div>
-
-    <div class="live-grid">
-
-      <div class="live-card">
-        <div class="live-badge">LIVE</div>
-        <div class="avatar">👤</div>
-        <h3>Live Person</h3>
-        <small>Waiting for live users...</small>
-      </div>
-
-      <div class="live-card">
-        <div class="live-badge">LIVE</div>
-        <div class="avatar">👤</div>
-        <h3>Live Person</h3>
-        <small>Waiting for live users...</small>
-      </div>
 
     </div>
+  </section>
 
-  </main>
+
+  <script type="module">
+
+    import { app, db } from "./firebase-config.js";
+
+    import {
+      getAuth,
+      GoogleAuthProvider,
+      signInWithPopup,
+      onAuthStateChanged,
+      signOut
+    } from "https://www.gstatic.com/firebasejs/12.2.1/firebase-auth.js";
+
+    import {
+      ref,
+      set,
+      onValue,
+      onDisconnect,
+      serverTimestamp
+    } from "https://www.gstatic.com/firebasejs/12.2.1/firebase-database.js";
 
 
-  <script>
-    let selectedGender = "";
+    // Firebase Auth
+    const auth = getAuth(app);
 
-    function showScreen(id) {
-      document.querySelectorAll(".screen").forEach(screen => {
-        screen.classList.remove("active");
+    const provider = new GoogleAuthProvider();
+
+
+    // Screens
+    const welcomeScreen = document.getElementById("welcomeScreen");
+    const loginScreen = document.getElementById("loginScreen");
+    const ageScreen = document.getElementById("ageScreen");
+    const genderScreen = document.getElementById("genderScreen");
+    const homeScreen = document.getElementById("homeScreen");
+
+
+    function showScreen(screen) {
+
+      document.querySelectorAll(".screen").forEach(item => {
+        item.classList.remove("active");
       });
 
-      document.getElementById(id).classList.add("active");
+      screen.classList.add("active");
     }
 
-    function goToAge() {
-      showScreen("ageScreen");
-    }
 
-    function checkAge() {
-      const age = Number(document.getElementById("ageInput").value);
+    // Get Started
+    document.getElementById("getStartedBtn").addEventListener("click", () => {
+
+      if (auth.currentUser) {
+
+        const savedAge = localStorage.getItem("worldmitra_age");
+        const savedGender = localStorage.getItem("worldmitra_gender");
+
+        if (savedAge && savedGender) {
+          showScreen(homeScreen);
+        } else if (!savedAge) {
+          showScreen(ageScreen);
+        } else {
+          showScreen(genderScreen);
+        }
+
+      } else {
+
+        showScreen(loginScreen);
+
+      }
+
+    });
+
+
+    // Google Login
+    document.getElementById("googleLoginBtn").addEventListener("click", async () => {
+
+      const button = document.getElementById("googleLoginBtn");
+      const error = document.getElementById("loginError");
+
+      button.disabled = true;
+      button.textContent = "Signing in...";
+      error.textContent = "";
+
+      try {
+
+        await signInWithPopup(auth, provider);
+
+        const savedAge = localStorage.getItem("worldmitra_age");
+        const savedGender = localStorage.getItem("worldmitra_gender");
+
+        if (!savedAge) {
+
+          showScreen(ageScreen);
+
+        } else if (!savedGender) {
+
+          showScreen(genderScreen);
+
+        } else {
+
+          showScreen(homeScreen);
+
+        }
+
+      } catch (err) {
+
+        console.error(err);
+
+        error.textContent =
+          err.message || "Google login failed.";
+
+      }
+
+      button.disabled = false;
+      button.textContent = "Continue with Google";
+
+    });
+
+
+    // Age
+    document.getElementById("ageContinueBtn").addEventListener("click", async () => {
+
+      const age = Number(
+        document.getElementById("ageInput").value
+      );
+
       const error = document.getElementById("ageError");
 
       if (!age) {
+
         error.textContent = "Please enter your age.";
         return;
+
       }
 
       if (age < 18) {
-        error.textContent = "You must be 18 or older to continue.";
+
+        error.textContent =
+          "Sorry, WorldMitra is only available for 18+ users.";
+
         return;
+
       }
 
-      if (age > 120) {
-        error.textContent = "Please enter a valid age.";
+      if (age > 100) {
+
+        error.textContent =
+          "Please enter a valid age.";
+
         return;
+
       }
 
       localStorage.setItem("worldmitra_age", age);
 
-      error.textContent = "";
-      showScreen("genderScreen");
-    }
+      showScreen(genderScreen);
 
-    function selectGender(gender) {
-      selectedGender = gender;
+    });
 
-      document.getElementById("maleBtn").classList.remove("selected");
-      document.getElementById("femaleBtn").classList.remove("selected");
 
-      if (gender === "Male") {
-        document.getElementById("maleBtn").classList.add("selected");
-      }
+    // Gender selection
+    let selectedGender = "";
 
-      if (gender === "Female") {
-        document.getElementById("femaleBtn").classList.add("selected");
-      }
-    }
+    document.querySelectorAll(".gender").forEach(item => {
 
-    function finishSetup() {
+      item.addEventListener("click", () => {
+
+        document.querySelectorAll(".gender").forEach(g => {
+          g.classList.remove("selected");
+        });
+
+        item.classList.add("selected");
+
+        selectedGender = item.dataset.gender;
+
+      });
+
+    });
+
+
+    // Gender Continue
+    document.getElementById("genderContinueBtn").addEventListener("click", async () => {
+
       const error = document.getElementById("genderError");
 
       if (!selectedGender) {
-        error.textContent = "Please select Male or Female.";
+
+        error.textContent =
+          "Please select your gender.";
+
+        return;
+
+      }
+
+      const user = auth.currentUser;
+
+      if (!user) {
+
+        showScreen(loginScreen);
+        return;
+
+      }
+
+      const age = Number(
+        localStorage.getItem("worldmitra_age")
+      );
+
+      try {
+
+        const userRef = ref(db, "users/" + user.uid);
+
+        await set(userRef, {
+
+          uid: user.uid,
+
+          name: user.displayName || "WorldMitra User",
+
+          email: user.email || "",
+
+          photoURL: user.photoURL || "",
+
+          age: age,
+
+          gender: selectedGender,
+
+          online: true,
+
+          lastSeen: serverTimestamp()
+
+        });
+
+
+        // Automatically mark offline
+        onDisconnect(userRef).update({
+
+          online: false,
+
+          lastSeen: serverTimestamp()
+
+        });
+
+
+        localStorage.setItem(
+          "worldmitra_gender",
+          selectedGender
+        );
+
+        localStorage.setItem(
+          "worldmitra_setup",
+          "true"
+        );
+
+
+        showScreen(homeScreen);
+
+        loadLiveUsers();
+
+      } catch (err) {
+
+        console.error(err);
+
+        error.textContent =
+          "Could not save your profile. Please try again.";
+
+      }
+
+    });
+
+
+    // Authentication state
+    onAuthStateChanged(auth, user => {
+
+      if (!user) {
         return;
       }
 
-      localStorage.setItem("worldmitra_gender", selectedGender);
-      localStorage.setItem("worldmitra_setup", "completed");
+      const savedAge = localStorage.getItem("worldmitra_age");
+      const savedGender = localStorage.getItem("worldmitra_gender");
 
-      document.getElementById("welcomeScreen").style.display = "none";
-      document.getElementById("ageScreen").style.display = "none";
-      document.getElementById("genderScreen").style.display = "none";
+      if (savedAge && savedGender) {
 
-      document.getElementById("homeScreen").classList.add("active");
-    }
+        showScreen(homeScreen);
 
-    function resetApp() {
-      localStorage.removeItem("worldmitra_age");
-      localStorage.removeItem("worldmitra_gender");
-      localStorage.removeItem("worldmitra_setup");
+        loadLiveUsers();
 
-      location.reload();
-    }
-
-    window.addEventListener("load", () => {
-      const setupDone = localStorage.getItem("worldmitra_setup");
-
-      if (setupDone === "completed") {
-        document.getElementById("welcomeScreen").style.display = "none";
-        document.getElementById("homeScreen").classList.add("active");
       }
+
     });
+
+
+    // Live users
+    function loadLiveUsers() {
+
+      const usersRef = ref(db, "users");
+
+      onValue(usersRef, snapshot => {
+
+        const list = document.getElementById("liveUsersList");
+
+        list.innerHTML = "";
+
+        let found = false;
+
+        snapshot.forEach(child => {
+
+          const user = child.val();
+
+          if (
+            user.online === true &&
+            child.key !== auth.currentUser?.uid
+          ) {
+
+            found = true;
+
+            const card = document.createElement("div");
+
+            card.className = "user-card";
+
+            const photo =
+              user.photoURL ||
+              "https://via.placeholder.com/100";
+
+            card.innerHTML = `
+
+              <img
+                class="avatar"
+                src="${photo}"
+                alt="Profile"
+              >
+
+              <div class="user-info">
+
+                <strong>
+                  ${user.name || "WorldMitra User"}
+                </strong>
+
+                <div>
+                  Age: ${user.age || "N/A"}
+                </div>
+
+                <div class="online">
+                  ● Online
+                </div>
+
+              </div>
+
+            `;
+
+            list.appendChild(card);
+
+          }
+
+        });
+
+
+        if (!found) {
+
+          list.innerHTML = `
+            <div class="empty">
+              No other people are online right now.
+            </div>
+          `;
+
+        }
+
+      });
+
+    }
+
+
+    // Logout
+    document.getElementById("logoutBtn").addEventListener("click", async () => {
+
+      try {
+
+        await signOut(auth);
+
+        localStorage.removeItem("worldmitra_age");
+        localStorage.removeItem("worldmitra_gender");
+        localStorage.removeItem("worldmitra_setup");
+
+        showScreen(welcomeScreen);
+
+      } catch (err) {
+
+        console.error(err);
+
+      }
+
+    });
+
   </script>
 
 </body>
