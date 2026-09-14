@@ -7,104 +7,94 @@
 
   <style>
     * {
-      box-sizing: border-box; 
-      margin: 0;
-      padding: 0;
+      box-sizing: border-box;
       font-family: Arial, sans-serif;
     }
 
     body {
+      margin: 0;
       background: #f5f7fb;
       color: #222;
-      min-height: 100vh;
     }
 
     .screen {
       display: none;
       min-height: 100vh;
       padding: 25px 18px;
+      justify-content: center;
     }
 
     .active {
       display: flex;
       flex-direction: column;
-      justify-content: center;
     }
 
-    .welcome {
-      text-align: center;
+    .box {
+      width: 100%;
+      max-width: 450px;
+      margin: auto;
     }
 
     .logo {
-      font-size: 42px;
+      text-align: center;
+      font-size: 40px;
       font-weight: bold;
       color: #2563eb;
-      margin-bottom: 12px;
+      margin-bottom: 15px;
     }
 
-    h1 {
-      font-size: 28px;
-      margin-bottom: 10px;
-    }
-
-    h2 {
-      font-size: 25px;
-      margin-bottom: 12px;
+    h1, h2 {
+      text-align: center;
     }
 
     p {
       color: #666;
+      text-align: center;
       line-height: 1.5;
-      margin-bottom: 25px;
     }
 
     button {
       width: 100%;
       padding: 15px;
-      border: none;
+      margin-top: 15px;
+      border: 0;
       border-radius: 12px;
       background: #2563eb;
       color: white;
       font-size: 17px;
       font-weight: bold;
       cursor: pointer;
-      margin-top: 10px;
     }
 
-    button:disabled {
-      opacity: 0.6;
-    }
-
-    .google-btn {
+    .google {
       background: white;
       color: #222;
       border: 1px solid #ddd;
     }
 
-    .input {
+    input {
       width: 100%;
       padding: 15px;
-      border: 1px solid #ddd;
+      margin-top: 15px;
+      border: 1px solid #ccc;
       border-radius: 12px;
       font-size: 18px;
-      margin: 15px 0;
     }
 
-    .gender-box {
+    .genders {
       display: flex;
       gap: 12px;
-      margin: 20px 0;
+      margin-top: 20px;
     }
 
     .gender {
       flex: 1;
-      padding: 18px 10px;
+      padding: 18px;
+      text-align: center;
+      background: white;
       border: 2px solid #ddd;
       border-radius: 12px;
-      text-align: center;
       cursor: pointer;
-      background: white;
-      font-size: 17px;
     }
 
     .gender.selected {
@@ -112,135 +102,118 @@
       background: #eff6ff;
     }
 
-    .top {
-      width: 100%;
-      padding-top: 10px;
+    .error {
+      color: red;
+      text-align: center;
+      margin-top: 12px;
     }
 
-    .user-card {
+    .user {
       background: white;
-      border-radius: 16px;
       padding: 15px;
+      border-radius: 15px;
       margin-top: 15px;
       display: flex;
+      gap: 12px;
       align-items: center;
-      gap: 14px;
-      box-shadow: 0 2px 10px rgba(0,0,0,0.06);
     }
 
-    .avatar {
+    .user img {
       width: 55px;
       height: 55px;
       border-radius: 50%;
       object-fit: cover;
-      background: #ddd;
-    }
-
-    .user-info {
-      flex: 1;
     }
 
     .online {
-      color: #16a34a;
+      color: green;
       font-size: 13px;
       margin-top: 4px;
     }
 
-    .empty {
-      text-align: center;
-      margin-top: 40px;
-      color: #777;
-    }
-
     .logout {
       background: #dc2626;
-      margin-top: 30px;
-    }
-
-    .error {
-      color: #dc2626;
-      margin-top: 12px;
-      text-align: center;
     }
   </style>
 </head>
 
 <body>
 
-  <!-- Welcome -->
-  <section id="welcomeScreen" class="screen active">
-    <div class="welcome">
+  <!-- WELCOME -->
+  <div id="welcome" class="screen active">
+    <div class="box">
+
       <div class="logo">WorldMitra</div>
 
-      <h1>Meet People Around You</h1>
+      <h1>Meet People</h1>
 
       <p>
-        Connect, chat and meet new people.
+        Connect with people around the world.
       </p>
 
-      <button id="getStartedBtn">
+      <button id="getStarted">
         Get Started
       </button>
+
     </div>
-  </section>
+  </div>
 
 
-  <!-- Google Login -->
-  <section id="loginScreen" class="screen">
-    <div>
+  <!-- LOGIN -->
+  <div id="login" class="screen">
+    <div class="box">
+
       <h2>Login to WorldMitra</h2>
 
-      <p>
-        Continue securely with your Google account.
-      </p>
+      <p>Continue securely with your Google account.</p>
 
-      <button id="googleLoginBtn" class="google-btn">
+      <button id="googleLogin" class="google">
         Continue with Google
       </button>
 
       <div id="loginError" class="error"></div>
+
     </div>
-  </section>
+  </div>
 
 
-  <!-- Age -->
-  <section id="ageScreen" class="screen">
-    <div>
+  <!-- AGE -->
+  <div id="age" class="screen">
+    <div class="box">
+
       <h2>18+ Only</h2>
 
       <p>
-        WorldMitra is for adults only.
-        Enter your age to continue.
+        WorldMitra is available only for adults.
       </p>
 
       <input
         id="ageInput"
-        class="input"
         type="number"
-        min="1"
-        max="100"
         placeholder="Enter your age"
+        min="18"
+        max="100"
       >
 
-      <button id="ageContinueBtn">
+      <button id="ageContinue">
         Continue
       </button>
 
       <div id="ageError" class="error"></div>
+
     </div>
-  </section>
+  </div>
 
 
-  <!-- Gender -->
-  <section id="genderScreen" class="screen">
-    <div>
+  <!-- GENDER -->
+  <div id="gender" class="screen">
+    <div class="box">
+
       <h2>Select Gender</h2>
 
-      <p>
-        Choose your gender.
-      </p>
+      <p>Select your gender to continue.</p>
 
-      <div class="gender-box">
+      <div class="genders">
 
         <div class="gender" data-gender="Male">
           Male
@@ -252,33 +225,34 @@
 
       </div>
 
-      <button id="genderContinueBtn">
+      <button id="genderContinue">
         Continue
       </button>
 
       <div id="genderError" class="error"></div>
+
     </div>
-  </section>
+  </div>
 
 
-  <!-- Home -->
-  <section id="homeScreen" class="screen">
-    <div class="top">
+  <!-- HOME -->
+  <div id="home" class="screen">
+    <div class="box">
 
       <h2>Live People</h2>
 
       <p>
-        People currently online on WorldMitra.
+        People currently online.
       </p>
 
-      <div id="liveUsersList"></div>
+      <div id="usersList"></div>
 
-      <button id="logoutBtn" class="logout">
+      <button id="logout" class="logout">
         Logout
       </button>
 
     </div>
-  </section>
+  </div>
 
 
   <script type="module">
@@ -298,113 +272,94 @@
       set,
       onValue,
       onDisconnect,
-      serverTimestamp
+      serverTimestamp,
+      update
     } from "https://www.gstatic.com/firebasejs/12.2.1/firebase-database.js";
 
 
-    // Firebase Auth
     const auth = getAuth(app);
-
     const provider = new GoogleAuthProvider();
 
 
-    // Screens
-    const welcomeScreen = document.getElementById("welcomeScreen");
-    const loginScreen = document.getElementById("loginScreen");
-    const ageScreen = document.getElementById("ageScreen");
-    const genderScreen = document.getElementById("genderScreen");
-    const homeScreen = document.getElementById("homeScreen");
+    function show(id) {
 
-
-    function showScreen(screen) {
-
-      document.querySelectorAll(".screen").forEach(item => {
-        item.classList.remove("active");
+      document.querySelectorAll(".screen").forEach(screen => {
+        screen.classList.remove("active");
       });
 
-      screen.classList.add("active");
+      document.getElementById(id).classList.add("active");
+
     }
 
 
-    // Get Started
-    document.getElementById("getStartedBtn").addEventListener("click", () => {
+    // GET STARTED
+    document.getElementById("getStarted").onclick = function() {
 
       if (auth.currentUser) {
 
-        const savedAge = localStorage.getItem("worldmitra_age");
-        const savedGender = localStorage.getItem("worldmitra_gender");
+        const savedAge =
+          localStorage.getItem("worldmitra_age");
 
-        if (savedAge && savedGender) {
-          showScreen(homeScreen);
-        } else if (!savedAge) {
-          showScreen(ageScreen);
-        } else {
-          showScreen(genderScreen);
+        const savedGender =
+          localStorage.getItem("worldmitra_gender");
+
+        if (!savedAge) {
+          show("age");
+        }
+        else if (!savedGender) {
+          show("gender");
+        }
+        else {
+          show("home");
+          loadUsers();
         }
 
       } else {
 
-        showScreen(loginScreen);
+        show("login");
 
       }
 
-    });
+    };
 
 
-    // Google Login
-    document.getElementById("googleLoginBtn").addEventListener("click", async () => {
+    // GOOGLE LOGIN
+    document.getElementById("googleLogin").onclick = async function() {
 
-      const button = document.getElementById("googleLoginBtn");
-      const error = document.getElementById("loginError");
+      const error =
+        document.getElementById("loginError");
 
-      button.disabled = true;
-      button.textContent = "Signing in...";
       error.textContent = "";
 
       try {
 
         await signInWithPopup(auth, provider);
 
-        const savedAge = localStorage.getItem("worldmitra_age");
-        const savedGender = localStorage.getItem("worldmitra_gender");
+        show("age");
 
-        if (!savedAge) {
+      }
+      catch (e) {
 
-          showScreen(ageScreen);
-
-        } else if (!savedGender) {
-
-          showScreen(genderScreen);
-
-        } else {
-
-          showScreen(homeScreen);
-
-        }
-
-      } catch (err) {
-
-        console.error(err);
+        console.error(e);
 
         error.textContent =
-          err.message || "Google login failed.";
+          e.message || "Google login failed.";
 
       }
 
-      button.disabled = false;
-      button.textContent = "Continue with Google";
-
-    });
+    };
 
 
-    // Age
-    document.getElementById("ageContinueBtn").addEventListener("click", async () => {
+    // AGE
+    document.getElementById("ageContinue").onclick = function() {
 
-      const age = Number(
-        document.getElementById("ageInput").value
-      );
+      const age =
+        Number(document.getElementById("ageInput").value);
 
-      const error = document.getElementById("ageError");
+      const error =
+        document.getElementById("ageError");
+
+      error.textContent = "";
 
       if (!age) {
 
@@ -416,7 +371,7 @@
       if (age < 18) {
 
         error.textContent =
-          "Sorry, WorldMitra is only available for 18+ users.";
+          "WorldMitra is only for 18+ users.";
 
         return;
 
@@ -431,37 +386,43 @@
 
       }
 
-      localStorage.setItem("worldmitra_age", age);
+      localStorage.setItem(
+        "worldmitra_age",
+        age
+      );
 
-      showScreen(genderScreen);
+      show("gender");
 
-    });
+    };
 
 
-    // Gender selection
+    // GENDER
     let selectedGender = "";
 
     document.querySelectorAll(".gender").forEach(item => {
 
-      item.addEventListener("click", () => {
+      item.onclick = function() {
 
-        document.querySelectorAll(".gender").forEach(g => {
-          g.classList.remove("selected");
-        });
+        document.querySelectorAll(".gender")
+          .forEach(g => g.classList.remove("selected"));
 
         item.classList.add("selected");
 
-        selectedGender = item.dataset.gender;
+        selectedGender =
+          item.dataset.gender;
 
-      });
+      };
 
     });
 
 
-    // Gender Continue
-    document.getElementById("genderContinueBtn").addEventListener("click", async () => {
+    // GENDER CONTINUE
+    document.getElementById("genderContinue").onclick = async function() {
 
-      const error = document.getElementById("genderError");
+      const error =
+        document.getElementById("genderError");
+
+      error.textContent = "";
 
       if (!selectedGender) {
 
@@ -476,28 +437,31 @@
 
       if (!user) {
 
-        showScreen(loginScreen);
+        show("login");
         return;
 
       }
 
-      const age = Number(
-        localStorage.getItem("worldmitra_age")
-      );
+      const age =
+        Number(localStorage.getItem("worldmitra_age"));
 
       try {
 
-        const userRef = ref(db, "users/" + user.uid);
+        const userRef =
+          ref(db, "users/" + user.uid);
 
         await set(userRef, {
 
           uid: user.uid,
 
-          name: user.displayName || "WorldMitra User",
+          name:
+            user.displayName || "WorldMitra User",
 
-          email: user.email || "",
+          email:
+            user.email || "",
 
-          photoURL: user.photoURL || "",
+          photoURL:
+            user.photoURL || "",
 
           age: age,
 
@@ -505,20 +469,19 @@
 
           online: true,
 
-          lastSeen: serverTimestamp()
+          lastSeen:
+            serverTimestamp()
 
         });
 
-
-        // Automatically mark offline
         onDisconnect(userRef).update({
 
           online: false,
 
-          lastSeen: serverTimestamp()
+          lastSeen:
+            serverTimestamp()
 
         });
-
 
         localStorage.setItem(
           "worldmitra_gender",
@@ -530,56 +493,37 @@
           "true"
         );
 
+        show("home");
 
-        showScreen(homeScreen);
+        loadUsers();
 
-        loadLiveUsers();
+      }
+      catch (e) {
 
-      } catch (err) {
-
-        console.error(err);
+        console.error(e);
 
         error.textContent =
-          "Could not save your profile. Please try again.";
+          "Profile save failed.";
 
       }
 
-    });
+    };
 
 
-    // Authentication state
-    onAuthStateChanged(auth, user => {
+    // LOAD ONLINE USERS
+    function loadUsers() {
 
-      if (!user) {
-        return;
-      }
-
-      const savedAge = localStorage.getItem("worldmitra_age");
-      const savedGender = localStorage.getItem("worldmitra_gender");
-
-      if (savedAge && savedGender) {
-
-        showScreen(homeScreen);
-
-        loadLiveUsers();
-
-      }
-
-    });
-
-
-    // Live users
-    function loadLiveUsers() {
-
-      const usersRef = ref(db, "users");
+      const usersRef =
+        ref(db, "users");
 
       onValue(usersRef, snapshot => {
 
-        const list = document.getElementById("liveUsersList");
+        const list =
+          document.getElementById("usersList");
 
         list.innerHTML = "";
 
-        let found = false;
+        let count = 0;
 
         snapshot.forEach(child => {
 
@@ -590,28 +534,24 @@
             child.key !== auth.currentUser?.uid
           ) {
 
-            found = true;
+            count++;
 
-            const card = document.createElement("div");
+            const div =
+              document.createElement("div");
 
-            card.className = "user-card";
+            div.className = "user";
 
-            const photo =
-              user.photoURL ||
-              "https://via.placeholder.com/100";
-
-            card.innerHTML = `
+            div.innerHTML = `
 
               <img
-                class="avatar"
-                src="${photo}"
-                alt="Profile"
+                src="${user.photoURL || ""}"
+                alt=""
               >
 
-              <div class="user-info">
+              <div>
 
                 <strong>
-                  ${user.name || "WorldMitra User"}
+                  ${user.name || "User"}
                 </strong>
 
                 <div>
@@ -626,19 +566,19 @@
 
             `;
 
-            list.appendChild(card);
+            list.appendChild(div);
 
           }
 
         });
 
 
-        if (!found) {
+        if (count === 0) {
 
           list.innerHTML = `
-            <div class="empty">
+            <p>
               No other people are online right now.
-            </div>
+            </p>
           `;
 
         }
@@ -648,26 +588,40 @@
     }
 
 
-    // Logout
-    document.getElementById("logoutBtn").addEventListener("click", async () => {
+    // AUTH STATE
+    onAuthStateChanged(auth, user => {
 
-      try {
+      if (!user) return;
 
-        await signOut(auth);
+      const savedAge =
+        localStorage.getItem("worldmitra_age");
 
-        localStorage.removeItem("worldmitra_age");
-        localStorage.removeItem("worldmitra_gender");
-        localStorage.removeItem("worldmitra_setup");
+      const savedGender =
+        localStorage.getItem("worldmitra_gender");
 
-        showScreen(welcomeScreen);
+      if (savedAge && savedGender) {
 
-      } catch (err) {
+        show("home");
 
-        console.error(err);
+        loadUsers();
 
       }
 
     });
+
+
+    // LOGOUT
+    document.getElementById("logout").onclick = async function() {
+
+      await signOut(auth);
+
+      localStorage.removeItem("worldmitra_age");
+      localStorage.removeItem("worldmitra_gender");
+      localStorage.removeItem("worldmitra_setup");
+
+      show("welcome");
+
+    };
 
   </script>
 
