@@ -3,145 +3,229 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-
   <title>WorldMitra</title>
 
   <style>
     * {
+      box-sizing: border-box;
       margin: 0;
       padding: 0;
-      box-sizing: border-box;
-      font-family: Arial, sans-serif;
     }
 
     body {
-      background: #f5f7fb;
-      color: #222;
+      font-family: Arial, sans-serif;
+      background: #f6f7fb;
+      color: #111827;
+      min-height: 100vh;
     }
 
-    .header {
-      background: white;
-      height: 65px;
-      display: flex;
+    .screen {
+      min-height: 100vh;
+      display: none;
       align-items: center;
-      justify-content: space-between;
-      padding: 0 20px;
-      box-shadow: 0 2px 10px rgba(0,0,0,0.08);
-      position: sticky;
-      top: 0;
-      z-index: 10;
+      justify-content: center;
+      padding: 24px;
+    }
+
+    .screen.active {
+      display: flex;
+    }
+
+    .card {
+      width: 100%;
+      max-width: 420px;
+      background: white;
+      border-radius: 24px;
+      padding: 30px 24px;
+      box-shadow: 0 10px 35px rgba(0,0,0,.08);
+      text-align: center;
     }
 
     .logo {
-      font-size: 25px;
-      font-weight: bold;
-      color: #2563eb;
-    }
-
-    .status {
-      font-size: 13px;
-      color: #16a34a;
-      font-weight: bold;
-    }
-
-    .hero {
-      text-align: center;
-      padding: 30px 15px 20px;
-    }
-
-    .hero h1 {
-      font-size: 28px;
-      margin-bottom: 8px;
-    }
-
-    .hero p {
-      color: #666;
-      font-size: 15px;
-      line-height: 1.5;
-    }
-
-    .online-title {
-      padding: 10px 18px;
-      font-size: 20px;
-      font-weight: bold;
-    }
-
-    .people {
-      padding: 10px 15px 30px;
-      display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
-      gap: 15px;
-      max-width: 1000px;
-      margin: auto;
-    }
-
-    .person-card {
-      background: white;
-      border-radius: 18px;
-      padding: 18px;
-      text-align: center;
-      box-shadow: 0 3px 15px rgba(0,0,0,0.08);
-    }
-
-    .avatar {
-      width: 75px;
-      height: 75px;
-      border-radius: 50%;
-      margin: auto;
+      width: 78px;
+      height: 78px;
+      border-radius: 22px;
+      margin: 0 auto 20px;
       display: flex;
       align-items: center;
       justify-content: center;
+      background: #111827;
+      color: white;
+      font-size: 32px;
+      font-weight: bold;
+    }
+
+    h1 {
       font-size: 30px;
-      background: #e8efff;
+      margin-bottom: 10px;
     }
 
-    .person-card h3 {
-      margin-top: 12px;
-      font-size: 18px;
-    }
-
-    .country {
-      color: #777;
-      font-size: 13px;
-      margin: 5px 0 12px;
-    }
-
-    .online {
-      color: #16a34a;
-      font-size: 13px;
+    h2 {
+      font-size: 24px;
       margin-bottom: 12px;
     }
 
-    .call-btn {
+    p {
+      color: #6b7280;
+      line-height: 1.5;
+      margin-bottom: 24px;
+    }
+
+    .btn {
       width: 100%;
-      border: none;
-      background: #2563eb;
-      color: white;
-      padding: 12px;
-      border-radius: 10px;
-      font-size: 15px;
+      border: 0;
+      border-radius: 14px;
+      padding: 15px;
+      font-size: 16px;
       font-weight: bold;
       cursor: pointer;
+      margin-top: 10px;
     }
 
-    .call-btn:hover {
-      background: #1d4ed8;
+    .primary {
+      background: #111827;
+      color: white;
     }
 
-    .bottom {
-      text-align: center;
-      padding: 25px 15px;
-      color: #888;
+    .secondary {
+      background: #eef0f4;
+      color: #111827;
+    }
+
+    .age-input {
+      width: 100%;
+      padding: 15px;
+      border: 1px solid #d1d5db;
+      border-radius: 14px;
+      font-size: 17px;
+      margin-bottom: 10px;
+      outline: none;
+    }
+
+    .gender-options {
+      display: flex;
+      gap: 12px;
+      margin: 22px 0;
+    }
+
+    .gender {
+      flex: 1;
+      padding: 20px 10px;
+      border: 2px solid #e5e7eb;
+      border-radius: 16px;
+      background: white;
+      cursor: pointer;
+      font-size: 16px;
+      font-weight: bold;
+    }
+
+    .gender.selected {
+      border-color: #111827;
+      background: #f0f1f4;
+    }
+
+    .error {
+      color: #dc2626;
+      font-size: 14px;
+      margin-top: 10px;
+      min-height: 20px;
+    }
+
+    .home {
+      width: 100%;
+      min-height: 100vh;
+      display: none;
+      padding: 22px 16px 40px;
+    }
+
+    .home.active {
+      display: block;
+    }
+
+    .topbar {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      max-width: 1000px;
+      margin: auto;
+      padding: 8px 0 22px;
+    }
+
+    .brand {
+      font-size: 24px;
+      font-weight: 800;
+    }
+
+    .live-title {
+      max-width: 1000px;
+      margin: 10px auto 20px;
+    }
+
+    .live-title h2 {
+      margin-bottom: 5px;
+    }
+
+    .live-title p {
+      margin: 0;
+    }
+
+    .live-grid {
+      max-width: 1000px;
+      margin: auto;
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 14px;
+    }
+
+    .live-card {
+      min-height: 190px;
+      border-radius: 20px;
+      background: #1f2937;
+      color: white;
+      padding: 16px;
+      display: flex;
+      flex-direction: column;
+      justify-content: flex-end;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .live-badge {
+      position: absolute;
+      top: 12px;
+      left: 12px;
+      background: #dc2626;
+      color: white;
+      padding: 5px 9px;
+      border-radius: 20px;
       font-size: 12px;
+      font-weight: bold;
     }
 
-    @media (max-width: 600px) {
-      .hero h1 {
-        font-size: 24px;
-      }
+    .avatar {
+      width: 62px;
+      height: 62px;
+      border-radius: 50%;
+      background: #6b7280;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 25px;
+      margin-bottom: 10px;
+    }
 
-      .people {
-        grid-template-columns: 1fr;
+    .live-card h3 {
+      font-size: 17px;
+      margin-bottom: 4px;
+    }
+
+    .live-card small {
+      opacity: .8;
+    }
+
+    @media (min-width: 700px) {
+      .live-grid {
+        grid-template-columns: repeat(4, 1fr);
       }
     }
   </style>
@@ -149,70 +233,218 @@
 
 <body>
 
-  <header class="header">
-    <div class="logo">🌍 WorldMitra</div>
-    <div class="status">● Online</div>
-  </header>
+  <!-- GET STARTED -->
+  <section id="welcomeScreen" class="screen active">
+    <div class="card">
+      <div class="logo">W</div>
 
-  <section class="hero">
-    <h1>Connect with the World</h1>
-    <p>
-      Meet people, discover new cultures and start a conversation.
-    </p>
+      <h1>WorldMitra</h1>
+
+      <p>
+        Meet people, connect and discover a live community around the world.
+      </p>
+
+      <button class="btn primary" onclick="goToAge()">
+        Get Started
+      </button>
+    </div>
   </section>
 
-  <div class="online-title">
-    🟢 People Online
-  </div>
 
-  <section class="people">
+  <!-- AGE SCREEN -->
+  <section id="ageScreen" class="screen">
+    <div class="card">
+      <div class="logo">18+</div>
 
-    <div class="person-card">
-      <div class="avatar">👨</div>
-      <h3>Alex</h3>
-      <div class="country">🇺🇸 United States</div>
-      <div class="online">● Available for call</div>
+      <h2>Age Check</h2>
 
-      <button class="call-btn" onclick="startCall('Alex')">
-        📹 Start Video Call
+      <p>
+        WorldMitra is intended for adults. You must be 18 or older to continue.
+      </p>
+
+      <input
+        id="ageInput"
+        class="age-input"
+        type="number"
+        min="1"
+        max="120"
+        placeholder="Enter your age"
+      >
+
+      <button class="btn primary" onclick="checkAge()">
+        Continue
       </button>
+
+      <div id="ageError" class="error"></div>
     </div>
-
-    <div class="person-card">
-      <div class="avatar">👩</div>
-      <h3>Emma</h3>
-      <div class="country">🇬🇧 United Kingdom</div>
-      <div class="online">● Available for call</div>
-
-      <button class="call-btn" onclick="startCall('Emma')">
-        📹 Start Video Call
-      </button>
-    </div>
-
-    <div class="person-card">
-      <div class="avatar">👨</div>
-      <h3>Daniel</h3>
-      <div class="country">🇨🇦 Canada</div>
-      <div class="online">● Available for call</div>
-
-      <button class="call-btn" onclick="startCall('Daniel')">
-        📹 Start Video Call
-      </button>
-    </div>
-
   </section>
 
-  <div class="bottom">
-    © 2026 WorldMitra · Connect safely with the world
-  </div>
+
+  <!-- GENDER SCREEN -->
+  <section id="genderScreen" class="screen">
+    <div class="card">
+      <div class="logo">👤</div>
+
+      <h2>Your Profile</h2>
+
+      <p>
+        Select your gender to continue.
+      </p>
+
+      <div class="gender-options">
+        <button
+          id="maleBtn"
+          class="gender"
+          onclick="selectGender('Male')">
+          👨<br><br>Male
+        </button>
+
+        <button
+          id="femaleBtn"
+          class="gender"
+          onclick="selectGender('Female')">
+          👩<br><br>Female
+        </button>
+      </div>
+
+      <button class="btn primary" onclick="finishSetup()">
+        Continue to WorldMitra
+      </button>
+
+      <div id="genderError" class="error"></div>
+    </div>
+  </section>
+
+
+  <!-- HOME -->
+  <main id="homeScreen" class="home">
+
+    <div class="topbar">
+      <div class="brand">🌍 WorldMitra</div>
+
+      <button
+        class="btn secondary"
+        style="width:auto;padding:10px 14px;margin:0;"
+        onclick="resetApp()">
+        Reset
+      </button>
+    </div>
+
+    <div class="live-title">
+      <h2>🔴 Live People</h2>
+      <p>People who are currently live will appear here.</p>
+    </div>
+
+    <div class="live-grid">
+
+      <div class="live-card">
+        <div class="live-badge">LIVE</div>
+        <div class="avatar">👤</div>
+        <h3>Live Person</h3>
+        <small>Waiting for live users...</small>
+      </div>
+
+      <div class="live-card">
+        <div class="live-badge">LIVE</div>
+        <div class="avatar">👤</div>
+        <h3>Live Person</h3>
+        <small>Waiting for live users...</small>
+      </div>
+
+    </div>
+
+  </main>
+
 
   <script>
-    function startCall(name) {
-      alert(
-        "Video call with " + name +
-        " will start after we connect the live calling system."
-      );
+    let selectedGender = "";
+
+    function showScreen(id) {
+      document.querySelectorAll(".screen").forEach(screen => {
+        screen.classList.remove("active");
+      });
+
+      document.getElementById(id).classList.add("active");
     }
+
+    function goToAge() {
+      showScreen("ageScreen");
+    }
+
+    function checkAge() {
+      const age = Number(document.getElementById("ageInput").value);
+      const error = document.getElementById("ageError");
+
+      if (!age) {
+        error.textContent = "Please enter your age.";
+        return;
+      }
+
+      if (age < 18) {
+        error.textContent = "You must be 18 or older to continue.";
+        return;
+      }
+
+      if (age > 120) {
+        error.textContent = "Please enter a valid age.";
+        return;
+      }
+
+      localStorage.setItem("worldmitra_age", age);
+
+      error.textContent = "";
+      showScreen("genderScreen");
+    }
+
+    function selectGender(gender) {
+      selectedGender = gender;
+
+      document.getElementById("maleBtn").classList.remove("selected");
+      document.getElementById("femaleBtn").classList.remove("selected");
+
+      if (gender === "Male") {
+        document.getElementById("maleBtn").classList.add("selected");
+      }
+
+      if (gender === "Female") {
+        document.getElementById("femaleBtn").classList.add("selected");
+      }
+    }
+
+    function finishSetup() {
+      const error = document.getElementById("genderError");
+
+      if (!selectedGender) {
+        error.textContent = "Please select Male or Female.";
+        return;
+      }
+
+      localStorage.setItem("worldmitra_gender", selectedGender);
+      localStorage.setItem("worldmitra_setup", "completed");
+
+      document.getElementById("welcomeScreen").style.display = "none";
+      document.getElementById("ageScreen").style.display = "none";
+      document.getElementById("genderScreen").style.display = "none";
+
+      document.getElementById("homeScreen").classList.add("active");
+    }
+
+    function resetApp() {
+      localStorage.removeItem("worldmitra_age");
+      localStorage.removeItem("worldmitra_gender");
+      localStorage.removeItem("worldmitra_setup");
+
+      location.reload();
+    }
+
+    window.addEventListener("load", () => {
+      const setupDone = localStorage.getItem("worldmitra_setup");
+
+      if (setupDone === "completed") {
+        document.getElementById("welcomeScreen").style.display = "none";
+        document.getElementById("homeScreen").classList.add("active");
+      }
+    });
   </script>
 
 </body>
